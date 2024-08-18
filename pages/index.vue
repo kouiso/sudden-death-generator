@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSessionStorage } from '@vueuse/core'
+// Removed import of useVuetify as it does not exist
 
 const participants = ref<number>(0)
 const assignedNumbers = ref<Map<number, number>>(new Map())
@@ -21,6 +22,7 @@ const assignNumbers = () => {
 }
 
 const finishGame = () => {
+  // Removed usage of useVuetify and replaced with a simple confirm dialog
   if (confirm('Are you sure?')) {
     sessionData.value = { participants: 0, assignedNumbers: [] }
     participants.value = 0
