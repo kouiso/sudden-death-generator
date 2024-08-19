@@ -18,7 +18,8 @@ const MESSAGES = {
   INPUT_PARTICIPANTS: '参加者数を入力してください',
   ASSIGN_NUMBERS: '番号を割り当てる',
   FINISH_GAME: '終了',
-  NEXT_GAME: '次のゲーム'
+  NEXT_GAME: '次のゲーム',
+  COPY_SUCCESS: '番号がクリップボードにコピーされました！'
 }
 
 const resetStateData = () => {
@@ -118,6 +119,21 @@ const resetForNextGame = () => {
   assignedNumbers.value = []
   isAssigning.value = false
 }
+
+const copyToClipboard = async (number: number) => {
+  try {
+    await navigator.clipboard.writeText(number.toString())
+    $q.notify({
+      message: MESSAGES.COPY_SUCCESS,
+      color: 'blue',
+      position: 'top',
+      timeout: 2000,
+      actions: [{ label: 'OK', color: 'white' }]
+    })
+  } catch (err) {
+    console.error('Failed to copy: ', err)
+  }
+}
 </script>
 
 <template>
@@ -132,7 +148,7 @@ const resetForNextGame = () => {
         <v-alert v-if="validationMessage" type="error">{{ validationMessage }}</v-alert>
         <v-list>
           <v-list-item v-for="(number, index) in assignedNumbers" :key="index">
-            <v-chip color="teal" text-color="white" class="ma-2">
+            <v-chip color="teal" text-color="white" class="ma-2" @click="copyToClipboard(number)">
               {{ getParticipantLabel(index) }}: {{ number }}
             </v-chip>
           </v-list-item>
@@ -153,6 +169,7 @@ const resetForNextGame = () => {
 .v-chip {
   font-size: 1.1em;
   animation: fadeIn 0.5s ease-in-out;
+  cursor: pointer;
 }
 
 @keyframes fadeIn {
