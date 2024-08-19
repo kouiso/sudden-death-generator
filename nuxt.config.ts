@@ -11,6 +11,11 @@ export default defineNuxtConfig({
     define: {
       "process.env.DEBUG": false,
     },
+    server: {
+      watch: {
+        usePolling: true,
+      },
+    },
   },
 
   compatibilityDate: "2024-08-19",
