@@ -1,45 +1,53 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useSessionStorage } from '@vueuse/core'
-// Removed import of useVuetify as it does not exist
 
 const participants = ref<number>(0)
-const assignedNumbers = ref<Map<number, number>>(new Map())
-const router = useRouter()
-const sessionData = useSessionStorage('gameData', { participants: 0, assignedNumbers: [] })
+const assignedNumbers = ref<number[]>([])
+const sessionData = useSessionStorage<{ participants: number, assignedNumbers: number[] }>('gameData', { participants: 0, assignedNumbers: [] })
 
 const assignNumbers = () => {
-  assignedNumbers.value.clear()
+  assignedNumbers.value = []
+  const usedNumbers = new Set<number>()
   for (let i = 1; i <= participants.value; i++) {
     let number
     do {
-      number = Math.floor(Math.random() * participants.value) + 1
-    } while (Array.from(assignedNumbers.value.values()).includes(number))
-    assignedNumbers.value.set(i, number)
+      number = Math.floor(Math.random() * 100) + 1
+    } while (usedNumbers.has(number))
+    usedNumbers.add(number)
+    
+    assignedNumbers.value.push(number)
   }
-  sessionData.value = { participants: participants.value, assignedNumbers: Array.from(assignedNumbers.value.entries()) }
+  sessionData.value = { participants: participants.value, assignedNumbers: assignedNumbers.value }
 }
 
 const finishGame = () => {
-  // Removed usage of useVuetify and replaced with a simple confirm dialog
   if (confirm('Are you sure?')) {
     sessionData.value = { participants: 0, assignedNumbers: [] }
     participants.value = 0
-    assignedNumbers.value.clear()
+    assignedNumbers.value = []
   }
 }
 
 onMounted(() => {
   if (sessionData.value.participants > 0) {
     participants.value = sessionData.value.participants
-    assignedNumbers.value = new Map(sessionData.value.assignedNumbers)
+    assignedNumbers.value = sessionData.value.assignedNumbers
   }
 })
 
 setTimeout(() => {
   sessionData.value = { participants: 0, assignedNumbers: [] }
 }, 6 * 60 * 60 * 1000) // 6 hours
+
+const getParticipantLabel = (index: number): string => {
+  let label = ''
+  while (index >= 0) {
+    label = String.fromCharCode(65 + (index % 26)) + label
+    index = Math.floor(index / 26) - 1
+  }
+  return label + 'さん'
+}
 </script>
 
 <template>
@@ -50,8 +58,8 @@ setTimeout(() => {
         <v-btn @click="assignNumbers">Assign Numbers</v-btn>
         <v-btn @click="finishGame">Finish</v-btn>
         <v-list>
-          <v-list-item v-for="(number, participant) in assignedNumbers" :key="participant">
-            Participant {{ participant }}: {{ number }}
+          <v-list-item v-for="(number, index) in assignedNumbers" :key="index">
+            {{ getParticipantLabel(index) }}: {{ number }}
           </v-list-item>
         </v-list>
       </v-container>

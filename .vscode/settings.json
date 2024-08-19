@@ -1,0 +1,41 @@
+{
+  // ファイル保存時に自動的にフォーマットおよびLintを実行
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "always"
+  },
+  // フォーマッターを設定
+  // ※全体に適用させるとprisma formatがonSave時に動かなかったので、ファイルタイプ別に指定する
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // ファイルを言語に関連付ける
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  // ESLintでバリデーションを行うファイルタイプを指定
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  // Stylelintのパスを指定
+  "stylelint.stylelintPath": "node_modules/stylelint",
+  // Stylelintでバリデーションを行うファイルタイプを指定
+  "stylelint.validate": ["css", "scss"]
+}
