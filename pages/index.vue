@@ -1,5 +1,3 @@
-<!-- Start of Selection -->
-// ITO
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useSessionStorage } from '@vueuse/core'
@@ -139,4 +137,3 @@ const getParticipantLabel = (index: number): string => {
   to { opacity: 1; }
 }
 </style>
-<!-- End of Selection -->
