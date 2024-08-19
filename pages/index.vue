@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useSessionStorage } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
@@ -8,7 +7,6 @@ const $q = useQuasar()
 const initialParticipants = ref<number | null>(null)
 const participants = ref<number>(0)
 const assignedNumbers = ref<number[]>([])
-const sessionData = useSessionStorage<{ participants: number, assignedNumbers: number[] }>('gameData', { participants: 0, assignedNumbers: [] })
 const isAssigning = ref<boolean>(false)
 const validationMessage = ref<string>('')
 
@@ -23,8 +21,9 @@ const MESSAGES = {
   NEXT_GAME: '次のゲーム'
 }
 
-const resetSessionData = () => {
-  sessionData.value = { participants: 0, assignedNumbers: [] }
+const resetStateData = () => {
+  participants.value = 0
+  assignedNumbers.value = []
 }
 
 const assignNumbers = async () => {
@@ -45,7 +44,6 @@ const assignNumbers = async () => {
     assignedNumbers.value.push(number)
   }
 
-  saveSessionData()
   notifyAssignment()
   disableButtons()
 }
@@ -67,18 +65,15 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   event.preventDefault()
   event.returnValue = MESSAGES.BEFORE_UNLOAD
   if (confirm(MESSAGES.BEFORE_UNLOAD)) {
-    resetSessionData()
+    resetStateData()
   }
 }
 
 onMounted(() => {
-  if (sessionData.value.participants > 0) {
-    restoreSessionData()
-  }
   window.addEventListener('beforeunload', handleBeforeUnload)
 })
 
-setTimeout(resetSessionData, 6 * 60 * 60 * 1000) // 6時間
+setTimeout(resetStateData, 6 * 60 * 60 * 1000) // 6時間
 
 const getParticipantLabel = (index: number): string => {
   let label = ''
@@ -98,11 +93,6 @@ const generateRandomNumber = (): number => {
   return Math.floor(Math.random() * 100) + 1
 }
 
-const saveSessionData = () => {
-  sessionData.value = { participants: participants.value, assignedNumbers: assignedNumbers.value }
-  isAssigning.value = false
-}
-
 const notifyAssignment = () => {
   $q.notify({
     message: MESSAGES.ASSIGNMENT_NOTIFICATION,
@@ -118,22 +108,15 @@ const disableButtons = () => {
 }
 
 const resetGameState = () => {
-  sessionData.value = { participants: 0, assignedNumbers: [] }
   participants.value = 0
   assignedNumbers.value = []
   isAssigning.value = false
 }
 
 const resetForNextGame = () => {
-  sessionData.value = { participants: initialParticipants.value ?? 0, assignedNumbers: [] }
+  participants.value = initialParticipants.value ?? 0
   assignedNumbers.value = []
   isAssigning.value = false
-}
-
-const restoreSessionData = () => {
-  participants.value = sessionData.value.participants
-  initialParticipants.value = sessionData.value.participants
-  assignedNumbers.value = sessionData.value.assignedNumbers
 }
 </script>
 
