@@ -1,179 +1,126 @@
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useQuasar } from 'quasar'
+<template>
+  <v-container class="container">
+    <v-row>
+      <v-col cols="12">
+        <v-form @submit.prevent="generateText">
+          <v-textarea
+            v-model="inputText"
+            label="ここにテキストを入力"
+            outlined
+            rows="4"
+          ></v-textarea>
+          <v-btn type="submit" color="primary" class="mt-4">生成</v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-row class="mt-4">
+      <v-col cols="12">
+        <v-checkbox v-model="vertical" label="縦書き(V)"></v-checkbox>
+        <v-checkbox v-model="padding" label="余白(P)"></v-checkbox>
+        <v-checkbox v-model="textFormat" label="テキスト形式(R)"></v-checkbox>
+        <v-radio-group v-model="shape" row>
+          <v-radio label="通常(N)" value="normal"></v-radio>
+          <v-radio label="四角形(4)" value="square"></v-radio>
+          <v-radio label="短冊(T)" value="tanzaku"></v-radio>
+          <v-radio label="ストレス(S)" value="stress"></v-radio>
+        </v-radio-group>
+      </v-col>
+    </v-row>
+    <v-row class="mt-4">
+      <v-col cols="12">
+        <div :class="['text-container', { vertical, padding, textFormat, [shape]: true }]">
+          <div v-html="formattedText"></div>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
 
-const $q = useQuasar()
+<script>
+export default {
+  name: 'IndexPage',
+  data() {
+    return {
+      vertical: false,
+      padding: false,
+      textFormat: false,
+      shape: 'normal',
+      inputText: '',
+      formattedText: ''
+    }
+  },
+  methods: {
+    generateText() {
+      let formattedText = '';
+      const lines = this.inputText.split('\n');
 
-const initialParticipants = ref<number | null>(null)
-const participants = ref<number>(0)
-const assignedNumbers = ref<number[]>([])
-const isAssigning = ref<boolean>(false)
-const validationMessage = ref<string>('')
+      switch (this.shape) {
+        case 'normal':
+          formattedText = lines.join('<br>');
+          break;
+        case 'square':
+          formattedText = lines.map(line => `＿${line}＿`).join('<br>');
+          break;
+        case 'tanzaku':
+          formattedText = lines.map(line => `＞${line}＜`).join('<br>');
+          break;
+        case 'stress':
+          formattedText = lines.map(line => `！！${line}！！`).join('<br>');
+          break;
+        default:
+          formattedText = lines.join('<br>');
+      }
 
-const MESSAGES = {
-  VALIDATION: '有効な参加者数を入力してください。',
-  CONFIRM_FINISH: '本当に終了しますか？',
-  BEFORE_UNLOAD: '本当に離れますか？ゲームの記録が削除されます。',
-  ASSIGNMENT_NOTIFICATION: '番号が割り当てられました！',
-  INPUT_PARTICIPANTS: '参加者数を入力してください',
-  ASSIGN_NUMBERS: '番号を割り当てる',
-  FINISH_GAME: '終了',
-  NEXT_GAME: '次のゲーム',
-  COPY_SUCCESS: '番号がクリップボードにコピーされました！'
-}
+      if (this.vertical) {
+        formattedText = formattedText.split('<br>').map(line => line.split('').join('<br>')).join('<br>');
+      }
 
-const resetStateData = () => {
-  participants.value = 0
-  assignedNumbers.value = []
-}
+      if (this.padding) {
+        formattedText = `<div style="padding: 20px;">${formattedText}</div>`;
+      }
 
-const assignNumbers = async () => {
-  if (participants.value <= 0) {
-    validationMessage.value = MESSAGES.VALIDATION
-    return
-  }
-  resetAssignmentState()
-  const usedNumbers = new Set<number>()
-  isAssigning.value = true
+      if (this.textFormat) {
+        formattedText = `<div style="font-family: monospace;">${formattedText}</div>`;
+      }
 
-  for (let i = 1; i <= participants.value; i++) {
-    let number
-    do {
-      number = generateRandomNumber()
-    } while (usedNumbers.has(number))
-    usedNumbers.add(number)
-    assignedNumbers.value.push(number)
-  }
-
-  notifyAssignment()
-  disableButtons()
-}
-
-const finishGame = () => {
-  if (confirm(MESSAGES.CONFIRM_FINISH)) {
-    resetGameState()
-  }
-}
-
-const nextGame = () => {
-  if (initialParticipants.value === null) {
-    initialParticipants.value = participants.value
-  }
-  resetForNextGame()
-}
-
-const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-  event.preventDefault()
-  event.returnValue = MESSAGES.BEFORE_UNLOAD
-  if (confirm(MESSAGES.BEFORE_UNLOAD)) {
-    resetStateData()
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('beforeunload', handleBeforeUnload)
-})
-
-setTimeout(resetStateData, 6 * 60 * 60 * 1000) // 6時間
-
-const getParticipantLabel = (index: number): string => {
-  let label = ''
-  while (index >= 0) {
-    label = String.fromCharCode(65 + (index % 26)) + label
-    index = Math.floor(index / 26) - 1
-  }
-  return label + 'さん'
-}
-
-const resetAssignmentState = () => {
-  validationMessage.value = ''
-  assignedNumbers.value = []
-}
-
-const generateRandomNumber = (): number => {
-  return Math.floor(Math.random() * 100) + 1
-}
-
-const notifyAssignment = () => {
-  $q.notify({
-    message: MESSAGES.ASSIGNMENT_NOTIFICATION,
-    color: 'green',
-    position: 'top',
-    timeout: 2000,
-    actions: [{ label: 'OK', color: 'white' }]
-  })
-}
-
-const disableButtons = () => {
-  isAssigning.value = true
-}
-
-const resetGameState = () => {
-  participants.value = 0
-  assignedNumbers.value = []
-  isAssigning.value = false
-}
-
-const resetForNextGame = () => {
-  participants.value = initialParticipants.value ?? 0
-  assignedNumbers.value = []
-  isAssigning.value = false
-}
-
-const copyToClipboard = async (number: number) => {
-  try {
-    await navigator.clipboard.writeText(number.toString())
-    $q.notify({
-      message: MESSAGES.COPY_SUCCESS,
-      color: 'blue',
-      position: 'top',
-      timeout: 2000,
-      actions: [{ label: 'OK', color: 'white' }]
-    })
-  } catch (err) {
-    console.error('Failed to copy: ', err)
+      this.formattedText = formattedText;
+    }
   }
 }
 </script>
 
-<template>
-  <v-app>
-    <v-main>
-      <v-container>
-        <h1>ITO</h1>
-        <v-text-field v-model="participants" :label="MESSAGES.INPUT_PARTICIPANTS" type="number"></v-text-field>
-        <v-btn @click="assignNumbers" :disabled="isAssigning" color="primary">{{ MESSAGES.ASSIGN_NUMBERS }}</v-btn>
-        <v-btn @click="finishGame" color="red">{{ MESSAGES.FINISH_GAME }}</v-btn>
-        <v-btn @click="nextGame" color="blue">{{ MESSAGES.NEXT_GAME }}</v-btn>
-        <v-alert v-if="validationMessage" type="error">{{ validationMessage }}</v-alert>
-        <v-list>
-          <v-list-item v-for="(number, index) in assignedNumbers" :key="index">
-            <v-chip color="teal" text-color="white" class="ma-2" @click="copyToClipboard(number)">
-              {{ getParticipantLabel(index) }}: {{ number }}
-            </v-chip>
-          </v-list-item>
-        </v-list>
-      </v-container>
-    </v-main>
-  </v-app>
-</template>
-
-<style>
-@import 'vuetify/lib/styles/main.sass';
-
-.v-btn {
-  font-size: 1.2em;
+<style scoped>
+.container {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 20vh;
+}
+.text-container {
+  display: inline-block;
+}
+.vertical {
+  writing-mode: vertical-rl;
+}
+.padding {
+  padding: 20px;
+}
+.textFormat {
+  font-family: monospace;
+}
+.normal {
+  /* 通常のスタイル */
+}
+.square {
+  border: 1px solid black;
+  padding: 10px;
+}
+.tanzaku {
+  border: 1px solid black;
+  padding: 10px;
+  width: 100px;
+}
+.stress {
+  color: red;
   font-weight: bold;
-}
-
-.v-chip {
-  font-size: 1.1em;
-  animation: fadeIn 0.5s ease-in-out;
-  cursor: pointer;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 </style>

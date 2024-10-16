@@ -1,5 +1,5 @@
 {
-  "name": "ito-games",
+  "name": "sudden-death-generator",
   "private": false,
   "type": "module",
   "license": "UNLICENSED",
@@ -26,5 +26,8 @@
   },
   "devDependencies": {
     "@invictus.codes/nuxt-vuetify": "^0.3.0"
+  },
+  "volta": {
+    "node": "22.5.1"
   }
 }
