@@ -23,6 +23,7 @@
           <v-radio label="四角形(4)" value="square"></v-radio>
           <v-radio label="短冊(T)" value="tanzaku"></v-radio>
           <v-radio label="ストレス(S)" value="stress"></v-radio>
+          <v-radio label="突然の死(SD)" value="suddenDeath"></v-radio>
         </v-radio-group>
       </v-col>
     </v-row>
@@ -66,6 +67,9 @@ export default {
           break;
         case 'stress':
           formattedText = lines.map(line => `！！${line}！！`).join('<br>');
+          break;
+        case 'suddenDeath':
+          formattedText = `＿人人人人人人人＿<br>＞　${lines.join('　')}　＜<br>￣Y^Y^Y^Y^Y^Y^Y^￣`;
           break;
         default:
           formattedText = lines.join('<br>');
@@ -122,5 +126,9 @@ export default {
 .stress {
   color: red;
   font-weight: bold;
+}
+.suddenDeath {
+  font-size: 1.5rem;
+  text-align: center;
 }
 </style>
