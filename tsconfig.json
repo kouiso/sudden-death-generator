@@ -1,27 +1,23 @@
 {
-  "include": [
-    "**/*",
-    "**/.server/**/*",
-    "**/.client/**/*",
-    ".react-router/types/**/*"
-  ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["node", "vite/client"],
     "target": "ES2022",
-    "module": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "rootDirs": [".", "./.react-router/types"],
-    "baseUrl": ".",
+    "jsxImportSource": "preact",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./src/*"]
     },
+    "types": ["node", "vitest/globals"],
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
-    "strict": true
-  }
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true
+  },
+  "include": ["src", "farm.config.ts", "vitest.config.ts"]
 }
