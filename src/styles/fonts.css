@@ -1,0 +1,14 @@
+/*
+ * 罫線・矢印など East Asian Ambiguous な文字は CJK フォント未導入端末で半角描画され、
+ * 四角形・短冊の枠が崩れる。該当コードポイントだけをサブセット化した woff2 で上書きし、
+ * どの端末でも同じ幅で描画されるようにする（scripts/subset-font.sh で生成、
+ * Noto Sans Mono CJK JP / SIL Open Font License 1.1）。
+ */
+@font-face {
+  font-family: "SD Symbols Mono";
+  src: url("/fonts/sd-symbols.woff2") format("woff2");
+  font-display: block;
+  unicode-range: U+0059, U+005E, U+2190-2193, U+2196-2199, U+2500-2503, U+250C, U+250F, U+2510,
+    U+2513, U+2514, U+2517, U+2518, U+251B, U+4EBA, U+FE11, U+FE12, U+FE41-FE44, U+FF1C, U+FF1E,
+    U+FF3F, U+FF5C, U+FFE3;
+}
