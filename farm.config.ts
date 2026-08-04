@@ -13,11 +13,6 @@ export default defineConfig({
       // 既定の "browser" は legacy polyfill を注入し index.html が肥大化するため esnext に絞る。
       targetEnv: "browser-esnext",
     },
-    resolve: {
-      alias: {
-        "~": "./src",
-      },
-    },
     persistentCache: false,
   },
   server: {

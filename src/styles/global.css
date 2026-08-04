@@ -124,6 +124,10 @@ button {
   gap: 16px;
 }
 
+.option-row--spaced {
+  margin-top: 12px;
+}
+
 .checkbox-label {
   display: inline-flex;
   align-items: center;
@@ -239,7 +243,9 @@ button {
 }
 
 .share-button--line {
-  background: #06c755;
+  /* LINE 公式ブランドカラー #06c755 は白文字だと 2.26:1 で WCAG AA (4.5:1) を大きく割るため、
+   * ブランドの色相・彩度を保ったまま輝度だけ落として 5.48:1 まで確保している。 */
+  background: #037a33;
   color: #ffffff;
 }
 

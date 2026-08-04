@@ -88,3 +88,23 @@ npm test
 
 単体テスト 68/68、実機受入テスト 15/15 の全項目が PASS。Phase 0 で確定した旧実装の不具合
 （非対称パディング、短冊・縦書きの完全崩壊、余白オプション欠落、`alert()`）は全て解消を確認した。
+
+## C. PR 提出後の自己レビューで発見・修正した項目
+
+上記 B の全項目 PASS を確認した後、実際に PR を出す前に敵対的な観点で自己レビューを行い、
+以下を実測（WCAG コントラスト比計算・Playwright での再検証）で確認し修正した。
+
+| # | 発見内容 | 根拠 | 対応 |
+|---|---|---|---|
+| C1 | LINE 共有ボタン（白文字 on `#06c755`）が WCAG AA (4.5:1) を大きく下回る | コントラスト比を実計算: 2.26:1 | `#037a33` に変更 → 5.48:1 で再検証 PASS |
+| C2 | コピー成功ボタン（白文字 on `#1d9a6c`）も同基準に未達 | コントラスト比を実計算: 3.56:1 | `#137a54` / hover `#0f6a48` に変更 → 5.33:1 |
+| C3 | `role="radio"` のスタイル選択が矢印キーで移動できない（WAI-ARIA radiogroup パターン未実装） | 実装コードレビューで発見 | roving tabindex + ArrowLeft/Right/Up/Down 対応を追加、Playwright で移動・選択・プレビュー反映を確認 |
+| C4 | `@testing-library/preact` を導入したが一度も使用していない | `grep` で使用箇所ゼロを確認 | 依存関係から削除 |
+| C5 | `happy-dom` テスト環境を設定したが、全テストが DOM 非依存の純粋関数 | `grep` で `document`/`window` 使用ゼロを確認 | 依存削除、デフォルトの node 環境に変更（テスト実行時間が確認済みで実際に短縮） |
+| C6 | `editor.tsx` で `e.target as HTMLTextAreaElement` 等の型キャストを使用 | コードレビューで発見 | Preact の型付き `e.currentTarget` に変更しキャストを排除 |
+| C7 | `tsconfig.json` / `farm.config.ts` / `vitest.config.ts` に `~/*` パスエイリアスを設定したが未使用 | `grep` で使用箇所ゼロを確認 | 3ファイルから削除 |
+| C8 | `useClipboard` のタイマーがコンポーネントアンマウント時にクリアされない | コードレビューで発見（実害は本アプリ構成では極小だが lifecycle として不正確） | `useEffect` クリーンアップで `clearTimeout` を追加 |
+
+全修正後、`npm run lint` / `npm run typecheck` / `npm test`（68/68）/ `npm run build` を再実行し
+exit 0 を確認。B1–B15 の実機受入テストと C3 のキーボード操作を Playwright で再実行し、
+15/15 PASS を維持したまま矢印キー操作（選択移動・フォーカス移動・プレビュー反映）も正常動作を確認。

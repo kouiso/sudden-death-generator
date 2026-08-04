@@ -28,15 +28,15 @@ export function Editor({
         rows={4}
         placeholder="ここにテキストを入力…（空のままなら「突然の死」を表示）"
         value={text}
-        onInput={(e) => onTextChange((e.target as HTMLTextAreaElement).value)}
+        onInput={(e) => onTextChange(e.currentTarget.value)}
       />
-      <div className="option-row" style={{ marginTop: 12 }}>
+      <div className="option-row option-row--spaced">
         <label className="checkbox-label">
           <input
             type="checkbox"
             checked={vertical}
             disabled={verticalDisabled}
-            onChange={(e) => onVerticalChange((e.target as HTMLInputElement).checked)}
+            onChange={(e) => onVerticalChange(e.currentTarget.checked)}
           />
           縦書き表示{verticalDisabled ? "（短冊は常に縦書き）" : ""}
         </label>
@@ -44,7 +44,7 @@ export function Editor({
           <input
             type="checkbox"
             checked={padding}
-            onChange={(e) => onPaddingChange((e.target as HTMLInputElement).checked)}
+            onChange={(e) => onPaddingChange(e.currentTarget.checked)}
           />
           余白
         </label>

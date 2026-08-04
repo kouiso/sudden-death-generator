@@ -12,8 +12,10 @@
   --color-accent: #2f5fe0;
   --color-accent-strong: #1f47b8;
   --color-accent-contrast: #ffffff;
-  --color-success: #1d9a6c;
-  --color-success-strong: #157a55;
+  /* 白文字を乗せた時に WCAG AA (4.5:1) を満たす濃さまで暗くしている
+   * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
+  --color-success: #137a54;
+  --color-success-strong: #0f6a48;
   --color-danger: #d1425a;
   --color-focus-ring: #2f5fe0;
 

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
 export interface ClipboardState {
   status: "idle" | "success" | "error";
@@ -27,6 +27,15 @@ export function useClipboard(resetDelayMs = 2000): ClipboardState {
     },
     [resetDelayMs],
   );
+
+  // アンマウント後に setStatus が呼ばれるのを防ぐ。
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   return { status, copy };
 }
