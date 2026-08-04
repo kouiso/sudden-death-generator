@@ -1,5 +1,5 @@
 import type { FrameGlyphs, RenderOptions } from "./types";
-import { evenCeil, maxLineWidth, padCenterToWidth, padEndToWidth, stringWidth } from "./width";
+import { evenCeil, maxLineWidth, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
 import { toVerticalGlyph } from "./vertical";
 
 /** 入力が空のときに使う既定文言。リアルタイムプレビューでも常に何かが見えるようにする。 */
@@ -63,7 +63,7 @@ function renderFramed(lines: readonly string[], glyphs: FrameGlyphs, padding: bo
  * renderFramed にそのまま渡せる（枠のロジックと縦書きのロジックを分離するため）。
  */
 function buildVerticalRows(lines: readonly string[]): string[] {
-  const columns = [...lines].reverse().map((line) => Array.from(line).map(toVerticalGlyph));
+  const columns = [...lines].reverse().map((line) => splitGraphemes(line).map(toVerticalGlyph));
   const height = columns.reduce((max, col) => Math.max(max, col.length), 0);
   const cellWidth = evenCeil(
     columns.reduce((max, col) => col.reduce((m, ch) => Math.max(m, stringWidth(ch)), max), 1),
@@ -79,7 +79,7 @@ function buildVerticalRows(lines: readonly string[]): string[] {
 
 /** 短冊1本分の枠。文字を縦一列に積み、常に縦書き字形へ変換する。 */
 function renderTanzakuFrame(line: string, padding: boolean): string {
-  const chars = Array.from(line).map(toVerticalGlyph);
+  const chars = splitGraphemes(line).map(toVerticalGlyph);
   const cells = padding ? ["", ...chars, ""] : chars;
   const cellWidth = evenCeil(cells.reduce((max, ch) => Math.max(max, stringWidth(ch)), 2));
   const repeat = cellWidth / 2;

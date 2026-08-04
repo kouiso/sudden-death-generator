@@ -12,8 +12,19 @@ const NARROW_LATIN1 = new Set([0xa2, 0xa3, 0xa5, 0xa6, 0xac, 0xaf]);
 
 const FULL_WIDTH_SPACE = "　";
 
+// 書記素クラスタ単位で分割する。合字（結合文字・Variation Selector・ZWJ シーケンス）を
+// コードポイント単位でバラすと、見た目は1文字でも複数文字分の幅として数えてしまい、
+// 縦書きでも1文字が複数行に分裂する。Unicode 標準の書記素分割 (UAX #29) に従う
+// Intl.Segmenter を使うことでこれを避ける。
+const GRAPHEME_SEGMENTER = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+/** 文字列を書記素クラスタ（見た目上の1文字）の配列に分割する。 */
+export function splitGraphemes(value: string): string[] {
+  return Array.from(GRAPHEME_SEGMENTER.segment(value), (s) => s.segment);
+}
+
 /**
- * 1文字（コードポイント単位）の表示幅を返す。
+ * 1コードポイントの表示幅を返す。
  * ASCII 印字可能域・半角カタカナ・一部の半角記号のみ半角(1)、それ以外は全角(2)とみなす。
  * East Asian Width の Halfwidth/Narrow 以外を Wide とみなす実務的な簡略化で、
  * 絵文字や罫線・矢印など判定が難しい文字も一律で全角として扱うことで枠幅計算を安定させる。
@@ -25,11 +36,19 @@ export function charWidth(codePoint: number): CharWidth {
   return 2;
 }
 
-/** 文字列全体の表示幅（半角=1 / 全角=2 の合計）。サロゲートペアも1文字として数える。 */
+/**
+ * 1書記素クラスタの表示幅を返す。結合文字・Variation Selector・ZWJ 結合部分は
+ * 表示上ゼロ幅なので、クラスタの先頭（基底）コードポイントの幅だけを見る。
+ */
+export function clusterWidth(cluster: string): CharWidth {
+  return charWidth(cluster.codePointAt(0) ?? 0);
+}
+
+/** 文字列全体の表示幅（半角=1 / 全角=2 の合計）。書記素クラスタ単位で数える。 */
 export function stringWidth(value: string): number {
   let width = 0;
-  for (const ch of value) {
-    width += charWidth(ch.codePointAt(0) ?? 0);
+  for (const cluster of splitGraphemes(value)) {
+    width += clusterWidth(cluster);
   }
   return width;
 }

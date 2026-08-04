@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { charWidth, evenCeil, padCenterToWidth, padEndToWidth, stringWidth } from "./width";
+import { charWidth, evenCeil, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
 
 describe("charWidth", () => {
   it("ASCII 印字可能文字は半角", () => {
@@ -33,6 +33,46 @@ describe("stringWidth", () => {
 
   it("サロゲートペア（絵文字）を1文字として数える", () => {
     expect(stringWidth("😀")).toBe(2);
+  });
+
+  it("結合文字（基底+アクセント）は1書記素として基底文字の幅で数える", () => {
+    // "e"(U+0065) + U+0301 COMBINING ACUTE ACCENT の分解形。
+    // コードポイント単位で数えると e(半角1)+結合文字(全角2扱い)=3 になってしまうが、
+    // 結合文字は表示上ゼロ幅なので正しくは基底の "e" と同じ半角(1)。
+    // \u{} で明示するのは、エディタ等が正規化して合成済み1コードポイントの
+    // "e with acute"(U+00E9) に変換してしまい、意図した分解形でテストできなくなる事故を防ぐため
+    // （実際に一度このテスト作成時に発生した）。
+    const combining = "e\u{0301}";
+    expect(combining.length).toBe(2); // 分解形（2コードポイント）であることの前提確認
+    expect(stringWidth(combining)).toBe(1);
+  });
+
+  it("Variation Selector 付き絵文字は基底の幅だけを数える", () => {
+    // U+2615 (全角2) + U+FE0F (VS16)。VS16 自体は表示幅を持たない。
+    const vs16Emoji = "\u{2615}\u{FE0F}";
+    expect(stringWidth(vs16Emoji)).toBe(2);
+  });
+
+  it("ZWJ 絵文字シーケンスは1書記素として数える", () => {
+    // U+1F468 + ZWJ(U+200D) + U+1F469 + ZWJ + U+1F467 の家族絵文字。
+    // コードポイント単位で数えると 3絵文字分の幅(6)になってしまう。
+    const zwjFamily = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}";
+    expect(stringWidth(zwjFamily)).toBe(2);
+  });
+});
+
+describe("splitGraphemes", () => {
+  it("結合文字・VS16・ZWJ シーケンスを1クラスタとして分割する", () => {
+    const combining = "e\u{0301}";
+    const vs16Emoji = "\u{2615}\u{FE0F}";
+    const zwjFamily = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}";
+    expect(splitGraphemes(combining)).toEqual([combining]);
+    expect(splitGraphemes(vs16Emoji)).toEqual([vs16Emoji]);
+    expect(splitGraphemes(zwjFamily)).toEqual([zwjFamily]);
+  });
+
+  it("通常の文字列は1文字ずつに分割する", () => {
+    expect(splitGraphemes("突然の死")).toEqual(["突", "然", "の", "死"]);
   });
 });
 

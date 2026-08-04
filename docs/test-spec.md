@@ -52,7 +52,7 @@
 
 ### A. 単体テスト
 
-```
+```console
 npm test
 
  Test Files  3 passed (3)

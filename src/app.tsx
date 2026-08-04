@@ -45,7 +45,7 @@ export function App() {
       <div className="card">
         <Editor
           text={text}
-          vertical={vertical}
+          vertical={effectiveVertical}
           padding={padding}
           verticalDisabled={shape === "tanzaku"}
           onTextChange={setText}

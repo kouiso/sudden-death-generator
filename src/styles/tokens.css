@@ -48,6 +48,7 @@
   --color-success-strong: #63dba8;
   --color-danger: #ff7a90;
   --color-focus-ring: #6d8bff;
+
   color-scheme: dark;
 }
 
@@ -68,6 +69,7 @@
     --color-success-strong: #63dba8;
     --color-danger: #ff7a90;
     --color-focus-ring: #6d8bff;
+
     color-scheme: dark;
   }
 }

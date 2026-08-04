@@ -31,6 +31,7 @@ npm install
 ```bash
 npm run dev        # 開発サーバー (http://localhost:5173)
 npm run build      # 本番ビルド
+npm run preview    # 本番ビルドをローカルで確認
 npm run lint       # oxlint
 npm run typecheck  # tsc --noEmit
 npm test           # vitest run

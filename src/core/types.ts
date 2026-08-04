@@ -3,7 +3,7 @@ export type ShapeKind = "normal" | "square" | "tanzaku" | "stress";
 
 export interface RenderOptions {
   shape: ShapeKind;
-  /** 縦書き表示。short冊 (tanzaku) では常に真として扱われる。 */
+  /** 縦書き表示。短冊 (tanzaku) では紙が縦長のため常に真として扱われる。 */
   vertical: boolean;
   /** 枠の内側上下に余白行を1行追加する。 */
   padding: boolean;

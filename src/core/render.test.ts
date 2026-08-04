@@ -105,3 +105,37 @@ describe("renderSuddenDeath — 余白オプション", () => {
     expectUniformWidth(renderSuddenDeath("突然の死", { ...base, padding: true }));
   });
 });
+
+describe("renderSuddenDeath — 書記素クラスタ（結合文字・VS16・ZWJ）", () => {
+  // コードポイント単位で分割すると、これらの入力が複数の縦書きセル・短冊マスに
+  // 分裂してしまう（width.test.ts の stringWidth テストと同じ問題が render 側にも伝播する）。
+  const combining = "e\u{0301}"; // e + COMBINING ACUTE ACCENT（分解形、2コードポイント）
+  const vs16Emoji = "\u{2615}\u{FE0F}"; // ☕ + VS16
+  const zwjFamily = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}"; // 👨‍👩‍👧
+
+  it.each([
+    ["結合文字", combining],
+    ["VS16絵文字", vs16Emoji],
+    ["ZWJ絵文字", zwjFamily],
+  ])("短冊: %s は1マスとして描画される（分裂しない）", (_label, input) => {
+    const output = renderSuddenDeath(input, { ...base, shape: "tanzaku" });
+    const lines = output.split("\n");
+    // ┏━┓ / ┃x┃ / ┗━┛ の3行になるはず。分裂すると行数が増える。
+    expect(lines).toHaveLength(3);
+    expect(lines[1]).toContain(input);
+    expectUniformWidth(output);
+  });
+
+  it.each([
+    ["結合文字", combining],
+    ["VS16絵文字", vs16Emoji],
+    ["ZWJ絵文字", zwjFamily],
+  ])("縦書き: %s は1行として描画される（分裂しない）", (_label, input) => {
+    const output = renderSuddenDeath(input, { ...base, vertical: true });
+    const lines = output.split("\n");
+    // 枠(上) + 本体1行 + 枠(下) の3行になるはず。分裂すると本体が複数行になる。
+    expect(lines).toHaveLength(3);
+    expect(lines[1]).toContain(input);
+    expectUniformWidth(output);
+  });
+});

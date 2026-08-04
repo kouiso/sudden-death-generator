@@ -12,9 +12,22 @@ set -euo pipefail
 #
 # ソースフォントの取得元 (OFL 1.1 でこのリポジトリへの再配布が許可されている):
 #   https://github.com/notofonts/noto-cjk/blob/main/Sans/Mono/NotoSansMonoCJKjp-Regular.otf
+#
+# 取得元は "main" ブランチの参照であり特定コミットに固定していない
+# （このリポジトリの開発環境からは GitHub API 経由でコミット SHA を確認できなかったため）。
+# 代わりに、2026-08-04 に実際に取得したバイト列の SHA-256 をこの値に固定し、
+# 検証済みのソースと異なるファイルが渡された場合は処理を中断する。
+# 正規の upstream 更新に追従する場合は、新しいソースの SHA-256 を確認した上で
+# この値を意図的に更新すること（黒魔術的にスキップしない）。
+EXPECTED_SHA256="4d01725be822d144cf9a56ade981e6fb920cd7a610b8fc24cc601a920beea5b9"
 
 if ! command -v pyftsubset >/dev/null 2>&1; then
   echo "pyftsubset が見つからない。'pip install fonttools brotli' を先に実行してください" >&2
+  exit 1
+fi
+
+if ! command -v sha256sum >/dev/null 2>&1; then
+  echo "sha256sum が見つからない。ソースフォントの整合性を検証できないため中断する" >&2
   exit 1
 fi
 
@@ -22,6 +35,15 @@ SRC_FONT="${1:?ソースフォント (NotoSansMonoCJKjp-Regular.otf) のパス�
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT_DIR="$ROOT_DIR/public/fonts"
 mkdir -p "$OUT_DIR"
+
+ACTUAL_SHA256="$(sha256sum "$SRC_FONT" | awk '{print $1}')"
+if [ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]; then
+  echo "ソースフォントの SHA-256 が想定値と一致しない。想定していない配布物・改変されたファイルの可能性がある" >&2
+  echo "  期待値: $EXPECTED_SHA256" >&2
+  echo "  実際値: $ACTUAL_SHA256" >&2
+  echo "正規の upstream 更新であれば、確認の上で本スクリプトの EXPECTED_SHA256 を更新すること" >&2
+  exit 1
+fi
 
 # 文字リテラルをシェルスクリプトに直書きすると、見た目が近い別ブロック
 # （Vertical Forms U+FE1x と Small Form Variants U+FE5x など）を誤って
