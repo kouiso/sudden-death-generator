@@ -158,4 +158,10 @@ describe("padCenterToWidth", () => {
   it("既に目標幅なら変化しない", () => {
     expect(padCenterToWidth("突", 2)).toBe("突");
   });
+
+  it("奇数の不足幅では右側に1幅多く配置する", () => {
+    // 総幅の一致だけでは左右の配分ミスを検出できない（CodeRabbit 指摘）。
+    // 不足3 → 左1(半角スペース) + 右2(全角スペース) に分かれることを直接検証する。
+    expect(padCenterToWidth("A", 4)).toBe(" A　");
+  });
 });
