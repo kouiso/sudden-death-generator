@@ -271,11 +271,16 @@ button {
   color: inherit;
 }
 
+/*
+ * position:fixed の画面下部オーバーレイだと、スマホの短い画面高さやスクロール位置次第で
+ * share-bar と重なってボタンのラベルを覆ってしまい、固定オフセット値では画面サイズごとの
+ * 組み合わせを網羅できないことを実機幅マトリクス（iPhone SE/12/Pro Max, Pixel）で確認した。
+ * ドキュメントフロー内（ShareBar の直下）に置くことで、画面サイズ・スクロール位置に関わらず
+ * 他要素と重ならないことを構造的に保証する。
+ */
 .toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 0 auto;
+  width: fit-content;
   background: var(--color-success);
   color: var(--color-accent-contrast);
   padding: 10px 20px;
@@ -292,7 +297,10 @@ button {
   background: var(--color-danger);
 }
 
-@media (max-width: 380px) {
+/* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では3列だと
+ * 「𝕏 でシェア」「LINE で送信」の文字が折り返して読みにくくなる（実機で確認した不具合）。
+ * 実機幅より十分広く余裕を持たせた閾値で縦積みに切り替える。 */
+@media (max-width: 480px) {
   .share-bar {
     grid-template-columns: 1fr;
   }

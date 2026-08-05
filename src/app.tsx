@@ -61,6 +61,13 @@ export function App() {
         <Preview output={output} />
 
         <ShareBar output={output} copyStatus={copyStatus} onCopy={() => copy(output)} />
+
+        {copyStatus !== "idle" && (
+          <Toast
+            status={copyStatus}
+            message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"}
+          />
+        )}
       </div>
 
       <footer className="app-footer">
@@ -75,13 +82,6 @@ export function App() {
           </a>
         </p>
       </footer>
-
-      {copyStatus !== "idle" && (
-        <Toast
-          status={copyStatus}
-          message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"}
-        />
-      )}
     </div>
   );
 }
