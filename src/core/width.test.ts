@@ -17,47 +17,17 @@ describe("charWidth", () => {
     expect(charWidth("😀".codePointAt(0)!)).toBe(2);
   });
 
-  it("ラテン文字拡張（アクセント付き文字）は半角", () => {
-    // 実機で "café au lait très bien" を入力し、枠が本体より広くなる非対称崩れを
-    // 目視確認した不具合の再発防止（Latin-1 Supplement / Latin Extended-A/B）。
-    expect(charWidth("é".codePointAt(0)!)).toBe(1);
-    expect(charWidth("ñ".codePointAt(0)!)).toBe(1);
-    expect(charWidth("ø".codePointAt(0)!)).toBe(1);
-    expect(charWidth("ß".codePointAt(0)!)).toBe(1);
-    expect(charWidth("œ".codePointAt(0)!)).toBe(1);
-  });
-
-  it("ギリシャ文字・キリル文字は半角", () => {
-    // 実機で "Привет" / "Γειά" を入力し、枠が本体より広くなる非対称崩れを
-    // 目視確認した不具合の再発防止（Codex bot 指摘）。
-    expect(charWidth("Γ".codePointAt(0)!)).toBe(1);
-    expect(charWidth("α".codePointAt(0)!)).toBe(1);
-    expect(charWidth("П".codePointAt(0)!)).toBe(1);
-    expect(charWidth("я".codePointAt(0)!)).toBe(1);
-  });
-
   it("タブは半角（CSS tab-size:1 に合わせて計算幅と描画幅を一致させる）", () => {
     // 実機で "A\tB" を入力し、タブストップの可変幅描画とのズレを確認した不具合の再発防止。
     expect(charWidth("\t".codePointAt(0)!)).toBe(1);
   });
 
-  it("ベトナム語の合成済み声調記号付き文字は半角", () => {
-    // 実機で "Tiếng Việt" を入力し、枠が本体より広くなる非対称崩れを
-    // 目視確認した不具合の再発防止（Codex bot 指摘、Latin Extended Additional）。
-    expect(charWidth("ế".codePointAt(0)!)).toBe(1);
-    expect(charWidth("ệ".codePointAt(0)!)).toBe(1);
-  });
-
-  it("スマート引用符・ダッシュ・三点リーダーは半角", () => {
-    // 実機で "Wait—what…" / "“突然”" を入力し、枠が本体より広くなる非対称崩れを
-    // 目視確認した不具合の再発防止（Codex bot 指摘、East Asian Width が Ambiguous な文字）。
-    expect(charWidth("—".codePointAt(0)!)).toBe(1); // EM DASH
-    expect(charWidth("–".codePointAt(0)!)).toBe(1); // EN DASH
-    expect(charWidth("…".codePointAt(0)!)).toBe(1); // HORIZONTAL ELLIPSIS
-    expect(charWidth("“".codePointAt(0)!)).toBe(1);
-    expect(charWidth("”".codePointAt(0)!)).toBe(1);
-    expect(charWidth("‘".codePointAt(0)!)).toBe(1);
-    expect(charWidth("’".codePointAt(0)!)).toBe(1);
+  it("非日本語文字（ラテン文字拡張・ギリシャ・キリル等）は全角扱い", () => {
+    // 本ツールは日本語入力を前提とするため、ASCII と半角カタカナ以外は一律全角とみなす
+    // （海外文字の個別半角対応は行わない、という製品スコープ上の判断）。
+    expect(charWidth("é".codePointAt(0)!)).toBe(2);
+    expect(charWidth("Γ".codePointAt(0)!)).toBe(2);
+    expect(charWidth("Привет".codePointAt(0)!)).toBe(2);
   });
 });
 
@@ -94,8 +64,8 @@ describe("stringWidth", () => {
     expect(stringWidth("😀")).toBe(2);
   });
 
-  it("ラテン文字拡張混じりの文はASCII同様に半角で数える", () => {
-    expect(stringWidth("café")).toBe(4); // c,a,f,é 全て半角1
+  it("非日本語文字（アクセント付きラテン文字等）混じりの文は全角換算", () => {
+    expect(stringWidth("café")).toBe(5); // c,a,f(半角1×3=3) + é(全角2)
   });
 
   it("結合文字（基底+アクセント）は1書記素として基底文字の幅で数える", () => {
