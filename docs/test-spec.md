@@ -36,8 +36,8 @@
 | B7 | 縦書きオプション | 通常形で縦書きをチェック | CSS回転ではなく文字ごとに1行の枠として表示され、文字が重ならず判読できる |
 | B8 | 余白オプション | 余白をチェック | 枠の内側上下に空白行が増える |
 | B9 | コピー | コピーボタンを押す | クリップボードの内容がプレビューと一致し、トーストが表示される（`alert()` は使わない） |
-| B10 | X シェア | 「X でシェア」リンク | `href` が `twitter.com/intent/tweet?text=<現在の出力>` になっている |
-| B11 | LINE 送信 | 「LINE で送信」リンク | `href` が `line.me/R/share?text=<現在の出力>` になっている |
+| B10 | X シェア | 「X でシェア」リンク | `href` が `twitter.com/intent/tweet?text=<encodeURIComponent(現在の出力)>` になっている |
+| B11 | LINE 送信 | 「LINE で送信」リンク | `href` が `line.me/R/share?text=<encodeURIComponent(現在の出力)>` になっている |
 | B12 | ダークモード切り替え | テーマ切り替えボタン | `data-theme` が切り替わり、配色がダークになる |
 | B13 | モバイル幅 | ビューポート 375px | `body` が横スクロールしない |
 | B14 | コンソールエラー | 全操作を通して | `console.error` / `pageerror` が発生しない（HMR 接続ログ等のノイズは除く） |
@@ -47,7 +47,7 @@
 
 ## 実施結果
 
-実施日: 本 PR 作成時。対象: `npm run build` の本番ビルドを `npm run preview`（Farm, port 1911）で
+実施日: 2026-08-04。対象: `npm run build` の本番ビルドを `npm run preview`（Farm, port 5173）で
 配信し、Playwright (Chromium) で操作。
 
 ### A. 単体テスト
@@ -115,7 +115,7 @@ PR の全レビュースレッド resolve 後、`git fetch` + `npm ci` からの
 
 - `npm run lint` / `npm run typecheck` / `npm test`（79/79、グラフェムクラスタの回帰テスト分が
   68→79 に増加）/ `npm run build` 全て exit 0
-- `npm run preview` + Playwright で B1〜B15 相当 + 以下を再実行し **17/17 PASS**:
+- `npm run preview` + Playwright で B1〜B15 相当 + 以下を再実行し **18/18 PASS**:
   - C3: 四角形にフォーカス → ArrowRight → 短冊に選択移動（キーボード操作の実動作）
   - grapheme: 結合文字 `é` が縦書きで分裂せず1行に収まる
   - grapheme: ZWJ 絵文字（👨‍👩‍👧、家族絵文字）が短冊で1マスに収まる（3マスに分裂しない）

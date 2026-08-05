@@ -8,6 +8,8 @@ set -euo pipefail
 # ことで、手打ちの Unicode 範囲指定にありがちな似た文字ブロックの取り違えを避ける）。
 #
 # 使い方:
+#   前提: Bash 4.0 以降（下記の EXPECTED_SHA256 連想配列が declare -A に依存するため。
+#         macOS 標準の /bin/bash は 3.2 系で非対応。Homebrew 等で新しい bash を入れて実行すること）
 #   pip install fonttools brotli
 #   bash scripts/subset-ui-font.sh /path/to/ZenMaruGothic-Regular.ttf \
 #                                   /path/to/ZenMaruGothic-Bold.ttf \
