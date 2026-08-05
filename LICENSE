@@ -22,6 +22,7 @@ SOFTWARE.
 
 ---
 
-Software フォントは同梱の public/fonts/sd-symbols.woff2 を除く。当該フォントは
-Noto Sans Mono CJK JP のサブセットであり、SIL Open Font License, Version 1.1
-の下でライセンスされる（public/fonts/LICENSE-OFL.txt 参照）。
+Software フォントは同梱の public/fonts/sd-symbols.woff2 と public/fonts/zen-maru-gothic-*.woff2 を
+除く。前者は Noto Sans Mono CJK JP のサブセット、後者は Zen Maru Gothic のサブセットであり、
+いずれも SIL Open Font License, Version 1.1 の下でライセンスされる
+（public/fonts/LICENSE-OFL.txt, public/fonts/LICENSE-OFL-ZenMaruGothic.txt 参照）。

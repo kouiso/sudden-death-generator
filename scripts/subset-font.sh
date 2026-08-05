@@ -55,9 +55,12 @@ fi
 # 罫線:  U+2500-2503, U+250C, U+250F, U+2510, U+2513, U+2514, U+2517, U+2518, U+251B
 #        (─ ━ │ ┃ ┌ ┏ ┐ ┓ └ ┗ ┘ ┛)
 # 漢字:  U+4EBA                   (人)
-# 縦書き提示形: U+FE11, U+FE12, U+FE41-FE44 (﹑ ﹒ ﹁ ﹂ ﹃ ﹄)
+# 縦書き提示形: U+FE11, U+FE12, U+FE35, U+FE36, U+FE41-FE44 (﹑ ﹒ ︵ ︶ ﹁ ﹂ ﹃ ﹄)
+#   U+FE35/FE36 は縦書きの丸括弧（（）→︵︶）。CJK フォント未導入端末ではこのサブセット
+#   フォントが無いと tofu もしくは非CJKフォールバックに落ちて枠のサイズが狂う
+#   （vertical.ts で ︵︶ を出力するようになった際に追加漏れが判明、Codex bot 指摘）。
 # 全角記号: U+FF1C, U+FF1E, U+FF3F, U+FF5C, U+FFE3 (＜ ＞ ＿ ｜ ￣)
-UNICODES="U+0059,U+005E,U+2190-2193,U+2196-2199,U+2500-2503,U+250C,U+250F,U+2510,U+2513,U+2514,U+2517,U+2518,U+251B,U+4EBA,U+FE11,U+FE12,U+FE41-FE44,U+FF1C,U+FF1E,U+FF3F,U+FF5C,U+FFE3"
+UNICODES="U+0059,U+005E,U+2190-2193,U+2196-2199,U+2500-2503,U+250C,U+250F,U+2510,U+2513,U+2514,U+2517,U+2518,U+251B,U+4EBA,U+FE11,U+FE12,U+FE35,U+FE36,U+FE41-FE44,U+FF1C,U+FF1E,U+FF3F,U+FF5C,U+FFE3"
 
 pyftsubset "$SRC_FONT" \
   --output-file="$OUT_DIR/sd-symbols.woff2" \

@@ -1,7 +1,7 @@
 # sd-symbols.woff2 について
 
 罫線・矢印文字（`─ ━ ┌ ┏ ↘ ↙` 等、Unicode の East Asian Ambiguous）は CJK フォント未導入の
-端末では半角幅で描画され、四角形・短冊の枠が崩れる。この対策として、必要な34文字だけを
+端末では半角幅で描画され、四角形・短冊の枠が崩れる。この対策として、必要な36文字だけを
 サブセット化した専用フォントを同梱している。
 
 - 元フォント: [Noto Sans Mono CJK JP](https://github.com/notofonts/noto-cjk/blob/main/Sans/Mono/NotoSansMonoCJKjp-Regular.otf)
@@ -12,8 +12,9 @@
   固定していないため、改変・別物のファイルが渡された場合に同じ手順で異なる `sd-symbols.woff2` が
   生成されるのを防ぐための最終防御）
 - 生成方法: `scripts/subset-font.sh`（fonttools の `pyftsubset` で該当コードポイントのみ抽出）
-- 収録文字: `Y ^ ← ↑ → ↓ ↖ ↗ ↘ ↙ ─ ━ │ ┃ ┌ ┏ ┐ ┓ └ ┗ ┘ ┛ 人 U+FE11 U+FE12 ﹁ ﹂ ﹃ ﹄ ＜ ＞ ＿ ｜ ￣`
-  （U+FE11 / U+FE12 は等幅フォント非搭載環境で表示できない可能性があるためコードポイント表記）
+- 収録文字: `Y ^ ← ↑ → ↓ ↖ ↗ ↘ ↙ ─ ━ │ ┃ ┌ ┏ ┐ ┓ └ ┗ ┘ ┛ 人 U+FE11 U+FE12 U+FE35 U+FE36 ﹁ ﹂ ﹃ ﹄ ＜ ＞ ＿ ｜ ￣`
+  （U+FE11 / U+FE12 / U+FE35 / U+FE36 は等幅フォント非搭載環境で表示できない可能性があるため
+  コードポイント表記。U+FE35/U+FE36 は縦書きの丸括弧 ︵︶）
 
 # zen-maru-gothic-{400,700,900}.woff2 について
 
