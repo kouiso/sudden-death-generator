@@ -13,12 +13,19 @@ const TAB = 0x09;
 const HALFWIDTH_KANA_START = 0xff61;
 const HALFWIDTH_KANA_END = 0xff9f;
 
-// Latin-1 Supplement + Latin Extended-A/B（é ñ ø ß œ 等、フランス語・ドイツ語・
-// 北欧言語などでよく使う文字）。CJK ではなく通常のアルファベットと同じ半角幅で
-// 等幅フォント上に描画されるため、全角扱いすると枠が本体より広くなり非対称に
-// ズレる（実機で "café au lait" を入力して実際に確認した不具合）。
-const LATIN_EXTENDED_START = 0x00a0;
-const LATIN_EXTENDED_END = 0x024f;
+// CJK ではなくアルファベット系文字と同じ半角幅で等幅フォント上に描画される
+// Unicode ブロック。全角扱いすると枠が本体より広くなり非対称にズレる
+// （実機で "café au lait" / "Привет" / "Γειά" を入力して実際に確認した不具合）。
+// 単一レンジでは足りない（言語ごとにブロックが飛び飛び）ため配列で持つ。
+const NARROW_RANGES: ReadonlyArray<readonly [number, number]> = [
+  [0x00a0, 0x024f], // Latin-1 Supplement + Latin Extended-A/B (é ñ ø ß œ 等)
+  [0x0370, 0x03ff], // Greek and Coptic (Γειά 等)
+  [0x0400, 0x052f], // Cyrillic + Cyrillic Supplement (Привет 等)
+];
+
+function isNarrowRange(codePoint: number): boolean {
+  return NARROW_RANGES.some(([start, end]) => codePoint >= start && codePoint <= end);
+}
 
 // Variation Selector-16。基底コードポイントを絵文字表示（emoji presentation）に
 // 強制する結合文字。"1"+VS16+U+20E3(combining enclosing keycap) の合字（1️⃣ 等）は
@@ -41,7 +48,7 @@ export function splitGraphemes(value: string): string[] {
 
 /**
  * 1コードポイントの表示幅を返す。
- * ASCII 印字可能域・半角カタカナ・ラテン文字拡張のみ半角(1)、それ以外は全角(2)とみなす。
+ * ASCII 印字可能域・半角カタカナ・NARROW_RANGES のみ半角(1)、それ以外は全角(2)とみなす。
  * East Asian Width の Halfwidth/Narrow 以外を Wide とみなす実務的な簡略化で、
  * 絵文字や罫線・矢印など判定が難しい文字も一律で全角として扱うことで枠幅計算を安定させる。
  */
@@ -49,7 +56,7 @@ export function charWidth(codePoint: number): CharWidth {
   if (codePoint === TAB) return 1;
   if (codePoint >= ASCII_PRINTABLE_START && codePoint <= ASCII_PRINTABLE_END) return 1;
   if (codePoint >= HALFWIDTH_KANA_START && codePoint <= HALFWIDTH_KANA_END) return 1;
-  if (codePoint >= LATIN_EXTENDED_START && codePoint <= LATIN_EXTENDED_END) return 1;
+  if (isNarrowRange(codePoint)) return 1;
   return 2;
 }
 

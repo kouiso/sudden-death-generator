@@ -27,6 +27,15 @@ describe("charWidth", () => {
     expect(charWidth("œ".codePointAt(0)!)).toBe(1);
   });
 
+  it("ギリシャ文字・キリル文字は半角", () => {
+    // 実機で "Привет" / "Γειά" を入力し、枠が本体より広くなる非対称崩れを
+    // 目視確認した不具合の再発防止（Codex bot 指摘）。
+    expect(charWidth("Γ".codePointAt(0)!)).toBe(1);
+    expect(charWidth("α".codePointAt(0)!)).toBe(1);
+    expect(charWidth("П".codePointAt(0)!)).toBe(1);
+    expect(charWidth("я".codePointAt(0)!)).toBe(1);
+  });
+
   it("タブは半角（CSS tab-size:1 に合わせて計算幅と描画幅を一致させる）", () => {
     // 実機で "A\tB" を入力し、タブストップの可変幅描画とのズレを確認した不具合の再発防止。
     expect(charWidth("\t".codePointAt(0)!)).toBe(1);
