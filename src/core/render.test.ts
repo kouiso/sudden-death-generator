@@ -46,7 +46,16 @@ describe("renderSuddenDeath — golden tests", () => {
 });
 
 describe("renderSuddenDeath — 不変条件（枠内の全行が同じ表示幅）", () => {
-  const inputs = ["突然の死", "一行目\n二行目はちょっと長い", "ぬるぽ!!", "😀絵文字混在", "a", "café au lait"];
+  const inputs = [
+    "突然の死",
+    "一行目\n二行目はちょっと長い",
+    "ぬるぽ!!",
+    "😀絵文字混在",
+    "a",
+    "café au lait",
+    "1\u{FE0F}\u{20E3}番",
+    "A\tB",
+  ];
   const shapes: RenderOptions["shape"][] = ["normal", "square"];
 
   for (const input of inputs) {

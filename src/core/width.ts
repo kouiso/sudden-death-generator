@@ -3,6 +3,12 @@ import type { CharWidth } from "./types";
 const ASCII_PRINTABLE_START = 0x20;
 const ASCII_PRINTABLE_END = 0x7e;
 
+// タブ(U+0009)。white-space:pre 下ではタブストップ(既定 tab-size:8)で可変幅描画され、
+// 固定幅の計算と食い違って枠がズレる（実機で "A\tB" を入力して確認した不具合）。
+// タブストップの可変計算までは行わず、CSS 側の tab-size を 1 に固定して「タブ=半角
+// スペース1個」として描画・計算の両方を一致させる（preview-pre 参照）。
+const TAB = 0x09;
+
 // 半角カタカナ・半角句読点 (｡-ﾟ)
 const HALFWIDTH_KANA_START = 0xff61;
 const HALFWIDTH_KANA_END = 0xff9f;
@@ -13,6 +19,12 @@ const HALFWIDTH_KANA_END = 0xff9f;
 // ズレる（実機で "café au lait" を入力して実際に確認した不具合）。
 const LATIN_EXTENDED_START = 0x00a0;
 const LATIN_EXTENDED_END = 0x024f;
+
+// Variation Selector-16。基底コードポイントを絵文字表示（emoji presentation）に
+// 強制する結合文字。"1"+VS16+U+20E3(combining enclosing keycap) の合字（1️⃣ 等）は
+// 基底が ASCII 数字のため単体では半角判定されるが、実際のブラウザ描画は正方形の
+// 絵文字として全角幅になる（実機で "1️⃣" を入力して右にズレるのを確認した不具合）。
+const VARIATION_SELECTOR_EMOJI = 0xfe0f;
 
 const FULL_WIDTH_SPACE = "　";
 
@@ -34,6 +46,7 @@ export function splitGraphemes(value: string): string[] {
  * 絵文字や罫線・矢印など判定が難しい文字も一律で全角として扱うことで枠幅計算を安定させる。
  */
 export function charWidth(codePoint: number): CharWidth {
+  if (codePoint === TAB) return 1;
   if (codePoint >= ASCII_PRINTABLE_START && codePoint <= ASCII_PRINTABLE_END) return 1;
   if (codePoint >= HALFWIDTH_KANA_START && codePoint <= HALFWIDTH_KANA_END) return 1;
   if (codePoint >= LATIN_EXTENDED_START && codePoint <= LATIN_EXTENDED_END) return 1;
@@ -42,9 +55,14 @@ export function charWidth(codePoint: number): CharWidth {
 
 /**
  * 1書記素クラスタの表示幅を返す。結合文字・Variation Selector・ZWJ 結合部分は
- * 表示上ゼロ幅なので、クラスタの先頭（基底）コードポイントの幅だけを見る。
+ * 表示上ゼロ幅なので、原則クラスタの先頭（基底）コードポイントの幅だけを見る。
+ * ただし VS16 を含むクラスタ（1️⃣ 等の keycap 絵文字）は基底が半角文字でも
+ * 絵文字として全角描画されるため、クラスタ全体を全角として扱う。
  */
 export function clusterWidth(cluster: string): CharWidth {
+  if (Array.from(cluster).some((ch) => ch.codePointAt(0) === VARIATION_SELECTOR_EMOJI)) {
+    return 2;
+  }
   return charWidth(cluster.codePointAt(0) ?? 0);
 }
 

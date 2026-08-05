@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { charWidth, evenCeil, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
+import { charWidth, clusterWidth, evenCeil, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
 
 describe("charWidth", () => {
   it("ASCII 印字可能文字は半角", () => {
@@ -25,6 +25,27 @@ describe("charWidth", () => {
     expect(charWidth("ø".codePointAt(0)!)).toBe(1);
     expect(charWidth("ß".codePointAt(0)!)).toBe(1);
     expect(charWidth("œ".codePointAt(0)!)).toBe(1);
+  });
+
+  it("タブは半角（CSS tab-size:1 に合わせて計算幅と描画幅を一致させる）", () => {
+    // 実機で "A\tB" を入力し、タブストップの可変幅描画とのズレを確認した不具合の再発防止。
+    expect(charWidth("\t".codePointAt(0)!)).toBe(1);
+  });
+});
+
+describe("clusterWidth", () => {
+  it("VS16 付き keycap 絵文字クラスタは基底が半角文字でも全角として扱う", () => {
+    // "1" (ASCII, 単体なら半角) + VS16 + combining enclosing keycap = 1️⃣。
+    // 実機でブラウザは正方形の絵文字として描画するため、基底文字だけを見ると
+    // 右の枠がズレる不具合の再発防止。
+    const keycap1 = "1\u{FE0F}\u{20E3}";
+    expect(clusterWidth(keycap1)).toBe(2);
+    const keycapHash = "#\u{FE0F}\u{20E3}";
+    expect(clusterWidth(keycapHash)).toBe(2);
+  });
+
+  it("VS16 を含まない結合文字は従来通り基底文字の幅", () => {
+    expect(clusterWidth("e\u{0301}")).toBe(1);
   });
 });
 

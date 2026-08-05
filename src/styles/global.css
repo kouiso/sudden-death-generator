@@ -204,6 +204,8 @@ button {
    * 不具合）。余裕を見て 1.5 にする。 */
   line-height: 1.5;
   white-space: pre;
+  /* タブのタブストップ可変幅描画を width.ts の固定幅計算（タブ=半角1）と一致させる。 */
+  tab-size: 1;
   color: var(--color-text);
 }
 
