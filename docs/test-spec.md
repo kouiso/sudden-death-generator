@@ -113,7 +113,7 @@ exit 0 を確認。B1–B15 の実機受入テストと C3 のキーボード操
 
 PR の全レビュースレッド resolve 後、`git fetch` + `npm ci` からのクリーン環境で改めて実施。
 
-- `npm run lint` / `npm run typecheck` / `npm test`（79/79、グラフィムクラスタの回帰テスト分が
+- `npm run lint` / `npm run typecheck` / `npm test`（79/79、グラフェムクラスタの回帰テスト分が
   68→79 に増加）/ `npm run build` 全て exit 0
 - `npm run preview` + Playwright で B1〜B15 相当 + 以下を再実行し **17/17 PASS**:
   - C3: 四角形にフォーカス → ArrowRight → 短冊に選択移動（キーボード操作の実動作）
