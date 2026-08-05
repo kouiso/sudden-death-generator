@@ -198,7 +198,11 @@ button {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 1rem;
-  line-height: 1.2;
+  /* サブセットフォント(sd-symbols.woff2)の hhea ascent(1160)+|descent|(288) が
+   * unitsPerEm(1000) の 1.448 倍あり、line-height がそれを下回ると隣接行の
+   * グリフが重なって完全に見えなくなる（実機で四角形・短冊の枠が消えるのを確認した
+   * 不具合）。余裕を見て 1.5 にする。 */
+  line-height: 1.5;
   white-space: pre;
   color: var(--color-text);
 }

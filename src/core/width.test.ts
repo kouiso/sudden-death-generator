@@ -16,6 +16,16 @@ describe("charWidth", () => {
     expect(charWidth("あ".codePointAt(0)!)).toBe(2);
     expect(charWidth("😀".codePointAt(0)!)).toBe(2);
   });
+
+  it("ラテン文字拡張（アクセント付き文字）は半角", () => {
+    // 実機で "café au lait très bien" を入力し、枠が本体より広くなる非対称崩れを
+    // 目視確認した不具合の再発防止（Latin-1 Supplement / Latin Extended-A/B）。
+    expect(charWidth("é".codePointAt(0)!)).toBe(1);
+    expect(charWidth("ñ".codePointAt(0)!)).toBe(1);
+    expect(charWidth("ø".codePointAt(0)!)).toBe(1);
+    expect(charWidth("ß".codePointAt(0)!)).toBe(1);
+    expect(charWidth("œ".codePointAt(0)!)).toBe(1);
+  });
 });
 
 describe("stringWidth", () => {
@@ -33,6 +43,10 @@ describe("stringWidth", () => {
 
   it("サロゲートペア（絵文字）を1文字として数える", () => {
     expect(stringWidth("😀")).toBe(2);
+  });
+
+  it("ラテン文字拡張混じりの文はASCII同様に半角で数える", () => {
+    expect(stringWidth("café")).toBe(4); // c,a,f,é 全て半角1
   });
 
   it("結合文字（基底+アクセント）は1書記素として基底文字の幅で数える", () => {

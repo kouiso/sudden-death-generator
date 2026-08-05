@@ -7,8 +7,12 @@ const ASCII_PRINTABLE_END = 0x7e;
 const HALFWIDTH_KANA_START = 0xff61;
 const HALFWIDTH_KANA_END = 0xff9f;
 
-// 伝統的な wcwidth 実装が半角扱いする Latin-1 の記号 (¢ £ ¥ ¦ ¬ ¯)
-const NARROW_LATIN1 = new Set([0xa2, 0xa3, 0xa5, 0xa6, 0xac, 0xaf]);
+// Latin-1 Supplement + Latin Extended-A/B（é ñ ø ß œ 等、フランス語・ドイツ語・
+// 北欧言語などでよく使う文字）。CJK ではなく通常のアルファベットと同じ半角幅で
+// 等幅フォント上に描画されるため、全角扱いすると枠が本体より広くなり非対称に
+// ズレる（実機で "café au lait" を入力して実際に確認した不具合）。
+const LATIN_EXTENDED_START = 0x00a0;
+const LATIN_EXTENDED_END = 0x024f;
 
 const FULL_WIDTH_SPACE = "　";
 
@@ -25,14 +29,14 @@ export function splitGraphemes(value: string): string[] {
 
 /**
  * 1コードポイントの表示幅を返す。
- * ASCII 印字可能域・半角カタカナ・一部の半角記号のみ半角(1)、それ以外は全角(2)とみなす。
+ * ASCII 印字可能域・半角カタカナ・ラテン文字拡張のみ半角(1)、それ以外は全角(2)とみなす。
  * East Asian Width の Halfwidth/Narrow 以外を Wide とみなす実務的な簡略化で、
  * 絵文字や罫線・矢印など判定が難しい文字も一律で全角として扱うことで枠幅計算を安定させる。
  */
 export function charWidth(codePoint: number): CharWidth {
   if (codePoint >= ASCII_PRINTABLE_START && codePoint <= ASCII_PRINTABLE_END) return 1;
   if (codePoint >= HALFWIDTH_KANA_START && codePoint <= HALFWIDTH_KANA_END) return 1;
-  if (NARROW_LATIN1.has(codePoint)) return 1;
+  if (codePoint >= LATIN_EXTENDED_START && codePoint <= LATIN_EXTENDED_END) return 1;
   return 2;
 }
 
