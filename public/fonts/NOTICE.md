@@ -14,3 +14,28 @@
 - 生成方法: `scripts/subset-font.sh`（fonttools の `pyftsubset` で該当コードポイントのみ抽出）
 - 収録文字: `Y ^ ← ↑ → ↓ ↖ ↗ ↘ ↙ ─ ━ │ ┃ ┌ ┏ ┐ ┓ └ ┗ ┘ ┛ 人 U+FE11 U+FE12 ﹁ ﹂ ﹃ ﹄ ＜ ＞ ＿ ｜ ￣`
   （U+FE11 / U+FE12 は等幅フォント非搭載環境で表示できない可能性があるためコードポイント表記）
+
+# zen-maru-gothic-{400,700,900}.woff2 について
+
+UI（見出し・ボタン・ラベル等）が Hiragino Sans / Yu Gothic UI / Noto Sans JP のいずれも
+未導入の環境（本番の実ユーザー環境も含む）にフォールバックすると、特徴の薄い汎用ゴシックに
+なってしまう。この対策として、実際に UI 文言で使っている文字だけを抜き出した Zen Maru Gothic
+のサブセットを3ウェイト分同梱している。外部フォントCDN（Google Fonts 等）への実行時依存を
+避けるため、ビルド時に静的ファイルとして同梱する方式にしている。
+
+- 元フォント: [Zen Maru Gothic](https://github.com/google/fonts/tree/main/ofl/zenmarugothic)
+  （Google Fonts 経由で配布、weight 400 / 700 / 900）
+- ライセンス: SIL Open Font License, Version 1.1（同梱の `LICENSE-OFL-ZenMaruGothic.txt` 参照。
+  Copyright 2021 The Zen Maru Gothic Project Authors）
+- ソース検証: 2026-08-05 に `fonts.gstatic.com` から取得したソースフォント（各ウェイトの TTF）の
+  SHA-256 は `scripts/subset-ui-font.sh` の `EXPECTED_SHA256` 連想配列に記載の値。一致しない
+  ファイルは拒否する（`main` 参照はコミット固定ではないため、改変・別物のファイルが渡された場合の
+  最終防御）
+- 生成方法: `scripts/subset-ui-font.sh`（`scripts/ui-font-corpus.txt` に列挙した実際の UI 文言から
+  `pyftsubset --text-file` で必要文字を機械的に抽出。手打ちの Unicode 範囲指定にありがちな
+  似た文字ブロックの取り違えを避けるため、コードポイントではなく実文言そのものを入力にしている）
+- 収録範囲: `scripts/ui-font-corpus.txt` に列挙した実際の UI 文言（見出し・ボタン・ラベル・
+  トースト文言等）＋ ASCII 印字可能域（U+0020–007E）。数式用の 𝕏（U+1D54F、X共有ボタンの装飾）は
+  対象外で、フォントスタックの次の候補にフォールバックする
+- UI コピーを追加・変更した場合は `scripts/ui-font-corpus.txt` を更新し、
+  `bash scripts/subset-ui-font.sh <400.ttf> <700.ttf> <900.ttf>` を再実行すること

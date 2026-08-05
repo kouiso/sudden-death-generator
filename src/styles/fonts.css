@@ -12,3 +12,31 @@
     U+2513, U+2514, U+2517, U+2518, U+251B, U+4EBA, U+FE11, U+FE12, U+FE41-FE44, U+FF1C, U+FF1E,
     U+FF3F, U+FF5C, U+FFE3;
 }
+
+/*
+ * UI用の和文書体。OS標準フォールバック(Hiragino/Yu Gothic/Noto Sans JP)だけに頼ると
+ * それらが未導入の環境（本番の実ユーザー環境も含む）で無機質な汎用ゴシックに落ちて
+ * 素っ気ない見た目になる。実際に使っている文言だけを抜き出したサブセットを同梱することで、
+ * 外部フォントCDNへの依存なしに全端末で同じ丸みのある書体を出す
+ * （scripts/subset-ui-font.sh で生成、Zen Maru Gothic / SIL Open Font License 1.1）。
+ */
+@font-face {
+  font-family: "Zen Maru Gothic UI";
+  src: url("/fonts/zen-maru-gothic-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Zen Maru Gothic UI";
+  src: url("/fonts/zen-maru-gothic-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Zen Maru Gothic UI";
+  src: url("/fonts/zen-maru-gothic-900.woff2") format("woff2");
+  font-weight: 900;
+  font-display: swap;
+}

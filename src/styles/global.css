@@ -54,7 +54,7 @@ button {
 .app-title {
   margin: 0;
   font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
+  font-weight: 900;
   letter-spacing: 0.02em;
 }
 
@@ -92,7 +92,7 @@ button {
 .field-label {
   display: block;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-muted);
   margin-bottom: 8px;
 }
@@ -167,7 +167,7 @@ button {
   background: var(--color-surface-muted);
   cursor: pointer;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
@@ -281,7 +281,7 @@ button {
   padding: 10px 20px;
   border-radius: 999px;
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;

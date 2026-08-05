@@ -19,7 +19,8 @@
   --color-danger: #d1425a;
   --color-focus-ring: #2f5fe0;
 
-  --font-ui: "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui, sans-serif;
+  --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
+    sans-serif;
   --font-mono: "SD Symbols Mono", "SF Mono", "Cascadia Code", "Consolas", ui-monospace, monospace;
 
   --radius-sm: 8px;
