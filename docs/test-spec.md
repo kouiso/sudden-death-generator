@@ -47,8 +47,9 @@
 
 ## 実施結果
 
-実施日: 2026-08-04。対象: `npm run build` の本番ビルドを `npm run preview`（Farm, port 5173）で
-配信し、Playwright (Chromium) で操作。
+実施日: 2026-08-04。対象: `npm run build` の本番ビルドを `npm run preview`（Farm、既定 port 1911。
+`server.port`（farm.config.ts）は dev server 用で `farm preview` には効かず、`farm preview --help`
+で確認できる `--port` フラグ未指定時のデフォルトが 1911）で配信し、Playwright (Chromium) で操作。
 
 ### A. 単体テスト
 
