@@ -37,7 +37,7 @@
 | B8 | 余白オプション | 余白をチェック | 枠の内側上下に空白行が増える |
 | B9 | コピー | コピーボタンを押す | クリップボードの内容がプレビューと一致し、トーストが表示される（`alert()` は使わない） |
 | B10 | X シェア | 「X でシェア」リンク | `href` が `twitter.com/intent/tweet?text=<現在の出力>` になっている |
-| B11 | LINE 送信 | 「LINE で送信」リンク | `href` が `line.me/R/msg/text/?<現在の出力>` になっている |
+| B11 | LINE 送信 | 「LINE で送信」リンク | `href` が `line.me/R/share?text=<現在の出力>` になっている |
 | B12 | ダークモード切り替え | テーマ切り替えボタン | `data-theme` が切り替わり、配色がダークになる |
 | B13 | モバイル幅 | ビューポート 375px | `body` が横スクロールしない |
 | B14 | コンソールエラー | 全操作を通して | `console.error` / `pageerror` が発生しない（HMR 接続ログ等のノイズは除く） |
@@ -75,7 +75,7 @@ npm test
 | B8 | PASS | 余白ONで行数が6→8（上下に空行が1行ずつ増加） |
 | B9 | PASS | `navigator.clipboard.readText()` の内容がプレビューと完全一致、トースト表示を確認 |
 | B10 | PASS | `href` が `https://twitter.com/intent/tweet?text=<encodeURIComponent(現在の出力)>` と一致 |
-| B11 | PASS | `href` が `https://line.me/R/msg/text/?<encodeURIComponent(現在の出力)>` と一致 |
+| B11 | PASS | `href` が `https://line.me/R/share?text=<encodeURIComponent(現在の出力)>` と一致 |
 | B12 | PASS | ボタン押下で `document.documentElement.dataset.theme` が `dark` に切り替わる |
 | B13 | PASS | viewport 375px で `document.body.scrollWidth`(375) が viewport 幅(375) を超えない |
 | B14 | PASS | `console.error` / `pageerror` の発生なし（Farm HMR の debug ログのみ、ノイズとして除外） |
