@@ -108,3 +108,16 @@ npm test
 全修正後、`npm run lint` / `npm run typecheck` / `npm test`（68/68）/ `npm run build` を再実行し
 exit 0 を確認。B1–B15 の実機受入テストと C3 のキーボード操作を Playwright で再実行し、
 15/15 PASS を維持したまま矢印キー操作（選択移動・フォーカス移動・プレビュー反映）も正常動作を確認。
+
+## D. CodeRabbit 指摘対応後（HEAD `934a300`）の最終再検証
+
+PR の全レビュースレッド resolve 後、`git fetch` + `npm ci` からのクリーン環境で改めて実施。
+
+- `npm run lint` / `npm run typecheck` / `npm test`（79/79、グラフィムクラスタの回帰テスト分が
+  68→79 に増加）/ `npm run build` 全て exit 0
+- `npm run preview` + Playwright で B1〜B15 相当 + 以下を再実行し **17/17 PASS**:
+  - C3: 四角形にフォーカス → ArrowRight → 短冊に選択移動（キーボード操作の実動作）
+  - grapheme: 結合文字 `é` が縦書きで分裂せず1行に収まる
+  - grapheme: ZWJ 絵文字（👨‍👩‍👧、家族絵文字）が短冊で1マスに収まる（3マスに分裂しない）
+- スクリーンショットを Read で目視確認（初期表示・短冊・縦書き・ZWJ絵文字短冊・モバイル幅の5枚）。
+  全体印象: **一致度100%**。レイアウト崩れ・文字重なり・横スクロール・コンソールエラーいずれも無し
