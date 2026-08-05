@@ -40,6 +40,13 @@ describe("charWidth", () => {
     // 実機で "A\tB" を入力し、タブストップの可変幅描画とのズレを確認した不具合の再発防止。
     expect(charWidth("\t".codePointAt(0)!)).toBe(1);
   });
+
+  it("ベトナム語の合成済み声調記号付き文字は半角", () => {
+    // 実機で "Tiếng Việt" を入力し、枠が本体より広くなる非対称崩れを
+    // 目視確認した不具合の再発防止（Codex bot 指摘、Latin Extended Additional）。
+    expect(charWidth("ế".codePointAt(0)!)).toBe(1);
+    expect(charWidth("ệ".codePointAt(0)!)).toBe(1);
+  });
 });
 
 describe("clusterWidth", () => {

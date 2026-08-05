@@ -56,6 +56,7 @@ describe("renderSuddenDeath — 不変条件（枠内の全行が同じ表示幅
     "1\u{FE0F}\u{20E3}番",
     "A\tB",
     "Привет Γειά",
+    "Tiếng Việt",
   ];
   const shapes: RenderOptions["shape"][] = ["normal", "square"];
 

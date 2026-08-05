@@ -21,6 +21,7 @@ const NARROW_RANGES: ReadonlyArray<readonly [number, number]> = [
   [0x00a0, 0x024f], // Latin-1 Supplement + Latin Extended-A/B (é ñ ø ß œ 等)
   [0x0370, 0x03ff], // Greek and Coptic (Γειά 等)
   [0x0400, 0x052f], // Cyrillic + Cyrillic Supplement (Привет 等)
+  [0x1e00, 0x1eff], // Latin Extended Additional (ベトナム語の合成済み声調記号付き文字。Tiếng Việt 等)
 ];
 
 function isNarrowRange(codePoint: number): boolean {
