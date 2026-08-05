@@ -47,6 +47,18 @@ describe("charWidth", () => {
     expect(charWidth("ế".codePointAt(0)!)).toBe(1);
     expect(charWidth("ệ".codePointAt(0)!)).toBe(1);
   });
+
+  it("スマート引用符・ダッシュ・三点リーダーは半角", () => {
+    // 実機で "Wait—what…" / "“突然”" を入力し、枠が本体より広くなる非対称崩れを
+    // 目視確認した不具合の再発防止（Codex bot 指摘、East Asian Width が Ambiguous な文字）。
+    expect(charWidth("—".codePointAt(0)!)).toBe(1); // EM DASH
+    expect(charWidth("–".codePointAt(0)!)).toBe(1); // EN DASH
+    expect(charWidth("…".codePointAt(0)!)).toBe(1); // HORIZONTAL ELLIPSIS
+    expect(charWidth("“".codePointAt(0)!)).toBe(1);
+    expect(charWidth("”".codePointAt(0)!)).toBe(1);
+    expect(charWidth("‘".codePointAt(0)!)).toBe(1);
+    expect(charWidth("’".codePointAt(0)!)).toBe(1);
+  });
 });
 
 describe("clusterWidth", () => {

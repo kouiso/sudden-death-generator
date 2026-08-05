@@ -22,6 +22,13 @@ const NARROW_RANGES: ReadonlyArray<readonly [number, number]> = [
   [0x0370, 0x03ff], // Greek and Coptic (Γειά 等)
   [0x0400, 0x052f], // Cyrillic + Cyrillic Supplement (Привет 等)
   [0x1e00, 0x1eff], // Latin Extended Additional (ベトナム語の合成済み声調記号付き文字。Tiếng Việt 等)
+  [0x2010, 0x2015], // General Punctuation のダッシュ類（en/em dash 等。"Wait—what" 等）
+  [0x2018, 0x201f], // General Punctuation のスマート引用符（“ ” ‘ ’ 等。モバイルキーボードの自動変換で入る）
+  [0x2026, 0x2026], // HORIZONTAL ELLIPSIS（…）
+  // 上記はいずれも East Asian Width が Ambiguous な文字。等幅プログラミングフォント
+  // （SF Mono / Cascadia Code / Consolas 等、--font-mono のフォールバック）は半角で描画するため、
+  // 全角扱いすると枠が本体より広くなり非対称にズレる（実機で "Wait—what…" / "“突然”" を
+  // 入力して実際に確認した不具合、Codex bot 指摘）。
 ];
 
 function isNarrowRange(codePoint: number): boolean {

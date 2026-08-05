@@ -16,6 +16,13 @@ describe("toVerticalGlyph", () => {
     expect(toVerticalGlyph("』")).toBe("\u{FE44}");
   });
 
+  it("丸括弧を CJK Compatibility Forms の縦書き提示形に変換する", () => {
+    // 実機で「（突然）」を縦書きで入力し、横向きの丸括弧のまま表示される不具合を
+    // 確認した再発防止（Codex bot 指摘）。
+    expect(toVerticalGlyph("（")).toBe("\u{FE35}");
+    expect(toVerticalGlyph("）")).toBe("\u{FE36}");
+  });
+
   it("矢印を90°回転させる", () => {
     expect(toVerticalGlyph("→")).toBe("↓");
     expect(toVerticalGlyph("↓")).toBe("←");

@@ -21,7 +21,14 @@
 
   --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
     sans-serif;
-  --font-mono: "SD Symbols Mono", "SF Mono", "Cascadia Code", "Consolas", ui-monospace, monospace;
+  /* 罫線(SD Symbols Mono) → 英数字用の等幅プログラミングフォント → 漢字・かな用の
+   * 日本語フォント → 総称フォールバックの順。日本語名を明示しないと、漢字は言語指定なしの
+   * 総称 monospace/sans-serif に落ち、環境によっては中国語向けフォント（简体字の字形）が
+   * 選ばれてしまう（実機で確認: このコンテナでは fc-match sans-serif:lang=ja が
+   * WenQuanYi Zen Hei を返す）。 */
+  --font-mono: "SD Symbols Mono", "SF Mono", "Cascadia Code", "Consolas", "Noto Sans Mono CJK JP",
+    "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP", "IPAGothic", ui-monospace,
+    monospace;
 
   --radius-sm: 8px;
   --radius-md: 14px;
