@@ -45,6 +45,18 @@ describe("clusterWidth", () => {
   it("VS16 を含まない結合文字は従来通り基底文字の幅", () => {
     expect(clusterWidth("e\u{0301}")).toBe(1);
   });
+
+  it("半角濁点・半角半濁点を含むクラスタは半角2文字ぶんの幅", () => {
+    // Intl.Segmenter は "ｶﾞ"(U+FF76+U+FF9E) を1クラスタにまとめるが、半角濁点は
+    // ゼロ幅の結合文字ではなく独立した半角1文字ぶんの幅で描画される（実機で "ｶﾞｷﾞ" を
+    // 入力し、枠が本体より1桁狭くなる崩れを確認した不具合の再発防止、Codex bot 指摘）。
+    expect(clusterWidth("ｶﾞ")).toBe(2);
+    expect(clusterWidth("ﾊﾟ")).toBe(2);
+  });
+
+  it("単独の半角濁点は半角1文字ぶんの幅", () => {
+    expect(clusterWidth("ﾞ")).toBe(1);
+  });
 });
 
 describe("stringWidth", () => {

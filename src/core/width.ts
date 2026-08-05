@@ -19,6 +19,14 @@ const HALFWIDTH_KANA_END = 0xff9f;
 // 絵文字として全角幅になる（実機で "1️⃣" を入力して右にズレるのを確認した不具合）。
 const VARIATION_SELECTOR_EMOJI = 0xfe0f;
 
+// 半角濁点・半角半濁点（ﾞﾟ）。Unicode の一般カテゴリは Lm（結合文字ではなく独立した文字）で、
+// 実際のブラウザ描画でも半角カナ1文字ぶんの幅を占有する。ところが Intl.Segmenter は
+// "ｶﾞ"（U+FF76+U+FF9E）を1書記素クラスタにまとめてしまうため、クラスタの先頭コードポイント
+// だけを見ると濁点の分の幅が消えてしまう（実機で "ｶﾞｷﾞ" を入力し、枠が本体より1桁狭くなる
+// 崩れを確認した不具合、Codex bot 指摘）。
+const HALFWIDTH_VOICE_MARK = 0xff9e;
+const HALFWIDTH_SEMI_VOICE_MARK = 0xff9f;
+
 const FULL_WIDTH_SPACE = "　";
 
 // 書記素クラスタ単位で分割する。合字（結合文字・Variation Selector・ZWJ シーケンス）を
@@ -48,14 +56,19 @@ export function charWidth(codePoint: number): CharWidth {
 /**
  * 1書記素クラスタの表示幅を返す。結合文字・Variation Selector・ZWJ 結合部分は
  * 表示上ゼロ幅なので、原則クラスタの先頭（基底）コードポイントの幅だけを見る。
- * ただし VS16 を含むクラスタ（1️⃣ 等の keycap 絵文字）は基底が半角文字でも
- * 絵文字として全角描画されるため、クラスタ全体を全角として扱う。
+ * ただし以下はクラスタ全体を見て例外的に扱う:
+ * - VS16 を含むクラスタ（1️⃣ 等の keycap 絵文字）は基底が半角文字でも絵文字として全角描画される
+ * - 半角濁点・半角半濁点を含むクラスタ（ｶﾞ 等）はゼロ幅ではなく、基底文字と合わせて半角2文字ぶんを占有する
  */
 export function clusterWidth(cluster: string): CharWidth {
-  if (Array.from(cluster).some((ch) => ch.codePointAt(0) === VARIATION_SELECTOR_EMOJI)) {
+  const codePoints = Array.from(cluster, (ch) => ch.codePointAt(0) ?? 0);
+  if (codePoints.some((cp) => cp === VARIATION_SELECTOR_EMOJI)) {
     return 2;
   }
-  return charWidth(cluster.codePointAt(0) ?? 0);
+  if (codePoints.length > 1 && codePoints.some((cp) => cp === HALFWIDTH_VOICE_MARK || cp === HALFWIDTH_SEMI_VOICE_MARK)) {
+    return 2;
+  }
+  return charWidth(codePoints[0] ?? 0);
 }
 
 /** 文字列全体の表示幅（半角=1 / 全角=2 の合計）。書記素クラスタ単位で数える。 */
