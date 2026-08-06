@@ -23,6 +23,41 @@ describe("toVerticalGlyph", () => {
     expect(toVerticalGlyph("）")).toBe("\u{FE36}");
   });
 
+  it("句点・感嘆符・疑問符・省略記号を Vertical Forms 提示形に変換する", () => {
+    // 元サイト(echo-sd)との機能比較で見つかったカバー範囲の抜け（実ソース比較で確認）。
+    expect(toVerticalGlyph("，")).toBe("\u{FE10}");
+    expect(toVerticalGlyph("：")).toBe("\u{FE13}");
+    expect(toVerticalGlyph("；")).toBe("\u{FE14}");
+    expect(toVerticalGlyph("！")).toBe("\u{FE15}");
+    expect(toVerticalGlyph("？")).toBe("\u{FE16}");
+    expect(toVerticalGlyph("…")).toBe("\u{FE19}");
+  });
+
+  it("各種括弧を CJK Compatibility Forms の縦書き提示形に変換する", () => {
+    expect(toVerticalGlyph("｛")).toBe("\u{FE37}");
+    expect(toVerticalGlyph("｝")).toBe("\u{FE38}");
+    expect(toVerticalGlyph("［")).toBe("\u{FE47}");
+    expect(toVerticalGlyph("］")).toBe("\u{FE48}");
+    expect(toVerticalGlyph("〔")).toBe("\u{FE39}");
+    expect(toVerticalGlyph("〕")).toBe("\u{FE3A}");
+    expect(toVerticalGlyph("【")).toBe("\u{FE3B}");
+    expect(toVerticalGlyph("】")).toBe("\u{FE3C}");
+    expect(toVerticalGlyph("〖")).toBe("\u{FE17}");
+    expect(toVerticalGlyph("〗")).toBe("\u{FE18}");
+    expect(toVerticalGlyph("《")).toBe("\u{FE3D}");
+    expect(toVerticalGlyph("》")).toBe("\u{FE3E}");
+    expect(toVerticalGlyph("〈")).toBe("\u{FE3F}");
+    expect(toVerticalGlyph("〉")).toBe("\u{FE40}");
+  });
+
+  it("横棒系の同義記号（ー－−─）は全て同じ縦棒近似に変換する", () => {
+    const bar = "\u{FF5C}";
+    expect(toVerticalGlyph("ー")).toBe(bar);
+    expect(toVerticalGlyph("－")).toBe(bar);
+    expect(toVerticalGlyph("−")).toBe(bar);
+    expect(toVerticalGlyph("─")).toBe(bar);
+  });
+
   it("矢印を90°回転させる", () => {
     expect(toVerticalGlyph("→")).toBe("↓");
     expect(toVerticalGlyph("↓")).toBe("←");
@@ -34,5 +69,13 @@ describe("toVerticalGlyph", () => {
     expect(toVerticalGlyph("死")).toBe("死");
     expect(toVerticalGlyph("あ")).toBe("あ");
     expect(toVerticalGlyph("A")).toBe("A");
+  });
+
+  it("Unicode に提示形が無い記号（〜／＝）は素通しする（既知の制約）", () => {
+    // 波ダッシュ・スラッシュ・イコールは Unicode が縦書き専用提示形を定めていないため、
+    // 記号を発明して埋めることはせず横書きのまま残す。
+    expect(toVerticalGlyph("〜")).toBe("〜");
+    expect(toVerticalGlyph("／")).toBe("／");
+    expect(toVerticalGlyph("＝")).toBe("＝");
   });
 });
