@@ -7,11 +7,12 @@ export interface ShapePickerProps {
   onChange: (shape: ShapeKind) => void;
 }
 
-const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; icon: string }> = [
-  { value: "normal", label: "通常", icon: "📝" },
-  { value: "square", label: "四角形", icon: "⬜" },
-  { value: "tanzaku", label: "短冊", icon: "🎋" },
-  { value: "stress", label: "ストレス", icon: "💢" },
+// accessKey は echo-sd のショートカット割り当て(N/4/T/S)に合わせる（機能面の参考、コードは転記していない）。
+const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; icon: string; accessKey: string }> = [
+  { value: "normal", label: "通常", icon: "📝", accessKey: "n" },
+  { value: "square", label: "四角形", icon: "⬜", accessKey: "4" },
+  { value: "tanzaku", label: "短冊", icon: "🎋", accessKey: "t" },
+  { value: "stress", label: "ストレス", icon: "💢", accessKey: "s" },
 ];
 
 export function ShapePicker({ value, onChange }: ShapePickerProps) {
@@ -48,6 +49,8 @@ export function ShapePicker({ value, onChange }: ShapePickerProps) {
             role="radio"
             aria-checked={selected}
             tabIndex={selected ? 0 : -1}
+            accessKey={shape.accessKey}
+            title={`ショートカットキー: ${shape.accessKey.toUpperCase()}`}
             className="shape-button"
             onClick={() => onChange(shape.value)}
             onKeyDown={(e) => handleKeyDown(e, index)}

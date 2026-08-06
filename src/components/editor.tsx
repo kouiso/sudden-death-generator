@@ -31,19 +31,21 @@ export function Editor({
         onInput={(e) => onTextChange(e.currentTarget.value)}
       />
       <div className="option-row option-row--spaced">
-        <label className="checkbox-label">
+        <label className="checkbox-label" title="ショートカットキー: V">
           <input
             type="checkbox"
             checked={vertical}
             disabled={verticalDisabled}
+            accessKey="v"
             onChange={(e) => onVerticalChange(e.currentTarget.checked)}
           />
           縦書き表示{verticalDisabled ? "（短冊は常に縦書き）" : ""}
         </label>
-        <label className="checkbox-label">
+        <label className="checkbox-label" title="ショートカットキー: P">
           <input
             type="checkbox"
             checked={padding}
+            accessKey="p"
             onChange={(e) => onPaddingChange(e.currentTarget.checked)}
           />
           余白
