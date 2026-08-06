@@ -22,13 +22,29 @@ export function App() {
   const { status: copyStatus, copy } = useClipboard();
   const { status: linkCopyStatus, copy: copyLink } = useClipboard();
 
+  // パーマリンクのクエリ文字列。URL同期・リンクコピーの両方でこの値を直接使う
+  // （リンクコピー時に location.href を読むと、下の debounce 中は古い値を掴む恐れがあるため）。
+  const permalinkQuery = useMemo(
+    () => buildPermalinkQuery({ text, shape, vertical, padding }),
+    [text, shape, vertical, padding],
+  );
+  const permalinkHref = `${location.origin}${location.pathname}${permalinkQuery ? `?${permalinkQuery}` : ""}`;
+
   // 入力・オプションの変更を URL に同期する（ブックマーク・共有用のパーマリンク）。
-  // 履歴を汚さないよう pushState ではなく replaceState を使う。
+  // 履歴を汚さないよう pushState ではなく replaceState を使う。IME変換中やタイピング中に
+  // 呼ぶたびに実行すると、ブラウザの History API レート制限（短時間の連続呼び出しで
+  // SecurityError）に達しうるため、300ms のデバウンスを挟む（Codex bot 指摘）。
   useEffect(() => {
-    const query = buildPermalinkQuery({ text, shape, vertical, padding });
-    const next = query ? `?${query}` : location.pathname;
-    history.replaceState(null, "", next);
-  }, [text, shape, vertical, padding]);
+    const timer = setTimeout(() => {
+      const next = `${location.pathname}${permalinkQuery ? `?${permalinkQuery}` : ""}`;
+      try {
+        history.replaceState(null, "", next);
+      } catch (error) {
+        console.error("URLの同期に失敗しました", error);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [permalinkQuery]);
 
   // 短冊は紙の短冊自体が縦長なので、常に縦書きとして扱う（UI 上もチェックボックスを無効化する）。
   const effectiveVertical = shape === "tanzaku" ? true : vertical;
@@ -79,7 +95,7 @@ export function App() {
           copyStatus={copyStatus}
           onCopy={() => copy(output)}
           linkCopyStatus={linkCopyStatus}
-          onCopyLink={() => copyLink(location.href)}
+          onCopyLink={() => copyLink(permalinkHref)}
         />
 
         {copyStatus !== "idle" && (
