@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPermalinkQuery, parsePermalink } from "./permalink";
+import { MAX_PERMALINK_QUERY_LENGTH, buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./permalink";
 
 describe("buildPermalinkQuery", () => {
   it("既定値のみなら空文字列を返す（URLを汚さない）", () => {
@@ -51,5 +51,22 @@ describe("parsePermalink", () => {
     const state = { text: "Wi-Fiが繋がらない!!", shape: "square" as const, vertical: true, padding: true };
     const restored = parsePermalink("?" + buildPermalinkQuery(state));
     expect(restored).toEqual(state);
+  });
+});
+
+describe("isPermalinkQueryTooLong", () => {
+  it("上限以下なら false", () => {
+    expect(isPermalinkQueryTooLong("text=" + "あ".repeat(10))).toBe(false);
+  });
+
+  it("上限を超えると true（数千字の日本語入力はpercent-encodingで大きく膨らむ、Codex bot 指摘）", () => {
+    const hugeQuery = buildPermalinkQuery({
+      text: "あ".repeat(2000),
+      shape: "normal",
+      vertical: false,
+      padding: false,
+    });
+    expect(hugeQuery.length).toBeGreaterThan(MAX_PERMALINK_QUERY_LENGTH);
+    expect(isPermalinkQueryTooLong(hugeQuery)).toBe(true);
   });
 });

@@ -4,6 +4,8 @@ export interface ShareBarProps {
   onCopy: () => void;
   linkCopyStatus: "idle" | "success" | "error";
   onCopyLink: () => void;
+  /** 入力が長すぎてURLに載せると復元を保証できない場合、リンクコピーそのものを止める。 */
+  linkCopyDisabled: boolean;
 }
 
 function buildXShareUrl(text: string): string {
@@ -17,7 +19,7 @@ function buildLineShareUrl(text: string): string {
   return `https://line.me/R/share?text=${encodeURIComponent(text)}`;
 }
 
-export function ShareBar({ output, copyStatus, onCopy, linkCopyStatus, onCopyLink }: ShareBarProps) {
+export function ShareBar({ output, copyStatus, onCopy, linkCopyStatus, onCopyLink, linkCopyDisabled }: ShareBarProps) {
   return (
     <div>
       <div className="share-bar">
@@ -40,13 +42,21 @@ export function ShareBar({ output, copyStatus, onCopy, linkCopyStatus, onCopyLin
         >
           LINE で送信
         </a>
-        <button type="button" className="share-button share-button--link" onClick={onCopyLink}>
+        <button
+          type="button"
+          className="share-button share-button--link"
+          onClick={onCopyLink}
+          disabled={linkCopyDisabled}
+          title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
+        >
           🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
       </div>
       <p className="share-note">
         ※ X・LINE は等幅フォントで表示されないため、貼り付け先で AA がズレる場合があります。
-        ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。
+        {linkCopyDisabled
+          ? " ※ 入力が長すぎるため、リンクでの共有はできません。"
+          : " ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。"}
       </p>
     </div>
   );

@@ -3,6 +3,8 @@ export interface EditorProps {
   vertical: boolean;
   padding: boolean;
   verticalDisabled: boolean;
+  /** チェックボックス無効時に添える理由（短冊=常に縦書き、ストレス=縦書きの影響を受けない、等）。 */
+  verticalDisabledHint: string;
   onTextChange: (text: string) => void;
   onVerticalChange: (value: boolean) => void;
   onPaddingChange: (value: boolean) => void;
@@ -13,6 +15,7 @@ export function Editor({
   vertical,
   padding,
   verticalDisabled,
+  verticalDisabledHint,
   onTextChange,
   onVerticalChange,
   onPaddingChange,
@@ -39,7 +42,7 @@ export function Editor({
             accessKey="v"
             onChange={(e) => onVerticalChange(e.currentTarget.checked)}
           />
-          縦書き表示{verticalDisabled ? "（短冊は常に縦書き）" : ""}
+          縦書き表示{verticalDisabled ? verticalDisabledHint : ""}
         </label>
         <label className="checkbox-label" title="ショートカットキー: P">
           <input

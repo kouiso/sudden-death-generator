@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { renderSuddenDeath, type ShapeKind } from "./core";
-import { buildPermalinkQuery, parsePermalink } from "./core/permalink";
+import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
 import { Editor } from "./components/editor";
 import { Preview } from "./components/preview";
 import { ShapePicker } from "./components/shape-picker";
@@ -29,12 +29,17 @@ export function App() {
     [text, shape, vertical, padding],
   );
   const permalinkHref = `${location.origin}${location.pathname}${permalinkQuery ? `?${permalinkQuery}` : ""}`;
+  // 長文入力はpercent-encodingで膨らみ、一部環境のURL長制限に引っかかって開けない
+  // 可能性がある。「復元できる保証のないリンク」を共有できると見せかけないため、
+  // 上限超過時はURL同期・コピーの両方を行わない（Codex bot 指摘）。
+  const permalinkTooLong = isPermalinkQueryTooLong(permalinkQuery);
 
   // 入力・オプションの変更を URL に同期する（ブックマーク・共有用のパーマリンク）。
   // 履歴を汚さないよう pushState ではなく replaceState を使う。IME変換中やタイピング中に
   // 呼ぶたびに実行すると、ブラウザの History API レート制限（短時間の連続呼び出しで
   // SecurityError）に達しうるため、300ms のデバウンスを挟む（Codex bot 指摘）。
   useEffect(() => {
+    if (permalinkTooLong) return;
     const timer = setTimeout(() => {
       const next = `${location.pathname}${permalinkQuery ? `?${permalinkQuery}` : ""}`;
       try {
@@ -44,10 +49,17 @@ export function App() {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [permalinkQuery]);
+  }, [permalinkQuery, permalinkTooLong]);
 
   // 短冊は紙の短冊自体が縦長なので、常に縦書きとして扱う（UI 上もチェックボックスを無効化する）。
+  // ストレスは内部でジグザグ蓄積ラインを組む都合上、縦書きオプションの影響を受けない
+  // （render.ts のコメント参照）ため、同様にチェックボックスを無効化する。無効化しないと
+  // チェックを切り替えても見た目が変わらないのに permalink には vertical=1 が残る
+  // という不整合が起きる（Codex bot 指摘）。
   const effectiveVertical = shape === "tanzaku" ? true : vertical;
+  const verticalDisabled = shape === "tanzaku" || shape === "stress";
+  const verticalDisabledHint =
+    shape === "tanzaku" ? "（短冊は常に縦書き）" : shape === "stress" ? "（ストレスには影響しません）" : "";
 
   // 純粋関数なので useMemo だけで生成ボタン無しのリアルタイムプレビューが成立する。
   const output = useMemo(
@@ -77,7 +89,8 @@ export function App() {
           text={text}
           vertical={effectiveVertical}
           padding={padding}
-          verticalDisabled={shape === "tanzaku"}
+          verticalDisabled={verticalDisabled}
+          verticalDisabledHint={verticalDisabledHint}
           onTextChange={setText}
           onVerticalChange={setVertical}
           onPaddingChange={setPadding}
@@ -96,6 +109,7 @@ export function App() {
           onCopy={() => copy(output)}
           linkCopyStatus={linkCopyStatus}
           onCopyLink={() => copyLink(permalinkHref)}
+          linkCopyDisabled={permalinkTooLong}
         />
 
         {copyStatus !== "idle" && (

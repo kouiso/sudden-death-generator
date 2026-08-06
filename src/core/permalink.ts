@@ -8,6 +8,14 @@ export interface PermalinkState {
   padding: boolean;
 }
 
+// クエリ文字列の安全な上限（文字数）。エディタは入力文字数を制限しておらず、日本語は
+// percent-encoding で1文字あたり最大9文字（3バイトUTF-8 × %XX）に膨らむため、長文を
+// そのまま載せると一部のブラウザ・プロキシ・デプロイ環境のリクエストURL長制限に
+// 引っかかって開けない・切り詰められるおそれがある（Codex bot 指摘）。この上限を
+// 超える場合は「復元できる保証がないリンクを共有できると見せかける」ことを避け、
+// URLへの同期・コピーの両方を行わない。
+export const MAX_PERMALINK_QUERY_LENGTH = 4000;
+
 const SHAPE_VALUES: readonly ShapeKind[] = ["normal", "square", "tanzaku", "stress"];
 
 function isShapeKind(value: string | null): value is ShapeKind {
@@ -44,4 +52,9 @@ export function buildPermalinkQuery(state: PermalinkState): string {
   if (state.vertical) params.set("vertical", "1");
   if (state.padding) params.set("padding", "1");
   return params.toString();
+}
+
+/** クエリ文字列が安全な長さの上限を超えているか。超える場合はURL同期・コピーを行わない。 */
+export function isPermalinkQueryTooLong(query: string): boolean {
+  return query.length > MAX_PERMALINK_QUERY_LENGTH;
 }
