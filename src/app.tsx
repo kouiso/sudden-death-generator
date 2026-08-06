@@ -38,10 +38,13 @@ export function App() {
   // 履歴を汚さないよう pushState ではなく replaceState を使う。IME変換中やタイピング中に
   // 呼ぶたびに実行すると、ブラウザの History API レート制限（短時間の連続呼び出しで
   // SecurityError）に達しうるため、300ms のデバウンスを挟む（Codex bot 指摘）。
+  // 上限超過時は同期を止めるだけでなく location.search を空にする。以前の短い入力で
+  // 同期済みのパーマリンクを放置すると、その後長文を貼り付けても URL は古い短い入力の
+  // ままになり、その URL をリロード・ブックマーク・手動コピーすると現在の入力ではなく
+  // 古い入力が復元される（fresh evidence、Codex bot 指摘）。
   useEffect(() => {
-    if (permalinkTooLong) return;
     const timer = setTimeout(() => {
-      const next = `${location.pathname}${permalinkQuery ? `?${permalinkQuery}` : ""}`;
+      const next = permalinkTooLong ? location.pathname : `${location.pathname}${permalinkQuery ? `?${permalinkQuery}` : ""}`;
       try {
         history.replaceState(null, "", next);
       } catch (error) {
