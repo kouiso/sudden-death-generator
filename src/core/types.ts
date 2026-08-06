@@ -9,8 +9,8 @@ export interface RenderOptions {
   padding: boolean;
 }
 
-/** 半角=1 / 全角=2 の表示幅。 */
-export type CharWidth = 1 | 2;
+/** 半角=1 / 全角=2 の表示幅。ゼロ幅制御文字のみ例外的に0。 */
+export type CharWidth = 0 | 1 | 2;
 
 /** 枠を構成する8種の飾り文字。top/bottom の繰り返し単位は必ず表示幅2で統一する
  *  （render.ts の枠幅計算が「繰り返し単位=幅2」を前提にしているため）。 */

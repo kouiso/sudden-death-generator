@@ -27,6 +27,18 @@ const VARIATION_SELECTOR_EMOJI = 0xfe0f;
 const HALFWIDTH_VOICE_MARK = 0xff9e;
 const HALFWIDTH_SEMI_VOICE_MARK = 0xff9f;
 
+// 不可視の書式制御文字（ゼロ幅）。他所からコピー&ペーストした文章に紛れ込むことがあり、
+// Intl.Segmenter はこれらを独立した書記素クラスタとして分割するため、対応しないと
+// 「未知の文字」として全角(2)扱いされ、実際は幅0で描画されるのに枠が余分に広がる
+// （Codex bot 指摘、実機未確認だが規格上明確なため対応）。
+const ZERO_WIDTH_FORMAT_CHARS: ReadonlySet<number> = new Set([
+  0x200b, // ZERO WIDTH SPACE
+  0x200c, // ZERO WIDTH NON-JOINER
+  0x200d, // ZERO WIDTH JOINER（単独で出現した場合。ZWJ絵文字結合の一部は別途クラスタ判定される）
+  0x2060, // WORD JOINER
+  0xfeff, // ZERO WIDTH NO-BREAK SPACE (BOM)
+]);
+
 const FULL_WIDTH_SPACE = "　";
 
 // 書記素クラスタ単位で分割する。合字（結合文字・Variation Selector・ZWJ シーケンス）を
@@ -42,12 +54,13 @@ export function splitGraphemes(value: string): string[] {
 
 /**
  * 1コードポイントの表示幅を返す。
- * ASCII 印字可能域・半角カタカナのみ半角(1)、それ以外は全角(2)とみなす。
+ * ASCII 印字可能域・半角カタカナのみ半角(1)、ゼロ幅制御文字のみ0、それ以外は全角(2)とみなす。
  * 日本語（漢字・かな・全角記号）と ASCII の混在だけを想定した実務的な簡略化。
  * ラテン文字拡張・キリル・ギリシャ等の非日本語文字は対象外（本ツールは日本語入力前提）。
  */
 export function charWidth(codePoint: number): CharWidth {
   if (codePoint === TAB) return 1;
+  if (ZERO_WIDTH_FORMAT_CHARS.has(codePoint)) return 0;
   if (codePoint >= ASCII_PRINTABLE_START && codePoint <= ASCII_PRINTABLE_END) return 1;
   if (codePoint >= HALFWIDTH_KANA_START && codePoint <= HALFWIDTH_KANA_END) return 1;
   return 2;

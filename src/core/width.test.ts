@@ -29,6 +29,13 @@ describe("charWidth", () => {
     expect(charWidth("Γ".codePointAt(0)!)).toBe(2);
     expect(charWidth("Привет".codePointAt(0)!)).toBe(2);
   });
+
+  it("ゼロ幅制御文字は幅0（他所からのコピペで紛れ込んでも枠が広がらない、Codex bot 指摘）", () => {
+    expect(charWidth("\u{200B}".codePointAt(0)!)).toBe(0); // ZERO WIDTH SPACE
+    expect(charWidth("\u{200C}".codePointAt(0)!)).toBe(0); // ZERO WIDTH NON-JOINER
+    expect(charWidth("\u{2060}".codePointAt(0)!)).toBe(0); // WORD JOINER
+    expect(charWidth("\u{FEFF}".codePointAt(0)!)).toBe(0); // ZERO WIDTH NO-BREAK SPACE (BOM)
+  });
 });
 
 describe("clusterWidth", () => {
@@ -74,6 +81,11 @@ describe("stringWidth", () => {
 
   it("サロゲートペア（絵文字）を1文字として数える", () => {
     expect(stringWidth("😀")).toBe(2);
+  });
+
+  it("他所からのコピペで紛れ込むゼロ幅スペースは幅に含めない", () => {
+    // "突然​の死" は見た目上「突然の死」と同じ幅で描画されるべき。
+    expect(stringWidth("突然\u{200B}の死")).toBe(stringWidth("突然の死"));
   });
 
   it("非日本語文字（アクセント付きラテン文字等）混じりの文は全角換算", () => {
