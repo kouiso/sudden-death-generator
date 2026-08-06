@@ -32,9 +32,11 @@ describe("renderSuddenDeath — golden tests", () => {
     );
   });
 
-  it("短冊・既定文言は1文字1行の縦一列になる", () => {
+  it("短冊・既定文言は1文字1行の縦一列になり、上枠中央に紐穴マークが入る", () => {
+    // "-┷-" は紙の短冊の吊り紐穴を模した装飾（echo-sd との機能比較で見つかった差分、自前実装）。
+    // 各セルの余白は幅2の不足を左右に1ずつ配分するため半角スペース（padCenterToWidth の仕様）。
     expect(renderSuddenDeath("突然の死", { ...base, shape: "tanzaku" })).toBe(
-      ["┏━┓", "┃突┃", "┃然┃", "┃の┃", "┃死┃", "┗━┛"].join("\n"),
+      ["┏-┷-┓", "┃ 突 ┃", "┃ 然 ┃", "┃ の ┃", "┃ 死 ┃", "┗━━┛"].join("\n"),
     );
   });
 
@@ -89,19 +91,30 @@ describe("renderSuddenDeath — 不変条件（枠内の全行が同じ表示幅
 });
 
 describe("renderSuddenDeath — ストレス形状の挙動", () => {
-  it("入力行を順番にジグザグへ消費し、最終行を強調して枠で締める", () => {
-    const output = renderSuddenDeath("残業\n休日出勤\n上司の圧", { ...base, shape: "stress" });
+  it("入力行を先頭から4個までジグザグ（字下げなし↘字下げあり↙の2往復）へ消費し、5個目以降を最後の枠に流し込む", () => {
+    // echo-sd との機能比較で見つかった構造差分（旧実装は行数ぶん↘を並べるだけだった）を修正。
+    const output = renderSuddenDeath("残業\n休日出勤\n上司の圧\n終電\n始発", { ...base, shape: "stress" });
     const lines = output.split("\n");
     expect(lines[0]).toBe("残業");
     expect(lines[1]).toBe("　　　　↘");
-    expect(lines[2]).toBe("休日出勤");
-    expect(lines[3]).toBe("　　　　↘");
+    expect(lines[2]).toBe("　　　休日出勤");
+    expect(lines[3]).toBe("　　　　↙");
     expect(lines[4]).toBe("上司の圧");
     expect(lines[5]).toBe("　　　　↘");
-    expect(lines[6]).toBe("　　　上司の圧");
+    expect(lines[6]).toBe("　　　終電");
     expect(lines[7]).toBe("　　　　↙");
+    expect(lines.slice(8).join("\n")).toBe(renderSuddenDeath("始発", { ...base, shape: "normal" }));
+  });
+
+  it("入力が4行以下なら不足分を既定文言で埋め、5個目が無ければ枠も既定文言になる", () => {
+    const output = renderSuddenDeath("残業\n休日出勤\n上司の圧", { ...base, shape: "stress" });
+    const lines = output.split("\n");
+    expect(lines[0]).toBe("残業");
+    expect(lines[2]).toBe("　　　休日出勤");
+    expect(lines[4]).toBe("上司の圧");
+    expect(lines[6]).toBe("　　　仕事のストレス"); // 4個目が無いので既定文言で埋める
     expect(lines.slice(8).join("\n")).toBe(
-      renderSuddenDeath("上司の圧", { ...base, shape: "normal" }),
+      renderSuddenDeath("仕事のストレス", { ...base, shape: "normal" }),
     );
   });
 });
