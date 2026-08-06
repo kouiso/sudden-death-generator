@@ -69,3 +69,4 @@ MIT（`LICENSE` 参照）。同梱のサブセットフォント `public/fonts/s
   [SATOH Fumiyasu 氏の bash スクリプト](https://github.com/fumiyas/home-commands/blob/master/echo-sd)
   （GPL-3）。オプション構成の参考にした
 - [突然の死ジェネレーター（sacnoha）](https://totuzennosi.sacnoha.com/)
+- [突然の死ジェネレータ（ichitaso）](https://ichitaso.com/suddenlygen/)
