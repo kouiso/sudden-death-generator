@@ -2,6 +2,8 @@ export interface ShareBarProps {
   output: string;
   copyStatus: "idle" | "success" | "error";
   onCopy: () => void;
+  linkCopyStatus: "idle" | "success" | "error";
+  onCopyLink: () => void;
 }
 
 function buildXShareUrl(text: string): string {
@@ -15,7 +17,7 @@ function buildLineShareUrl(text: string): string {
   return `https://line.me/R/share?text=${encodeURIComponent(text)}`;
 }
 
-export function ShareBar({ output, copyStatus, onCopy }: ShareBarProps) {
+export function ShareBar({ output, copyStatus, onCopy, linkCopyStatus, onCopyLink }: ShareBarProps) {
   return (
     <div>
       <div className="share-bar">
@@ -38,9 +40,13 @@ export function ShareBar({ output, copyStatus, onCopy }: ShareBarProps) {
         >
           LINE で送信
         </a>
+        <button type="button" className="share-button share-button--link" onClick={onCopyLink}>
+          🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
+        </button>
       </div>
       <p className="share-note">
         ※ X・LINE は等幅フォントで表示されないため、貼り付け先で AA がズレる場合があります。
+        ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。
       </p>
     </div>
   );
