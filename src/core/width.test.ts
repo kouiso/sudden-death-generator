@@ -36,6 +36,15 @@ describe("charWidth", () => {
     expect(charWidth("\u{2060}".codePointAt(0)!)).toBe(0); // WORD JOINER
     expect(charWidth("\u{FEFF}".codePointAt(0)!)).toBe(0); // ZERO WIDTH NO-BREAK SPACE (BOM)
   });
+
+  it("双方向制御文字（LRM/RLM・bidi isolate）も幅0（残っていた見落とし、Codex bot 指摘）", () => {
+    expect(charWidth("\u{200E}".codePointAt(0)!)).toBe(0); // LEFT-TO-RIGHT MARK
+    expect(charWidth("\u{200F}".codePointAt(0)!)).toBe(0); // RIGHT-TO-LEFT MARK
+    expect(charWidth("\u{2066}".codePointAt(0)!)).toBe(0); // LEFT-TO-RIGHT ISOLATE
+    expect(charWidth("\u{2067}".codePointAt(0)!)).toBe(0); // RIGHT-TO-LEFT ISOLATE
+    expect(charWidth("\u{2068}".codePointAt(0)!)).toBe(0); // FIRST STRONG ISOLATE
+    expect(charWidth("\u{2069}".codePointAt(0)!)).toBe(0); // POP DIRECTIONAL ISOLATE
+  });
 });
 
 describe("clusterWidth", () => {
@@ -64,6 +73,18 @@ describe("clusterWidth", () => {
   it("単独の半角濁点は半角1文字ぶんの幅", () => {
     expect(clusterWidth("ﾞ")).toBe(1);
   });
+
+  it("全角カナ基底+半角濁点は基底の全角幅+半角1（固定値ではなく合算、Codex bot 指摘）", () => {
+    // "カﾞ"(U+30AB+U+FF9E) は全角カナに半角濁点が続く珍しいが起こりうる入力。
+    // 固定値2を返すと基底の全角ぶん(2)が消えてしまう。
+    expect(clusterWidth("カ\u{FF9E}")).toBe(3);
+  });
+
+  it("濁点が連続するクラスタは濁点の個数ぶん加算する（Codex bot 指摘）", () => {
+    // "ｶﾞﾟ"(U+FF76+U+FF9E+U+FF9F) は Intl.Segmenter が1クラスタにまとめる。
+    // 固定値2では濁点1個ぶんしか計上できない。
+    expect(clusterWidth("ｶﾞﾟ")).toBe(3);
+  });
 });
 
 describe("stringWidth", () => {
@@ -86,6 +107,10 @@ describe("stringWidth", () => {
   it("他所からのコピペで紛れ込むゼロ幅スペースは幅に含めない", () => {
     // "突然​の死" は見た目上「突然の死」と同じ幅で描画されるべき。
     expect(stringWidth("突然\u{200B}の死")).toBe(stringWidth("突然の死"));
+  });
+
+  it("他所からのコピペで紛れ込む双方向制御文字（LRM等）も幅に含めない", () => {
+    expect(stringWidth("突然\u{200E}の死")).toBe(stringWidth("突然の死"));
   });
 
   it("非日本語文字（アクセント付きラテン文字等）混じりの文は全角換算", () => {

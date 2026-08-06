@@ -35,7 +35,13 @@ const ZERO_WIDTH_FORMAT_CHARS: ReadonlySet<number> = new Set([
   0x200b, // ZERO WIDTH SPACE
   0x200c, // ZERO WIDTH NON-JOINER
   0x200d, // ZERO WIDTH JOINER（単独で出現した場合。ZWJ絵文字結合の一部は別途クラスタ判定される）
+  0x200e, // LEFT-TO-RIGHT MARK
+  0x200f, // RIGHT-TO-LEFT MARK
   0x2060, // WORD JOINER
+  0x2066, // LEFT-TO-RIGHT ISOLATE
+  0x2067, // RIGHT-TO-LEFT ISOLATE
+  0x2068, // FIRST STRONG ISOLATE
+  0x2069, // POP DIRECTIONAL ISOLATE
   0xfeff, // ZERO WIDTH NO-BREAK SPACE (BOM)
 ]);
 
@@ -71,17 +77,19 @@ export function charWidth(codePoint: number): CharWidth {
  * 表示上ゼロ幅なので、原則クラスタの先頭（基底）コードポイントの幅だけを見る。
  * ただし以下はクラスタ全体を見て例外的に扱う:
  * - VS16 を含むクラスタ（1️⃣ 等の keycap 絵文字）は基底が半角文字でも絵文字として全角描画される
- * - 半角濁点・半角半濁点を含むクラスタ（ｶﾞ 等）はゼロ幅ではなく、基底文字と合わせて半角2文字ぶんを占有する
+ * - 半角濁点・半角半濁点を含むクラスタ（ｶﾞ 等）はゼロ幅ではなく、実際に描画される個数ぶん
+ *   半角1文字ずつ加算する。固定値2を返すと、基底が全角カナの「カﾞ」（全角2+半角1=3が正しい）や
+ *   濁点が連続する「ｶﾞﾟ」（半角1+半角1+半角1=3が正しい）で1桁足りなくなる
+ *   （フルワイド基底・複数個の濁点は fresh evidence として Codex bot 指摘）。
  */
-export function clusterWidth(cluster: string): CharWidth {
+export function clusterWidth(cluster: string): number {
   const codePoints = Array.from(cluster, (ch) => ch.codePointAt(0) ?? 0);
   if (codePoints.some((cp) => cp === VARIATION_SELECTOR_EMOJI)) {
     return 2;
   }
-  if (codePoints.length > 1 && codePoints.some((cp) => cp === HALFWIDTH_VOICE_MARK || cp === HALFWIDTH_SEMI_VOICE_MARK)) {
-    return 2;
-  }
-  return charWidth(codePoints[0] ?? 0);
+  const [base, ...rest] = codePoints;
+  const voiceMarkCount = rest.filter((cp) => cp === HALFWIDTH_VOICE_MARK || cp === HALFWIDTH_SEMI_VOICE_MARK).length;
+  return charWidth(base ?? 0) + voiceMarkCount;
 }
 
 /** 文字列全体の表示幅（半角=1 / 全角=2 の合計）。書記素クラスタ単位で数える。 */
