@@ -65,6 +65,12 @@ describe("toVerticalGlyph", () => {
     expect(toVerticalGlyph("↑")).toBe("→");
   });
 
+  it("VS16付き絵文字提示形の矢印（モバイルキーボードが送出しうる）も基底文字を回転させる", () => {
+    // 例: ↗️ = U+2197 + U+FE0F(VS16) が1書記素クラスタとして渡ってくる（Codex bot 指摘）。
+    expect(toVerticalGlyph("\u{2197}\u{FE0F}")).toBe("↘");
+    expect(toVerticalGlyph("\u{2192}\u{FE0F}")).toBe("↓");
+  });
+
   it("縦書き提示形を持たない文字はそのまま返す", () => {
     expect(toVerticalGlyph("死")).toBe("死");
     expect(toVerticalGlyph("あ")).toBe("あ");

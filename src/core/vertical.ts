@@ -64,7 +64,30 @@ const ARROW_ROTATION_MAP: ReadonlyMap<string, string> = new Map([
   ["↗", "↘"],
 ]);
 
-/** 1文字を縦書き用の字形に変換する。対応する提示形が無い文字はそのまま返す。 */
-export function toVerticalGlyph(char: string): string {
-  return VERTICAL_GLYPH_MAP.get(char) ?? ARROW_ROTATION_MAP.get(char) ?? char;
+function lookup(char: string): string | undefined {
+  return VERTICAL_GLYPH_MAP.get(char) ?? ARROW_ROTATION_MAP.get(char);
+}
+
+/**
+ * 1書記素クラスタを縦書き用の字形に変換する。対応する提示形が無い場合はそのまま返す。
+ *
+ * クラスタ全体でのマッチを先に試し、失敗した場合のみ先頭（基底）コードポイントだけで
+ * 再度マッチを試みる。これは矢印の絵文字提示形（例: ↗️ = U+2197 + VS16）が Intl.Segmenter に
+ * より1クラスタとして渡ってくると、矢印そのものはマップにあるのに全体一致では見つからず
+ * 回転が素通りしてしまう不具合の対策（Codex bot 指摘）。基底文字が一致した場合は、VS16 等の
+ * 提示形セレクタは破棄する（回転後の矢印はテキスト提示のみを想定しており、破棄しても
+ * charWidth 側の全角判定には影響しない）。
+ */
+export function toVerticalGlyph(cluster: string): string {
+  const direct = lookup(cluster);
+  if (direct) return direct;
+
+  const codePoints = Array.from(cluster);
+  if (codePoints.length > 1) {
+    const base = codePoints[0] ?? "";
+    const rotatedBase = lookup(base);
+    if (rotatedBase) return rotatedBase;
+  }
+
+  return cluster;
 }
