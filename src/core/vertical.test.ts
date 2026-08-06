@@ -50,6 +50,26 @@ describe("toVerticalGlyph", () => {
     expect(toVerticalGlyph("〉")).toBe("\u{FE40}");
   });
 
+  it("ASCII半角の句読点・括弧も対応する全角形と同じ提示形に変換する（fresh evidence、Codex bot 指摘）", () => {
+    // "突然!?" "(突然)" のようなASCII記号混じりの日本語文が縦書きで横向きのまま
+    // 残らないことを確認する。
+    expect(toVerticalGlyph(",")).toBe("\u{FE10}");
+    expect(toVerticalGlyph(":")).toBe("\u{FE13}");
+    expect(toVerticalGlyph(";")).toBe("\u{FE14}");
+    expect(toVerticalGlyph("!")).toBe("\u{FE15}");
+    expect(toVerticalGlyph("?")).toBe("\u{FE16}");
+    expect(toVerticalGlyph("(")).toBe("\u{FE35}");
+    expect(toVerticalGlyph(")")).toBe("\u{FE36}");
+    expect(toVerticalGlyph("{")).toBe("\u{FE37}");
+    expect(toVerticalGlyph("}")).toBe("\u{FE38}");
+    expect(toVerticalGlyph("[")).toBe("\u{FE47}");
+    expect(toVerticalGlyph("]")).toBe("\u{FE48}");
+  });
+
+  it("ASCIIピリオドは全角句点と字形が別物なので変換しない", () => {
+    expect(toVerticalGlyph(".")).toBe(".");
+  });
+
   it("横棒系の同義記号（ー－−─）は全て同じ縦棒近似に変換する", () => {
     const bar = "\u{FF5C}";
     expect(toVerticalGlyph("ー")).toBe(bar);

@@ -11,6 +11,12 @@
  * 対応するのが一般的）ため、視覚的な近似として縦棒 U+FF5C に置き換える。この横棒系4文字のみ
  * 規格に基づかない近似であることを明記する。〜／＝ 等その他の記号は対応する提示形が無いため
  * 変換せず素通しする（既知の制約。個別に記号を発明して埋めることはしない）。
+ *
+ * 句読点・括弧類は全角形（，：；！？（）｛｝［］）だけでなく、対応する ASCII 半角形
+ * （,:;!?(){}[]）も同じ提示形へ変換する。ASCII 版と全角版は幅が違うだけで字形の意味は
+ * 同一であり、"突然!?" や "(突然)" のように ASCII 記号混じりの日本語インターネット文が
+ * 縦書きで横向きのまま残る不具合の対策（fresh evidence、Codex bot 指摘）。ただし ASCII
+ * ピリオド"."は全角句点「。」とは字形が別物（点 vs 丸）なので対象外とする。
  */
 // 文字リテラルは見た目が非常に近い「Small Form Variants」(U+FE50台) と混同しやすいため、
 // \u{} エスケープでコードポイントを明示する（過去に一度この転記ミスを実測で検出したため）。
@@ -43,6 +49,18 @@ const VERTICAL_GLYPH_MAP: ReadonlyMap<string, string> = new Map([
   ["》", "\u{FE3E}"], // U+300B → U+FE3E PRESENTATION FORM FOR VERTICAL RIGHT DOUBLE ANGLE BRACKET
   ["〈", "\u{FE3F}"], // U+3008 → U+FE3F PRESENTATION FORM FOR VERTICAL LEFT ANGLE BRACKET
   ["〉", "\u{FE40}"], // U+3009 → U+FE40 PRESENTATION FORM FOR VERTICAL RIGHT ANGLE BRACKET
+  // ASCII半角の句読点・括弧（全角形と字形の意味が同じもののみ。ピリオドは対象外）
+  [",", "\u{FE10}"],
+  [":", "\u{FE13}"],
+  [";", "\u{FE14}"],
+  ["!", "\u{FE15}"],
+  ["?", "\u{FE16}"],
+  ["(", "\u{FE35}"],
+  [")", "\u{FE36}"],
+  ["{", "\u{FE37}"],
+  ["}", "\u{FE38}"],
+  ["[", "\u{FE47}"],
+  ["]", "\u{FE48}"],
   ["ー", "\u{FF5C}"], // 近似（Unicode に専用提示形なし。FULLWIDTH VERTICAL LINE で代替）
   ["－", "\u{FF5C}"], // 同上（全角ハイフンマイナス）
   ["−", "\u{FF5C}"], // 同上（マイナス記号）
