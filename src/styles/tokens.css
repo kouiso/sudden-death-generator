@@ -1,0 +1,83 @@
+/* デザイントークン。Tailwind を使わず CSS Custom Properties だけで完結させる方針
+ * （単一画面のツールなので utility クラスの羅列より狙った見た目を出しやすい）。 */
+:root {
+  --color-bg: #f1f4f9;
+  --color-bg-gradient-start: #eef2fb;
+  --color-bg-gradient-end: #e4e9f5;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f6f8fc;
+  --color-border: #dde3ef;
+  --color-text: #1c2333;
+  --color-text-muted: #5b6478;
+  --color-accent: #2f5fe0;
+  --color-accent-strong: #1f47b8;
+  --color-accent-contrast: #ffffff;
+  /* 白文字を乗せた時に WCAG AA (4.5:1) を満たす濃さまで暗くしている
+   * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
+  --color-success: #137a54;
+  --color-success-strong: #0f6a48;
+  --color-danger: #d1425a;
+  --color-focus-ring: #2f5fe0;
+
+  --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
+    sans-serif;
+  /* 罫線(SD Symbols Mono) → 英数字用の等幅プログラミングフォント → 漢字・かな用の
+   * 日本語フォント → 総称フォールバックの順。日本語名を明示しないと、漢字は言語指定なしの
+   * 総称 monospace/sans-serif に落ち、環境によっては中国語向けフォント（简体字の字形）が
+   * 選ばれてしまう（実機で確認: このコンテナでは fc-match sans-serif:lang=ja が
+   * WenQuanYi Zen Hei を返す）。 */
+  --font-mono: "SD Symbols Mono", "SF Mono", "Cascadia Code", "Consolas", "Noto Sans Mono CJK JP",
+    "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP", "IPAGothic", ui-monospace,
+    monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --shadow-card: 0 20px 45px -25px rgb(31 43 92 / 0.35), 0 2px 8px -2px rgb(31 43 92 / 0.12);
+  --shadow-sm: 0 1px 2px rgb(31 43 92 / 0.08);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #10131c;
+  --color-bg-gradient-start: #14182430;
+  --color-bg-gradient-end: #0a0c12;
+  --color-surface: #1a1e2b;
+  --color-surface-muted: #23283a;
+  --color-border: #2d3245;
+  --color-text: #e8ebf4;
+  --color-text-muted: #9aa2b8;
+  --color-accent: #6d8bff;
+  --color-accent-strong: #8ca0ff;
+  --color-accent-contrast: #0b0e17;
+  --color-success: #3fcf94;
+  --color-success-strong: #63dba8;
+  --color-danger: #ff7a90;
+  --color-focus-ring: #6d8bff;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #10131c;
+    --color-bg-gradient-start: #14182430;
+    --color-bg-gradient-end: #0a0c12;
+    --color-surface: #1a1e2b;
+    --color-surface-muted: #23283a;
+    --color-border: #2d3245;
+    --color-text: #e8ebf4;
+    --color-text-muted: #9aa2b8;
+    --color-accent: #6d8bff;
+    --color-accent-strong: #8ca0ff;
+    --color-accent-contrast: #0b0e17;
+    --color-success: #3fcf94;
+    --color-success-strong: #63dba8;
+    --color-danger: #ff7a90;
+    --color-focus-ring: #6d8bff;
+
+    color-scheme: dark;
+  }
+}

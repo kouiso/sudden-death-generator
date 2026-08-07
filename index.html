@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>＞　突然の死　＜ ジェネレーター</title>
+    <meta
+      name="description"
+      content="テキストを入力するだけでリアルタイムに「突然の死」AAを生成。通常・四角形・短冊・ストレスの4形状、縦書き・余白オプション、X/LINEへそのまま共有できます。"
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <script>
+      // テーマの初回チラつき防止。Farm が注入する <link rel=stylesheet> より前に
+      // 同期実行させる必要があるため、head内の他要素より先に置く（インラインscriptは
+      // パーサーを止めて即実行されるので、後続のスタイルシート適用より先に間に合う）。
+      // useTheme.ts と同じキー・同じ「手動選択が無ければ何もしない」ロジックをここで
+      // 先取りして適用する。OS設定と手動選択が食い違う場合、CSS の
+      // prefers-color-scheme フォールバックによる初回ペイントが手動選択と逆のテーマで
+      // 一瞬出てしまう不具合の対策（Codex bot 指摘）。
+      (function () {
+        try {
+          var t = localStorage.getItem("sudden-death-theme");
+          if (t === "light" || t === "dark") {
+            document.documentElement.dataset.theme = t;
+          }
+        } catch (e) {
+          // localStorage 不可の環境（プライベートブラウジング等）ではCSSの既定フォールバックに任せる。
+        }
+      })();
+    </script>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

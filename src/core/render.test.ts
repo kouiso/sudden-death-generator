@@ -1,0 +1,163 @@
+import { describe, expect, it } from "vitest";
+import { renderSuddenDeath } from "./render";
+import { stringWidth } from "./width";
+import type { RenderOptions } from "./types";
+
+const base: RenderOptions = { shape: "normal", vertical: false, padding: false };
+
+/** 1つの枠内の全行が同じ表示幅であることを確認するヘルパー。枠ズレのクラス全体を機械的に封じる。 */
+function expectUniformWidth(block: string) {
+  const widths = block.split("\n").map(stringWidth);
+  const first = widths[0];
+  for (const w of widths) {
+    expect(w).toBe(first);
+  }
+}
+
+describe("renderSuddenDeath — golden tests", () => {
+  it("通常形・既定文言は左右対称の正解形になる", () => {
+    expect(renderSuddenDeath("突然の死", base)).toBe(
+      ["＿人人人人人人＿", "＞　突然の死　＜", "￣Y^Y^Y^Y^Y^Y^￣"].join("\n"),
+    );
+  });
+
+  it("入力が空でも既定文言にフォールバックする", () => {
+    expect(renderSuddenDeath("", base)).toBe(renderSuddenDeath("突然の死", base));
+    expect(renderSuddenDeath("   \n\n", base)).toBe(renderSuddenDeath("突然の死", base));
+  });
+
+  it("四角形・既定文言", () => {
+    expect(renderSuddenDeath("突然の死", { ...base, shape: "square" })).toBe(
+      ["┌──────┐", "│　突然の死　│", "└──────┘"].join("\n"),
+    );
+  });
+
+  it("短冊・既定文言は1文字1行の縦一列になり、上枠中央に紐穴マークが入る", () => {
+    // "-┷-" は紙の短冊の吊り紐穴を模した装飾（echo-sd との機能比較で見つかった差分、自前実装）。
+    // 各セルの余白は幅2の不足を左右に1ずつ配分するため半角スペース（padCenterToWidth の仕様）。
+    expect(renderSuddenDeath("突然の死", { ...base, shape: "tanzaku" })).toBe(
+      ["┏-┷-┓", "┃ 突 ┃", "┃ 然 ┃", "┃ の ┃", "┃ 死 ┃", "┗━━┛"].join("\n"),
+    );
+  });
+
+  it("縦書きオプション・単一行は1文字1行の枠になる", () => {
+    expect(renderSuddenDeath("突然の死", { ...base, vertical: true })).toBe(
+      ["＿人人人＿", "＞　突　＜", "＞　然　＜", "＞　の　＜", "＞　死　＜", "￣Y^Y^Y^￣"].join("\n"),
+    );
+  });
+});
+
+describe("renderSuddenDeath — 不変条件（枠内の全行が同じ表示幅）", () => {
+  const inputs = [
+    "突然の死",
+    "一行目\n二行目はちょっと長い",
+    "ぬるぽ!!",
+    "😀絵文字混在",
+    "a",
+    "1\u{FE0F}\u{20E3}番",
+    "A\tB",
+    "ぐわし！！",
+  ];
+  const shapes: RenderOptions["shape"][] = ["normal", "square"];
+
+  for (const input of inputs) {
+    for (const shape of shapes) {
+      for (const vertical of [false, true]) {
+        for (const padding of [false, true]) {
+          it(`shape=${shape} vertical=${vertical} padding=${padding} input=${JSON.stringify(input)}`, () => {
+            const output = renderSuddenDeath(input, { shape, vertical, padding });
+            expectUniformWidth(output);
+          });
+        }
+      }
+    }
+  }
+
+  it("短冊は短冊ごと（空行区切り）に幅が揃う", () => {
+    const output = renderSuddenDeath("一行目\n二行目はちょっと長い", { ...base, shape: "tanzaku" });
+    for (const frame of output.split("\n\n")) {
+      expectUniformWidth(frame);
+    }
+  });
+
+  it("ストレスは末尾の枠部分（突然の死パート）だけ幅が揃う", () => {
+    for (const padding of [false, true]) {
+      const output = renderSuddenDeath("残業\n休日出勤\n上司の圧", { ...base, shape: "stress", padding });
+      const frameLineCount = padding ? 5 : 3; // renderFramed が出力する行数
+      const frame = output.split("\n").slice(-frameLineCount).join("\n");
+      expectUniformWidth(frame);
+    }
+  });
+});
+
+describe("renderSuddenDeath — ストレス形状の挙動", () => {
+  it("入力行を先頭から4個までジグザグ（字下げなし↘字下げあり↙の2往復）へ消費し、5個目以降を最後の枠に流し込む", () => {
+    // echo-sd との機能比較で見つかった構造差分（旧実装は行数ぶん↘を並べるだけだった）を修正。
+    const output = renderSuddenDeath("残業\n休日出勤\n上司の圧\n終電\n始発", { ...base, shape: "stress" });
+    const lines = output.split("\n");
+    expect(lines[0]).toBe("残業");
+    expect(lines[1]).toBe("　　　　↘");
+    expect(lines[2]).toBe("　　　休日出勤");
+    expect(lines[3]).toBe("　　　　↙");
+    expect(lines[4]).toBe("上司の圧");
+    expect(lines[5]).toBe("　　　　↘");
+    expect(lines[6]).toBe("　　　終電");
+    expect(lines[7]).toBe("　　　　↙");
+    expect(lines.slice(8).join("\n")).toBe(renderSuddenDeath("始発", { ...base, shape: "normal" }));
+  });
+
+  it("入力が4行以下なら不足分を既定文言で埋め、5個目が無ければ枠も既定文言になる", () => {
+    const output = renderSuddenDeath("残業\n休日出勤\n上司の圧", { ...base, shape: "stress" });
+    const lines = output.split("\n");
+    expect(lines[0]).toBe("残業");
+    expect(lines[2]).toBe("　　　休日出勤");
+    expect(lines[4]).toBe("上司の圧");
+    expect(lines[6]).toBe("　　　仕事のストレス"); // 4個目が無いので既定文言で埋める
+    expect(lines.slice(8).join("\n")).toBe(
+      renderSuddenDeath("仕事のストレス", { ...base, shape: "normal" }),
+    );
+  });
+});
+
+describe("renderSuddenDeath — 余白オプション", () => {
+  it("枠の内側上下に空行が1行増える", () => {
+    const withoutPadding = renderSuddenDeath("突然の死", base).split("\n");
+    const withPadding = renderSuddenDeath("突然の死", { ...base, padding: true }).split("\n");
+    expect(withPadding.length).toBe(withoutPadding.length + 2);
+    expectUniformWidth(renderSuddenDeath("突然の死", { ...base, padding: true }));
+  });
+});
+
+describe("renderSuddenDeath — 書記素クラスタ（結合文字・VS16・ZWJ）", () => {
+  // コードポイント単位で分割すると、これらの入力が複数の縦書きセル・短冊マスに
+  // 分裂してしまう（width.test.ts の stringWidth テストと同じ問題が render 側にも伝播する）。
+  const combining = "e\u{0301}"; // e + COMBINING ACUTE ACCENT（分解形、2コードポイント）
+  const vs16Emoji = "\u{2615}\u{FE0F}"; // ☕ + VS16
+  const zwjFamily = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}"; // 👨‍👩‍👧
+
+  it.each([
+    ["結合文字", combining],
+    ["VS16絵文字", vs16Emoji],
+    ["ZWJ絵文字", zwjFamily],
+  ])("短冊: %s は1マスとして描画される（分裂しない）", (_label, input) => {
+    const output = renderSuddenDeath(input, { ...base, shape: "tanzaku" });
+    const lines = output.split("\n");
+    // ┏━┓ / ┃x┃ / ┗━┛ の3行になるはず。分裂すると行数が増える。
+    expect(lines).toHaveLength(3);
+    expect(lines[1]).toContain(input);
+    expectUniformWidth(output);
+  });
+
+  it.each([
+    ["結合文字", combining],
+    ["VS16絵文字", vs16Emoji],
+    ["ZWJ絵文字", zwjFamily],
+  ])("縦書き: %s は1行として描画される（分裂しない）", (_label, input) => {
+    const output = renderSuddenDeath(input, { ...base, vertical: true });
+    const lines = output.split("\n");
+    // 枠(上) + 本体1行 + 枠(下) の3行になるはず。分裂すると本体が複数行になる。
+    expect(lines).toHaveLength(3);
+    expect(lines[1]).toContain(input);
+    expectUniformWidth(output);
+  });
+});
