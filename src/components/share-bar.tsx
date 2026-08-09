@@ -85,13 +85,20 @@ export function ShareBar({
           🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
       </div>
+      {/*
+       * shareDisabled と linkCopyDisabled は独立した基準（前者は本体出力の長さ、後者は
+       * 入力テキストの長さ）で判定しており、同時に true になり得る。片方だけ表示すると、
+       * もう一方も無効なのに理由が説明文から消えてユーザーが混乱する
+       * （CodeRabbit 指摘: 長文入力で両方無効になる帯域を実測して確認した不具合）。
+       * 該当する理由を全部つなげて表示する。
+       */}
       <p className="share-note">
         ※ X・LINE は等幅フォントで表示されないため、貼り付け先で AA がズレる場合があります。
-        {shareDisabled
-          ? " ※ 入力が長すぎるため、X・LINEでの共有はできません。"
-          : linkCopyDisabled
-            ? " ※ 入力が長すぎるため、リンクでの共有はできません。"
-            : " ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。"}
+        {shareDisabled && " ※ 入力が長すぎるため、X・LINEでの共有はできません。"}
+        {linkCopyDisabled && " ※ 入力が長すぎるため、リンクでの共有はできません。"}
+        {!shareDisabled &&
+          !linkCopyDisabled &&
+          " ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。"}
       </p>
     </div>
   );
