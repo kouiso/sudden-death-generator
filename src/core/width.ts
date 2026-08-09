@@ -47,6 +47,16 @@ const ZERO_WIDTH_FORMAT_CHARS: ReadonlySet<number> = new Set([
 
 const FULL_WIDTH_SPACE = "　";
 
+// 結合文字（Unicode 一般カテゴリ Mn/Mc/Me）。基底文字に重ねて描画され、単体では
+// 表示幅を持たない。通常は書記素クラスタの2文字目以降（rest）としてまとめられ
+// charWidth を通らないが、基底無しで単独出現した場合（コピペ由来の孤立した結合文字等）は
+// Intl.Segmenter がそれ単体を1クラスタとして返し、その先頭コードポイント自身が
+// この判定に来る。charWidth の既定(2)に落ちると「幅を持たない文字を全角2として数える」
+// 誤りになり、枠の直前にある全角スペース等（本体行を組み立てる際の隣接文字）に実際には
+// 結合してしまうため、行全体の表示幅が計算値より短くなり枠とずれる
+// （実機で "́abc" を入力し、本体行だけ枠より2桁狭くなる崩れを実測した不具合）。
+const COMBINING_MARK = /\p{M}/u;
+
 // 書記素クラスタ単位で分割する。合字（結合文字・Variation Selector・ZWJ シーケンス）を
 // コードポイント単位でバラすと、見た目は1文字でも複数文字分の幅として数えてしまい、
 // 縦書きでも1文字が複数行に分裂する。Unicode 標準の書記素分割 (UAX #29) に従う
@@ -69,6 +79,7 @@ export function charWidth(codePoint: number): CharWidth {
   if (ZERO_WIDTH_FORMAT_CHARS.has(codePoint)) return 0;
   if (codePoint >= ASCII_PRINTABLE_START && codePoint <= ASCII_PRINTABLE_END) return 1;
   if (codePoint >= HALFWIDTH_KANA_START && codePoint <= HALFWIDTH_KANA_END) return 1;
+  if (COMBINING_MARK.test(String.fromCodePoint(codePoint))) return 0;
   return 2;
 }
 
