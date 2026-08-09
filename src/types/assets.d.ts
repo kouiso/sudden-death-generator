@@ -1,7 +1,3 @@
-// Farm がバンドル時に解決する CSS / フォントの side-effect import に型を与える。
-// tsc 単体では実体を持たないモジュールなので、ambient module として宣言する。
-declare module "*.css";
-declare module "*.woff2" {
-  const url: string;
-  export default url;
-}
+// Vite が解決する CSS / フォント等の side-effect import・URL import に型を与える
+// （import.meta.env や *.css の ambient 宣言を含む）。
+/// <reference types="vite/client" />
