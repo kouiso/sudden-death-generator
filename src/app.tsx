@@ -131,7 +131,7 @@ export function App() {
 
       <footer className="app-footer">
         <p>
-          Preact + Farm + TypeScript で構築。参考:{" "}
+          Preact + Vite + TypeScript で構築。参考:{" "}
           <a href="https://www.osstech.co.jp/cgi-bin/echo-sd" target="_blank" rel="noreferrer">
             echo-sd
           </a>{" "}
