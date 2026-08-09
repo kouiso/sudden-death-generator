@@ -25,8 +25,17 @@ export function Preview({ output }: PreviewProps) {
   const [announcement, setAnnouncement] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tickRef = useRef(false);
+  // Preact のエフェクトはマウント直後の初回コミットでも実行される。ガード無しだと
+  // 初期表示（既定文言のAA）自体を「更新」として600ms後に読み上げてしまい、ユーザーが
+  // 何も操作していないのにスクリーンリーダーへ偽の変更通知が飛ぶ（自己レビューで実測）。
+  // 初回だけ読み上げをスキップし、2回目以降の実際の入力変更だけを通知対象にする。
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     if (timerRef.current !== null) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       const lineCount = output.split("\n").length;

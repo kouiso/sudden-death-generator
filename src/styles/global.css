@@ -287,6 +287,14 @@ button {
   cursor: not-allowed;
 }
 
+/* <a> は disabled 属性を持たないため aria-disabled で判定する。X/LINE シェアURLが安全な
+ * 長さの上限を超える場合（ShareBar の shareDisabled 参照）に同じ見た目・操作不可を適用する。 */
+.share-button[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .share-note {
   margin: 0;
   font-size: 0.78rem;

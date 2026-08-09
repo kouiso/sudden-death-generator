@@ -69,6 +69,13 @@ export function App() {
     () => renderSuddenDeath(text, { shape, vertical: effectiveVertical, padding }),
     [text, shape, effectiveVertical, padding],
   );
+  // X/LINE のシェアURLも同じ危険（一部環境のURL長制限に引っかかって開けない）を抱える。
+  // むしろ本体出力（枠のパディング込みで入力テキストより常に長い）を丸ごと載せるため、
+  // パーマリンク（入力テキストのみ）より長くなりやすく、パーマリンクは安全と判定された
+  // 入力でもこちらは超過しうる（自己レビューで指摘）。パーマリンクと同じ基準
+  // （MAX_PERMALINK_QUERY_LENGTH）を「text=<encode後の出力>」というクエリ片に対して適用し、
+  // 新たな閾値を当て推量で作らず同じ安全マージンを流用する。
+  const shareTooLong = isPermalinkQueryTooLong(`text=${encodeURIComponent(output)}`);
 
   return (
     <div className="app-shell">
@@ -113,6 +120,7 @@ export function App() {
           linkCopyStatus={linkCopyStatus}
           onCopyLink={() => copyLink(permalinkHref)}
           linkCopyDisabled={permalinkTooLong}
+          shareDisabled={shareTooLong}
         />
 
         {copyStatus !== "idle" && (
