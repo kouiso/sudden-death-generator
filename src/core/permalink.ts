@@ -33,13 +33,22 @@ function isShapeKind(value: string | null): value is ShapeKind {
  * 巨大な文字列がそのまま渡り、初回ペイントが極端に重くなる・固まる恐れがある
  * （fresh evidence、自己レビューで指摘）。読み込み側でも同じ上限で弾き、
  * 超過時は text を既定値へフォールバックさせる。
+ *
+ * 上限は書き込み側（isPermalinkQueryTooLong）と同じく、クエリ文字列そのものの長さ
+ * （percent-encoding 後・先頭 "?" 抜き）で判定する。復元後の文字数で判定すると、
+ * 日本語1文字が最大9文字にエンコードされる分だけ基準がずれ、書き込み側が
+ * 「長すぎて共有しない」と判断した URL を読み込み側だけが復元してしまう
+ * （CodeRabbit 指摘、PR #20）。
  */
 export function parsePermalink(search: string): Partial<PermalinkState> {
+  const query = search.startsWith("?") ? search.slice(1) : search;
+  if (isPermalinkQueryTooLong(query)) return {};
+
   const params = new URLSearchParams(search);
   const result: Partial<PermalinkState> = {};
 
   const text = params.get("text");
-  if (text !== null && text.length <= MAX_PERMALINK_QUERY_LENGTH) result.text = text;
+  if (text !== null) result.text = text;
 
   const shape = params.get("shape");
   if (isShapeKind(shape)) result.shape = shape;
