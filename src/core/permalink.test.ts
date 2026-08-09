@@ -52,6 +52,23 @@ describe("parsePermalink", () => {
     const restored = parsePermalink("?" + buildPermalinkQuery(state));
     expect(restored).toEqual(state);
   });
+
+  it("上限を超える text は既定値にフォールバックさせる（このアプリが書いたとは限らないURLへの防御）", () => {
+    const hugeText = "あ".repeat(MAX_PERMALINK_QUERY_LENGTH + 1);
+    const result = parsePermalink("?text=" + hugeText);
+    expect(result.text).toBeUndefined();
+  });
+
+  it("復元後の文字数が上限以下でも、encode後のクエリ長が上限を超えるなら復元しない（CodeRabbit 指摘）", () => {
+    // 日本語2000文字は decode 後の文字数だと上限(4000)未満だが、percent-encoding で
+    // 1文字最大9文字に膨らむため encode 後のクエリ長は上限を超える。書き込み側が
+    // 「共有しない」と判断するのと同じ基準で読み込み側も弾かないと、書き込み不可能な
+    // URLを読み込み側だけが復元してしまう非対称になる。
+    const qs = buildPermalinkQuery({ text: "あ".repeat(2000), shape: "normal", vertical: false, padding: false });
+    expect(qs.length).toBeGreaterThan(MAX_PERMALINK_QUERY_LENGTH);
+    const result = parsePermalink("?" + qs);
+    expect(result.text).toBeUndefined();
+  });
 });
 
 describe("isPermalinkQueryTooLong", () => {

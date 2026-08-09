@@ -2,6 +2,6 @@
 .env
 /node_modules/
 
-# Farm
+# Vite
 /dist/
-/.farm/
+/.vite/

@@ -77,17 +77,20 @@ function buildVerticalRows(lines: readonly string[]): string[] {
   return rows;
 }
 
-// 短冊上枠中央の切れ込みマーク。紙の短冊にある吊り紐用の穴を模した装飾で、
-// "-"(半角1)+"┷"(全角2)+"-"(半角1) の合計幅4は━2本ぶんと同じなので、
-// 中央の━2本をこれに置き換えても枠全体の幅は変わらない（自前実装、echo-sd のコードは転記していない）。
-const TANZAKU_TOP_MARK = "-┷-";
-const TANZAKU_TOP_MARK_WIDTH = 4;
+// 短冊上枠中央の切れ込みマーク。紙の短冊にある吊り紐用の穴を模した装飾。
+// "┷"(全角2)を━1本分と置き換えるだけなので枠全体の幅は変わらない（自前実装、echo-sd の
+// コードは転記していない）。半角のASCIIハイフンで挟んでいた旧実装は、フォント環境によって
+// ASCIIの実測幅が全角の半分ちょうどにならず枠が歪む原因になっていたため、全角文字のみで
+// 組む（実機でズレを実測した不具合）。
+const TANZAKU_TOP_MARK = "┷";
+const TANZAKU_TOP_MARK_WIDTH = 2;
 
-/** 短冊上枠を組む。幅が足りる（repeat >= 2）ときだけ中央にマークを入れる。 */
+/** 短冊上枠を組む。幅が足りる（repeat >= 1）ときだけ中央にマークを入れる。 */
 function buildTanzakuTop(repeat: number): string {
   if (repeat < TANZAKU_TOP_MARK_WIDTH / 2) return "┏" + "━".repeat(repeat) + "┓";
-  const left = Math.floor((repeat - TANZAKU_TOP_MARK_WIDTH / 2) / 2);
-  const right = repeat - TANZAKU_TOP_MARK_WIDTH / 2 - left;
+  const remaining = repeat - TANZAKU_TOP_MARK_WIDTH / 2;
+  const left = Math.floor(remaining / 2);
+  const right = remaining - left;
   return "┏" + "━".repeat(left) + TANZAKU_TOP_MARK + "━".repeat(right) + "┓";
 }
 

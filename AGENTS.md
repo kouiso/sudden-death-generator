@@ -3,7 +3,7 @@
 ## Overview
 
 sudden-death-generator - kouiso プロジェクト。「突然の死」AA をリアルタイム生成する静的サイト。
-サーバーは無く、Farm でビルドした静的アセットをそのまま配信する（Vercel）。
+サーバーは無く、Vite でビルドした静的アセットをそのまま配信する（Vercel）。
 
 ## Development
 
@@ -11,7 +11,7 @@ sudden-death-generator - kouiso プロジェクト。「突然の死」AA をリ
 
 - TypeScript
 - Preact
-- Farm（バンドラ）
+- Vite（バンドラ）
 
 ### Setup
 

@@ -45,6 +45,21 @@ describe("charWidth", () => {
     expect(charWidth("\u{2068}".codePointAt(0)!)).toBe(0); // FIRST STRONG ISOLATE
     expect(charWidth("\u{2069}".codePointAt(0)!)).toBe(0); // POP DIRECTIONAL ISOLATE
   });
+
+  it("結合文字単体（基底文字を伴わない孤立した状態）は幅0", () => {
+    // コピペ由来の孤立した結合文字（例: 濁点だけがクリップボードに残る等）が
+    // 書記素クラスタの先頭に来ると、以前は「未知の文字」として全角(2)扱いされ、
+    // 実際は表示幅を持たない（隣接する何らかの文字に重なって描画される）のに
+    // 行の表示幅計算だけが2桁分膨らんでいた（自己レビューで発見・修正）。
+    expect(charWidth("\u{0301}".codePointAt(0)!)).toBe(0); // COMBINING ACUTE ACCENT
+    expect(charWidth("\u{3099}".codePointAt(0)!)).toBe(0); // COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK
+  });
+
+  it("合成済み文字（NFC）は結合文字扱いにならず従来通り全角", () => {
+    // U+00E9 (é、単一コードポイントの合成済み文字) は Unicode 一般カテゴリが Ll
+    // （小文字）であって Mn ではないため、上の孤立結合文字の判定に巻き込まれない。
+    expect(charWidth("é".codePointAt(0)!)).toBe(2);
+  });
 });
 
 describe("clusterWidth", () => {

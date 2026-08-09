@@ -224,7 +224,9 @@ button {
 
 .share-bar {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* ボタンは4つ（コピー / X / LINE / リンクをコピー）。3列固定だと4つ目だけ
+   * 2段目に落ちて1/3幅になり見た目が崩れる（実機のスクショで確認した不具合）。 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
@@ -266,6 +268,31 @@ button {
    * ブランドの色相・彩度を保ったまま輝度だけ落として 5.48:1 まで確保している。 */
   background: #037a33;
   color: #ffffff;
+}
+
+.share-button--link {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+}
+
+.share-button--link:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+
+/* disabled は cursor だけでは見た目に出ないため、明示的に不透明度を落として無効状態と分かるようにする
+ * （入力が長すぎてリンク共有できない場合。ShareBar の linkCopyDisabled 参照）。 */
+.share-button--link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* <a> は disabled 属性を持たないため aria-disabled で判定する。X/LINE シェアURLが安全な
+ * 長さの上限を超える場合（ShareBar の shareDisabled 参照）に同じ見た目・操作不可を適用する。 */
+.share-button[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .share-note {
@@ -310,11 +337,18 @@ button {
   background: var(--color-danger);
 }
 
-/* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では3列だと
+/* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では4列だと
  * 「𝕏 でシェア」「LINE で送信」の文字が折り返して読みにくくなる（実機で確認した不具合）。
  * 実機幅より十分広く余裕を持たせた閾値で縦積みに切り替える。 */
 @media (max-width: 480px) {
   .share-bar {
     grid-template-columns: 1fr;
+  }
+}
+
+/* 480px は超えるが4列だとまだ窮屈な中間幅（タブレット縦持ち等）向けに2列で1段折り返す。 */
+@media (min-width: 481px) and (max-width: 640px) {
+  .share-bar {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

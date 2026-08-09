@@ -18,7 +18,7 @@
 
 | カテゴリ | 技術 |
 | --- | --- |
-| ビルド | [Farm](https://farmfe.org/) |
+| ビルド | [Vite](https://vitejs.dev/) |
 | UI | [Preact](https://preactjs.com/) |
 | 言語 | TypeScript |
 | テスト | [Vitest](https://vitest.dev/) |

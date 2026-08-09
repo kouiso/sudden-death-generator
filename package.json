@@ -4,13 +4,15 @@
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "farm start",
-    "build": "farm build",
-    "preview": "farm preview",
-    "clean": "farm clean",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src",
+    "lint": "oxlint src --deny-warnings",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -18,13 +20,11 @@
     "preact": "^10.29.8"
   },
   "devDependencies": {
-    "@farmfe/cli": "^1.0.5",
-    "@farmfe/core": "^1.7.11",
-    "@farmfe/plugin-react": "^1.2.6",
+    "@preact/preset-vite": "^2.10.6",
     "@types/node": "^22.15.0",
     "oxlint": "^1.77.0",
-    "react-refresh": "^0.18.0",
     "typescript": "^7.0.2",
+    "vite": "^8.2.1",
     "vitest": "^4.1.10"
   }
 }

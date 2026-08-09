@@ -8,9 +8,16 @@
   font-family: "SD Symbols Mono";
   src: url("/fonts/sd-symbols.woff2") format("woff2");
   font-display: block;
-  unicode-range: U+0059, U+005E, U+2190-2193, U+2196-2199, U+2500-2503, U+250C, U+250F, U+2510,
-    U+2513, U+2514, U+2517, U+2518, U+251B, U+2537, U+4EBA, U+FE10-FE19, U+FE35-FE40, U+FE41-FE44,
-    U+FE47-FE48, U+FF1C, U+FF1E, U+FF3F, U+FF5C, U+FFE3;
+  /*
+   * ASCII印字可能域(U+0020-007E)を丸ごと含む。表示幅モデルは「半角=全角ちょうど半分」を
+   * 前提にしており、ASCIIを和文フォントより先に評価されるLatin専用等幅フォント
+   * （tokens.css の --font-mono 参照）に任せると、その等幅フォントの実測幅が0.5emから
+   * 外れて枠がズレる。このフォントで固定することでフォント環境に関わらず0.5emを保証する
+   * （自己レビューで発見・修正）。
+   */
+  unicode-range: U+0020-007E, U+2190-2193, U+2196-2199, U+2500-2503, U+250C, U+250F, U+2510,
+    U+2513, U+2514, U+2517, U+2518, U+251B, U+2537, U+3000, U+4EBA, U+FE10-FE19, U+FE35-FE40,
+    U+FE41-FE44, U+FE47-FE48, U+FF1C, U+FF1E, U+FF3F, U+FF5C, U+FFE3;
 }
 
 /*
