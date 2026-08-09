@@ -25,13 +25,21 @@ function isShapeKind(value: string | null): value is ShapeKind {
 /**
  * クエリ文字列から状態を復元する。パラメータが無い・不正な場合は各項目 undefined を返し、
  * 呼び出し側の既定値（空文字・normal・false 等）にフォールバックさせる。
+ *
+ * 書き込み側（buildPermalinkQuery + isPermalinkQueryTooLong）は上限を超えるクエリを
+ * 生成しないが、読み込み側はブラウザ履歴・ブックマーク・他者から共有された URL 等、
+ * このアプリが書いたとは限らない任意の文字列を受け取る。上限チェックを書き込み時だけに
+ * 課すと、細工された極端に長い text= を渡す URL で初回レンダー時に renderSuddenDeath へ
+ * 巨大な文字列がそのまま渡り、初回ペイントが極端に重くなる・固まる恐れがある
+ * （fresh evidence、自己レビューで指摘）。読み込み側でも同じ上限で弾き、
+ * 超過時は text を既定値へフォールバックさせる。
  */
 export function parsePermalink(search: string): Partial<PermalinkState> {
   const params = new URLSearchParams(search);
   const result: Partial<PermalinkState> = {};
 
   const text = params.get("text");
-  if (text !== null) result.text = text;
+  if (text !== null && text.length <= MAX_PERMALINK_QUERY_LENGTH) result.text = text;
 
   const shape = params.get("shape");
   if (isShapeKind(shape)) result.shape = shape;

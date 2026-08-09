@@ -52,6 +52,12 @@ describe("parsePermalink", () => {
     const restored = parsePermalink("?" + buildPermalinkQuery(state));
     expect(restored).toEqual(state);
   });
+
+  it("上限を超える text は既定値にフォールバックさせる（このアプリが書いたとは限らないURLへの防御）", () => {
+    const hugeText = "あ".repeat(MAX_PERMALINK_QUERY_LENGTH + 1);
+    const result = parsePermalink("?text=" + hugeText);
+    expect(result.text).toBeUndefined();
+  });
 });
 
 describe("isPermalinkQueryTooLong", () => {

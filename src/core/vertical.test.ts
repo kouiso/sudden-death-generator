@@ -66,6 +66,14 @@ describe("toVerticalGlyph", () => {
     expect(toVerticalGlyph("]")).toBe("\u{FE48}");
   });
 
+  it("半角カナの句読点・かぎ括弧も対応する全角形と同じ提示形に変換する（自己レビューで発見）", () => {
+    // ASCII版だけ変換対応していて半角カナ版が漏れていた不具合。
+    expect(toVerticalGlyph("｡")).toBe("\u{FE12}");
+    expect(toVerticalGlyph("｢")).toBe("\u{FE41}");
+    expect(toVerticalGlyph("｣")).toBe("\u{FE42}");
+    expect(toVerticalGlyph("､")).toBe("\u{FE11}");
+  });
+
   it("ASCIIピリオドは全角句点と字形が別物なので変換しない", () => {
     expect(toVerticalGlyph(".")).toBe(".");
   });

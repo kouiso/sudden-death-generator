@@ -49,6 +49,13 @@ const VERTICAL_GLYPH_MAP: ReadonlyMap<string, string> = new Map([
   ["》", "\u{FE3E}"], // U+300B → U+FE3E PRESENTATION FORM FOR VERTICAL RIGHT DOUBLE ANGLE BRACKET
   ["〈", "\u{FE3F}"], // U+3008 → U+FE3F PRESENTATION FORM FOR VERTICAL LEFT ANGLE BRACKET
   ["〉", "\u{FE40}"], // U+3009 → U+FE40 PRESENTATION FORM FOR VERTICAL RIGHT ANGLE BRACKET
+  // 半角カナの句読点・かぎ括弧（｡｢｣､）。全角形・ASCII版と同じ理屈で、字形の意味が
+  // 同一の対応する提示形へ変換する（自己レビューで、ASCII版だけ対応して半角カナ版が
+  // 未対応だった漏れを指摘・修正）。
+  ["｡", "\u{FE12}"], // U+FF61 → 。と同じ扱い
+  ["｢", "\u{FE41}"], // U+FF62 → 「と同じ扱い
+  ["｣", "\u{FE42}"], // U+FF63 → 」と同じ扱い
+  ["､", "\u{FE11}"], // U+FF64 → 、と同じ扱い
   // ASCII半角の句読点・括弧（全角形と字形の意味が同じもののみ。ピリオドは対象外）
   [",", "\u{FE10}"],
   [":", "\u{FE13}"],
