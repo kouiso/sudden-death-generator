@@ -9,6 +9,20 @@
       content="テキストを入力するだけでリアルタイムに「突然の死」AAを生成。通常・四角形・短冊・ストレスの4形状、縦書き・余白オプション、X/LINEへそのまま共有できます。"
     />
     <link rel="icon" href="/favicon.ico" />
+    <!--
+      X / LINE への共有が主要導線なので、共有先でタイトル・説明が出るよう OGP を持たせる。
+      og:url と og:image は本番ドメインが確定してから入れる（暫定URLを焼き込むと
+      共有カードが誤ったURLを指し続けるため、確定するまで意図的に省く）。
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="突然の死ジェネレーター" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:title" content="＞　突然の死　＜ ジェネレーター" />
+    <meta
+      property="og:description"
+      content="テキストを入力するだけでリアルタイムに「突然の死」AAを生成。通常・四角形・短冊・ストレスの4形状、縦書き・余白オプションに対応。"
+    />
+    <meta name="twitter:card" content="summary" />
     <script>
       // テーマの初回チラつき防止。Farm が注入する <link rel=stylesheet> より前に
       // 同期実行させる必要があるため、head内の他要素より先に置く（インラインscriptは
@@ -28,6 +42,7 @@
         }
       })();
     </script>
+  </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>
