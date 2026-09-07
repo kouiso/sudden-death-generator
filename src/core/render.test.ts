@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderSuddenDeath } from "./render";
 import { stringWidth } from "./width";
-import type { RenderOptions } from "./types";
+import type { RenderOptions } from "./type";
 
 const base: RenderOptions = { shape: "normal", vertical: false, padding: false };
 

@@ -23,7 +23,7 @@ npm install
 
 - 日本語でコメント・ドキュメントを記述（コメントは「なぜ」を書く）
 - 既存コードスタイルに従う
-- `src/core/` はビジネスロジックを純粋関数として置く場所。UI (`src/components/`, `src/app.tsx`)
+- `src/core/` はビジネスロジックを純粋関数として置く場所。UI (`src/component/`, `src/app.tsx`)
   から状態を持ち込まない
 
 ### Commands
@@ -39,12 +39,12 @@ npm test           # vitest run
 
 ### Font subset の再生成
 
-`public/fonts/sd-symbols.woff2` は罫線・矢印の表示崩れ対策のサブセットフォント。
+`public/font/sd-symbols.woff2` は罫線・矢印の表示崩れ対策のサブセットフォント。
 再生成する場合:
 
 ```bash
 pip install fonttools brotli
-bash scripts/subset-font.sh /path/to/NotoSansMonoCJKjp-Regular.otf
+bash script/subset-font.sh /path/to/NotoSansMonoCJKjp-Regular.otf
 ```
 
-ソースフォントの取得元は `scripts/subset-font.sh` のコメントを参照。
+ソースフォントの取得元は `script/subset-font.sh` のコメントを参照。

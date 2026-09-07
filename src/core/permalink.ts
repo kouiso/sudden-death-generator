@@ -1,4 +1,4 @@
-import type { ShapeKind } from "./types";
+import type { ShapeKind } from "./type";
 
 /** URL に載せる状態。text は入力テキスト全文（複数行可）。 */
 export interface PermalinkState {

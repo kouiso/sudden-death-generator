@@ -4,14 +4,14 @@ set -euo pipefail
 # UI（見出し・ボタン・ラベル等）のフォールバックが Hiragino/Yu Gothic/Noto Sans JP のみだと、
 # それらが未導入の環境では特徴の薄い汎用ゴシックに落ちてしまう。この対策として Zen Maru Gothic
 # (SIL Open Font License 1.1) から実際に UI で使っている文字だけを抜き出し、専用の woff2 として
-# 同梱する（scripts/ui-font-corpus.txt に実際の UI 文言を列挙し、そこから必要文字を機械的に算出する
+# 同梱する（script/ui-font-corpus.txt に実際の UI 文言を列挙し、そこから必要文字を機械的に算出する
 # ことで、手打ちの Unicode 範囲指定にありがちな似た文字ブロックの取り違えを避ける）。
 #
 # 使い方:
 #   前提: Bash 4.0 以降（下記の EXPECTED_SHA256 連想配列が declare -A に依存するため。
 #         macOS 標準の /bin/bash は 3.2 系で非対応。Homebrew 等で新しい bash を入れて実行すること）
 #   pip install fonttools brotli
-#   bash scripts/subset-ui-font.sh /path/to/ZenMaruGothic-Regular.ttf \
+#   bash script/subset-ui-font.sh /path/to/ZenMaruGothic-Regular.ttf \
 #                                   /path/to/ZenMaruGothic-Bold.ttf \
 #                                   /path/to/ZenMaruGothic-Black.ttf
 #
@@ -44,8 +44,8 @@ SRC_700="${2:?ソースフォント (Bold/700) のパスを指定してくださ
 SRC_900="${3:?ソースフォント (Black/900) のパスを指定してください}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT_DIR="$ROOT_DIR/public/fonts"
-CORPUS="$ROOT_DIR/scripts/ui-font-corpus.txt"
+OUT_DIR="$ROOT_DIR/public/font"
+CORPUS="$ROOT_DIR/script/ui-font-corpus.txt"
 mkdir -p "$OUT_DIR"
 
 declare -A SRC_PATHS=([400]="$SRC_400" [700]="$SRC_700" [900]="$SRC_900")

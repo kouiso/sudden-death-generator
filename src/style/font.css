@@ -1,17 +1,17 @@
 /*
  * 罫線・矢印など East Asian Ambiguous な文字は CJK フォント未導入端末で半角描画され、
  * 四角形・短冊の枠が崩れる。該当コードポイントだけをサブセット化した woff2 で上書きし、
- * どの端末でも同じ幅で描画されるようにする（scripts/subset-font.sh で生成、
+ * どの端末でも同じ幅で描画されるようにする（script/subset-font.sh で生成、
  * Noto Sans Mono CJK JP / SIL Open Font License 1.1）。
  */
 @font-face {
   font-family: "SD Symbols Mono";
-  src: url("/fonts/sd-symbols.woff2") format("woff2");
+  src: url("/font/sd-symbols.woff2") format("woff2");
   font-display: block;
   /*
    * ASCII印字可能域(U+0020-007E)を丸ごと含む。表示幅モデルは「半角=全角ちょうど半分」を
    * 前提にしており、ASCIIを和文フォントより先に評価されるLatin専用等幅フォント
-   * （tokens.css の --font-mono 参照）に任せると、その等幅フォントの実測幅が0.5emから
+   * （token.css の --font-mono 参照）に任せると、その等幅フォントの実測幅が0.5emから
    * 外れて枠がズレる。このフォントで固定することでフォント環境に関わらず0.5emを保証する
    * （自己レビューで発見・修正）。
    */
@@ -25,25 +25,25 @@
  * それらが未導入の環境（本番の実ユーザー環境も含む）で無機質な汎用ゴシックに落ちて
  * 素っ気ない見た目になる。実際に使っている文言だけを抜き出したサブセットを同梱することで、
  * 外部フォントCDNへの依存なしに全端末で同じ丸みのある書体を出す
- * （scripts/subset-ui-font.sh で生成、Zen Maru Gothic / SIL Open Font License 1.1）。
+ * （script/subset-ui-font.sh で生成、Zen Maru Gothic / SIL Open Font License 1.1）。
  */
 @font-face {
   font-family: "Zen Maru Gothic UI";
-  src: url("/fonts/zen-maru-gothic-400.woff2") format("woff2");
+  src: url("/font/zen-maru-gothic-400.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Zen Maru Gothic UI";
-  src: url("/fonts/zen-maru-gothic-700.woff2") format("woff2");
+  src: url("/font/zen-maru-gothic-700.woff2") format("woff2");
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Zen Maru Gothic UI";
-  src: url("/fonts/zen-maru-gothic-900.woff2") format("woff2");
+  src: url("/font/zen-maru-gothic-900.woff2") format("woff2");
   font-weight: 900;
   font-display: swap;
 }

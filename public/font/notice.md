@@ -8,13 +8,13 @@
 専用フォントを同梱している。
 
 - 元フォント: [Noto Sans Mono CJK JP](https://github.com/notofonts/noto-cjk/blob/main/Sans/Mono/NotoSansMonoCJKjp-Regular.otf)
-- ライセンス: SIL Open Font License, Version 1.1（同梱の `LICENSE-OFL.txt` 参照）
+- ライセンス: SIL Open Font License, Version 1.1（同梱の `license-ofl.txt` 参照）
 - ソース検証: 2026-08-04 に取得したソースフォントの SHA-256 は
   `4d01725be822d144cf9a56ade981e6fb920cd7a610b8fc24cc601a920beea5b9`。
-  `scripts/subset-font.sh` はこの値と一致しないファイルを拒否する（`main` 参照は特定コミットに
+  `script/subset-font.sh` はこの値と一致しないファイルを拒否する（`main` 参照は特定コミットに
   固定していないため、改変・別物のファイルが渡された場合に同じ手順で異なる `sd-symbols.woff2` が
   生成されるのを防ぐための最終防御）
-- 生成方法: `scripts/subset-font.sh`（fonttools の `pyftsubset` で該当コードポイントのみ抽出）
+- 生成方法: `script/subset-font.sh`（fonttools の `pyftsubset` で該当コードポイントのみ抽出）
 - 収録文字: ASCII印字可能域 U+0020–007E（半角スペース〜チルダ、全ての枠・入力テキストの
   半角文字がこのフォントの0.5em幅に固定される。以前は `Y ^` の2文字のみ収録しておりASCII
   混在入力でフォント環境依存の枠ズレが起きていたため、2026-08-09 に拡張した）+
@@ -37,17 +37,17 @@ UI（見出し・ボタン・ラベル等）が Hiragino Sans / Yu Gothic UI / N
 
 - 元フォント: [Zen Maru Gothic](https://github.com/google/fonts/tree/main/ofl/zenmarugothic)
   （Google Fonts 経由で配布、weight 400 / 700 / 900）
-- ライセンス: SIL Open Font License, Version 1.1（同梱の `LICENSE-OFL-ZenMaruGothic.txt` 参照。
+- ライセンス: SIL Open Font License, Version 1.1（同梱の `license-ofl-zen-maru-gothic.txt` 参照。
   Copyright 2021 The Zen Maru Gothic Project Authors）
 - ソース検証: 2026-08-05 に `fonts.gstatic.com` から取得したソースフォント（各ウェイトの TTF）の
-  SHA-256 は `scripts/subset-ui-font.sh` の `EXPECTED_SHA256` 連想配列に記載の値。一致しない
+  SHA-256 は `script/subset-ui-font.sh` の `EXPECTED_SHA256` 連想配列に記載の値。一致しない
   ファイルは拒否する（`main` 参照はコミット固定ではないため、改変・別物のファイルが渡された場合の
   最終防御）
-- 生成方法: `scripts/subset-ui-font.sh`（`scripts/ui-font-corpus.txt` に列挙した実際の UI 文言から
+- 生成方法: `script/subset-ui-font.sh`（`script/ui-font-corpus.txt` に列挙した実際の UI 文言から
   `pyftsubset --text-file` で必要文字を機械的に抽出。手打ちの Unicode 範囲指定にありがちな
   似た文字ブロックの取り違えを避けるため、コードポイントではなく実文言そのものを入力にしている）
-- 収録範囲: `scripts/ui-font-corpus.txt` に列挙した実際の UI 文言（見出し・ボタン・ラベル・
+- 収録範囲: `script/ui-font-corpus.txt` に列挙した実際の UI 文言（見出し・ボタン・ラベル・
   トースト文言等）＋ ASCII 印字可能域（U+0020–007E）。数式用の 𝕏（U+1D54F、X共有ボタンの装飾）は
   対象外で、フォントスタックの次の候補にフォールバックする
-- UI コピーを追加・変更した場合は `scripts/ui-font-corpus.txt` を更新し、
-  `bash scripts/subset-ui-font.sh <400.ttf> <700.ttf> <900.ttf>` を再実行すること
+- UI コピーを追加・変更した場合は `script/ui-font-corpus.txt` を更新し、
+  `bash script/subset-ui-font.sh <400.ttf> <700.ttf> <900.ttf>` を再実行すること

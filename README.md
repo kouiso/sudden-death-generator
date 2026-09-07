@@ -53,12 +53,12 @@ npm test           # vitest run
 
 ## ライセンス
 
-MIT（`LICENSE` 参照）。同梱のサブセットフォント `public/fonts/sd-symbols.woff2` と
-`public/fonts/zen-maru-gothic-*.woff2` のみ SIL Open Font License 1.1
-（`public/fonts/LICENSE-OFL.txt` / `public/fonts/LICENSE-OFL-ZenMaruGothic.txt` 参照、元フォントは
+MIT（`LICENSE` 参照）。同梱のサブセットフォント `public/font/sd-symbols.woff2` と
+`public/font/zen-maru-gothic-*.woff2` のみ SIL Open Font License 1.1
+（`public/font/license-ofl.txt` / `public/font/license-ofl-zen-maru-gothic.txt` 参照、元フォントは
 [Noto Sans Mono CJK JP](https://github.com/notofonts/noto-cjk) /
 [Zen Maru Gothic](https://github.com/google/fonts/tree/main/ofl/zenmarugothic)）。
-詳細は `public/fonts/NOTICE.md` 参照。
+詳細は `public/font/notice.md` 参照。
 
 ## 参考にした先行実装
 
