@@ -1,4 +1,4 @@
-import type { CharWidth } from "./types";
+import type { CharWidth } from "./type";
 
 const ASCII_PRINTABLE_START = 0x20;
 const ASCII_PRINTABLE_END = 0x7e;

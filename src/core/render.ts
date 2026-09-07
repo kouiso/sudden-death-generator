@@ -1,4 +1,4 @@
-import type { FrameGlyphs, RenderOptions } from "./types";
+import type { FrameGlyphs, RenderOptions } from "./type";
 import { evenCeil, maxLineWidth, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
 import { toVerticalGlyph } from "./vertical";
 

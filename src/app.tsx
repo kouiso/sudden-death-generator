@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { renderSuddenDeath, type ShapeKind } from "./core";
 import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
-import { Editor } from "./components/editor";
-import { Preview } from "./components/preview";
-import { ShapePicker } from "./components/shape-picker";
-import { ShareBar } from "./components/share-bar";
-import { Toast } from "./components/toast";
-import { useClipboard } from "./hooks/use-clipboard";
-import { useTheme } from "./hooks/use-theme";
+import { Editor } from "./component/editor";
+import { Preview } from "./component/preview";
+import { ShapePicker } from "./component/shape-picker";
+import { ShareBar } from "./component/share-bar";
+import { Toast } from "./component/toast";
+import { useClipboard } from "./hook/use-clipboard";
+import { useTheme } from "./hook/use-theme";
 
 // マウント時に1回だけ読む。以降の状態変更は下の useEffect が URL 側へ反映する
 // （URL → state は初期表示のみ。逆方向の state → URL は常に同期する片方向フロー）。
