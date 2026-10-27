@@ -1,0 +1,6 @@
+このリポジトリのソフトウェアは MIT License（LICENSE 参照）の下で提供される。
+
+Software フォントは同梱の public/font/sd-symbols.woff2 と public/font/zen-maru-gothic-*.woff2 を
+除く。前者は Noto Sans Mono CJK JP のサブセット、後者は Zen Maru Gothic のサブセットであり、
+いずれも SIL Open Font License, Version 1.1 の下でライセンスされる
+（public/font/license-ofl.txt, public/font/license-ofl-zen-maru-gothic.txt 参照）。

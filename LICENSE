@@ -20,9 +20,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
----
-
-Software フォントは同梱の public/font/sd-symbols.woff2 と public/font/zen-maru-gothic-*.woff2 を
-除く。前者は Noto Sans Mono CJK JP のサブセット、後者は Zen Maru Gothic のサブセットであり、
-いずれも SIL Open Font License, Version 1.1 の下でライセンスされる
-（public/font/license-ofl.txt, public/font/license-ofl-zen-maru-gothic.txt 参照）。
