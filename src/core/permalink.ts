@@ -61,12 +61,19 @@ export function parsePermalink(search: string): Partial<PermalinkState> {
 
 /**
  * 状態からクエリ文字列（先頭 "?" 無し）を組み立てる。既定値と同じ項目は省略し、URL を短く保つ。
+ *
+ * tanzaku は常に縦書き、stress は縦書きオプションの影響を受けない（render.ts 参照）ため、
+ * これらの形状では vertical の値に関わらず同じ見た目・同じ復元結果になる。内部 state に
+ * 残った vertical=1 をそのまま query に書くと、見た目が同じなのに URL が一意にならない。
+ * そのため vertical を載せるのは値が意味を持つ形状（normal/square）のときだけに限定する
+ * （UI 側の state は保持したまま、URL 表現だけを canonical にする）。
  */
 export function buildPermalinkQuery(state: PermalinkState): string {
   const params = new URLSearchParams();
   if (state.text !== "") params.set("text", state.text);
   if (state.shape !== "normal") params.set("shape", state.shape);
-  if (state.vertical) params.set("vertical", "1");
+  const verticalMeaningful = state.shape === "normal" || state.shape === "square";
+  if (state.vertical && verticalMeaningful) params.set("vertical", "1");
   if (state.padding) params.set("padding", "1");
   return params.toString();
 }

@@ -19,6 +19,20 @@ describe("buildPermalinkQuery", () => {
     expect(params.get("padding")).toBe("1");
   });
 
+  it("vertical が意味を持たない形状（tanzaku/stress）では vertical=1 を query に残さない", () => {
+    for (const shape of ["tanzaku", "stress"] as const) {
+      const qs = buildPermalinkQuery({ text: "a", shape, vertical: true, padding: false });
+      expect(new URLSearchParams(qs).has("vertical")).toBe(false);
+    }
+  });
+
+  it("vertical が効く形状（normal/square）では vertical=1 を query に残す", () => {
+    for (const shape of ["normal", "square"] as const) {
+      const qs = buildPermalinkQuery({ text: "a", shape, vertical: true, padding: false });
+      expect(new URLSearchParams(qs).get("vertical")).toBe("1");
+    }
+  });
+
   it("複数行の入力も往復できる（改行が失われない）", () => {
     const text = "残業\n休日出勤\n上司の圧";
     const qs = buildPermalinkQuery({ text, shape: "stress", vertical: false, padding: false });
