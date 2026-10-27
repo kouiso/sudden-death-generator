@@ -1,4 +1,6 @@
 .DS_Store
+# Windows がフォルダ表示設定に応じて自動生成する（macOS の .DS_Store 相当）
+desktop.ini
 .env
 /node_modules/
 
