@@ -48,3 +48,9 @@ bash script/subset-font.sh /path/to/NotoSansMonoCJKjp-Regular.otf
 ```
 
 ソースフォントの取得元は `script/subset-font.sh` のコメントを参照。
+
+## GitHub Project での作業管理
+
+- この repo の作業は GitHub Project（`.github/scrum-board.yml` の番号）で管理する
+- 次にやる物と、課題の起こし方は `.agents/skills/scrum-board/SKILL.md`
+- Status は Backlog / In progress / In review / Done の 4 つ。Todo は作らん
