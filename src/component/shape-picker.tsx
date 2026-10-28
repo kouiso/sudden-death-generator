@@ -1,5 +1,5 @@
 import { useRef } from "preact/hooks";
-import type { JSX } from "preact";
+import type { TargetedKeyboardEvent } from "preact";
 import type { ShapeKind } from "../core";
 
 export interface ShapePickerProps {
@@ -20,7 +20,7 @@ export function ShapePicker({ value, onChange }: ShapePickerProps) {
 
   // WAI-ARIA の radiogroup パターン: グループ内は roving tabindex にし、
   // 矢印キーで選択が移動する（Tab は1回でグループを通過する）。
-  const handleKeyDown = (event: JSX.TargetedKeyboardEvent<HTMLButtonElement>, index: number) => {
+  const handleKeyDown = (event: TargetedKeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex: number | null = null;
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       nextIndex = (index + 1) % SHAPES.length;
