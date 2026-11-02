@@ -37,6 +37,8 @@ npm run preview    # 本番ビルドをローカルで確認
 npm run lint       # oxlint
 npm run typecheck  # tsc --noEmit
 npm test           # vitest run
+npx playwright install chromium  # 初回のみブラウザを導入
+npm run test:e2e   # 本番ビルドでブラウザ回帰検証
 ```
 
 ## コア描画ロジック
