@@ -1,12 +1,40 @@
 # テスト仕様書
 
-新実装（Preact + Farm + TypeScript 7）の受入テスト。実施結果は各項目に追記する。
+Preact + Vite + TypeScript の受入テスト。
+
+## 現行の自動検証（2026-11-02 UTC）
+
+対象コードは `e959ac17c1c739ca175661ef900e6b1658a6fb3d`。
+単体テストは4ファイル・152件、ブラウザ回帰はChromiumで13件成功した。
+lint・型検査・本番ビルドも成功した。CIは停止中で、実測はローカルの結果。
+
+```bash
+npm ci
+npx playwright install chromium
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+```
+
+`test:e2e` は本番ビルドを作り直し、専用ポートで配信して検証する。
+入力、4形状、縦書き・余白、実クリップボード、通知の消去、リンク復元、
+X・LINEのURL、矢印キーとTab、長文の共有制限を確認する。
+375px・428pxではページの横はみ出し、共有文の折り返し、通知の重なりも測る。
+全シナリオでブラウザの例外とコンソールエラーがないことを確認する。
+X・LINEへは送信しない。URLの内容だけを確認する。
+
+結果は `npx playwright show-report` で開く。
+レポートには実行時のコミットSHAとUTC日時を記録する。
+最新の件数・日時・対象SHAは、固定の過去記録ではなくこのレポートで確認する。
+CI再開後はPRごとに同じ検証が走り、`browser-regression-<SHA>` に保存される。
+保存期間は7日間。以下の古い実施結果は変更当時の記録として残す。
 
 ## 実施環境
 
 - ビルド: `npm run build`（本番ビルド）
 - サーバー: `npm run preview` で本番ビルドを配信
-- 検証ツール: Playwright（Chromium, `/opt/pw-browsers/chromium-1194`）
+- 検証ツール: Playwright 1.56.1（Chromium 141）
 - 自動テスト: `vitest run`（`src/core/*.test.ts`）
 
 ---
@@ -23,7 +51,7 @@
 | A6 | ストレス形状の行消費順序 | 入力行を順にジグザグへ消費し、最終行を枠で締める |
 | A7 | 余白オプション | 枠の内側上下に空行が1行ずつ増える |
 
-## B. 実機（ブラウザ）受入テスト
+## B. ブラウザ受入テスト
 
 | # | 項目 | 操作 | 期待結果 |
 |---|---|---|---|
