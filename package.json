@@ -12,14 +12,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src --deny-warnings",
+    "lint": "oxlint src tests playwright.config.ts --deny-warnings",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest"
   },
   "dependencies": {
     "preact": "^11.0.2"
   },
   "devDependencies": {
+    "@playwright/test": "1.56.1",
     "@preact/preset-vite": "^2.10.6",
     "@types/node": "^26.6.5",
     "oxlint": "^1.89.0",
