@@ -18,7 +18,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "preact": "^11.0.2"
+    "preact": "^11.1.0"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",
