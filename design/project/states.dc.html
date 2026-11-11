@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ボタンの状態</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.r{--sf:#ffffff;--sfm:#f6f8fc;--bd:#dde3ef;--tx:#1c2333;--mu:#5b6478;--ac:#2f5fe0;--ach:#1f47b8;--ok:#137a54;--ng:#b3243f;--onac:#ffffff;--xbd:#14171a;background:linear-gradient(160deg,#eef2fb,#e4e9f5);color:var(--tx);font-family:'Zen Maru Gothic',sans-serif;box-sizing:border-box}
+.r[data-theme=dark]{--sf:#1a1e2b;--sfm:#23283a;--bd:#2d3245;--tx:#e8ebf4;--mu:#9aa2b8;--ac:#6d8bff;--ach:#8ca0ff;--ok:#3fcf94;--ng:#ff7a90;--onac:#0b0e17;--xbd:#565e7a;background:linear-gradient(160deg,#141824,#0a0c12)}
+.r *{box-sizing:border-box}
+table{border-collapse:separate;border-spacing:14px 12px}
+th{font-size:12px;color:var(--mu);font-weight:700;text-align:left;padding:0 4px}
+td{vertical-align:middle}
+.rl{font-size:14px;font-weight:700;white-space:nowrap}
+.sb{height:48px;min-width:200px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;border:1.5px solid transparent;font:700 15px 'Zen Maru Gothic',sans-serif;white-space:nowrap;padding:0 14px;text-decoration:none;cursor:pointer}
+.cp{background:var(--ac);color:var(--onac)}
+.cph{background:var(--ach);color:var(--onac)}
+.x{background:#14171a;color:#ffffff;border-color:var(--xbd)}
+.xh{background:#2a2f36;color:#ffffff;border-color:var(--xbd)}
+.ln{background:#037a33;color:#ffffff}
+.lnh{background:#026a2c;color:#ffffff}
+.lk{background:var(--sfm);color:var(--tx);border:1.5px solid var(--bd)}
+.lkh{background:var(--sfm);color:var(--ac);border:1.5px solid var(--ac)}
+.fo{outline:2px solid var(--ac);outline-offset:2px}
+.dis{opacity:.5;cursor:not-allowed}
+.toast{display:flex;align-items:center;gap:6px;min-height:24px;margin:0;font-size:14px;font-weight:700}
+.note{margin:0;font-size:12px;color:var(--mu);line-height:1.6}
+</style>
+</helmet>
+<div class="r" data-theme="{{theme}}" style="width: 1680px; height: 640px; padding: 36px 40px; display: flex; gap: 40px; align-items: flex-start">
+  <table>
+    <tr><th></th><th>ふだん</th><th>マウスを乗せた</th><th>キーボードで選んだ</th><th>押せない（長すぎる）</th><th>押した後</th></tr>
+    <tr><td class="rl">コピー</td><td><button class="sb cp">コピー</button></td><td><button class="sb cph">コピー</button></td><td><button class="sb cp fo">コピー</button></td><td><span class="note">押せない状態はなし</span></td><td><button class="sb cp">✓ コピー済み</button></td></tr>
+    <tr><td class="rl">𝕏</td><td><a class="sb x" href="#x">𝕏 でシェア</a></td><td><a class="sb xh" href="#x">𝕏 でシェア</a></td><td><a class="sb x fo" href="#x">𝕏 でシェア</a></td><td><a class="sb x dis" aria-disabled="true">𝕏 でシェア</a></td><td><span class="note">別タブで開く</span></td></tr>
+    <tr><td class="rl">LINE</td><td><a class="sb ln" href="#line">LINE で送信</a></td><td><a class="sb lnh" href="#line">LINE で送信</a></td><td><a class="sb ln fo" href="#line">LINE で送信</a></td><td><a class="sb ln dis" aria-disabled="true">LINE で送信</a></td><td><span class="note">別タブで開く</span></td></tr>
+    <tr><td class="rl">リンク</td><td><button class="sb lk">リンクをコピー</button></td><td><button class="sb lkh">リンクをコピー</button></td><td><button class="sb lk fo">リンクをコピー</button></td><td><button class="sb lk dis" disabled>リンクをコピー</button></td><td><button class="sb lk">✓ コピー済み</button></td></tr>
+  </table>
+  <div style="display: flex; flex-direction: column; gap: 14px; width: 300px; padding-top: 30px">
+    <p class="rl" style="margin: 0; white-space: normal">知らせ（ボタンのすぐ下の行に出す）</p>
+    <p class="toast" style="color: var(--ok)">コピーしました</p>
+    <p class="toast" style="color: var(--ng)">コピーできませんでした。もう一度押してください</p>
+    <p class="note">知らせの行は高さ 24px を先に取っておく。出ても消えてもカードの高さは変わらず、スマホでも押したボタンのすぐ下に見える。失敗もここに出す。</p>
+    <p class="note">押せない時は、マウスの形も「押せない」にそろえる。理由はボタンの下の注記に1行で出す（例: 入力が長すぎるため、リンクでの共有はできません）。</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1680,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'light' }; }
+}
+</script>
+</body>
+</html>

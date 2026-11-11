@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>幅ごとの並び</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.r{--bg:#f1f4f9;--sf:#ffffff;--sfm:#f6f8fc;--bd:#dde3ef;--tx:#1c2333;--mu:#5b6478;--ac:#2f5fe0;--ok:#137a54;--onac:#ffffff;--xbd:#14171a;background:linear-gradient(160deg,#eef2fb,#e4e9f5);color:var(--tx);font-family:'Zen Maru Gothic',sans-serif;box-sizing:border-box}
+.r[data-theme=dark]{--bg:#10131c;--sf:#1a1e2b;--sfm:#23283a;--bd:#2d3245;--tx:#e8ebf4;--mu:#9aa2b8;--ac:#6d8bff;--ok:#3fcf94;--onac:#0b0e17;--xbd:#565e7a;background:linear-gradient(160deg,#141824,#0a0c12)}
+.r *{box-sizing:border-box}
+.fr{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.lab{margin:0;font-size:14px;font-weight:700}
+.sub{margin:0;font-size:12px;color:var(--mu);line-height:1.6}
+.pre{height:72px;border-radius:14px;background:var(--sfm);border:1px solid var(--bd)}
+.g{display:grid;gap:10px}
+.sb{height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;border:1.5px solid transparent;font:700 15px 'Zen Maru Gothic',sans-serif;white-space:nowrap;padding:0 12px;text-decoration:none}
+.cp{background:var(--ac);color:var(--onac)}
+.x{background:#14171a;color:#ffffff;border-color:var(--xbd)}
+.ln{background:#037a33;color:#ffffff}
+.lk{background:var(--sfm);color:var(--tx);border:1.5px solid var(--bd)}
+.grp{display:flex;flex-direction:column;gap:6px}
+.gl{margin:0;font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.06em}
+.case{display:inline-flex;align-self:flex-start;height:26px;padding:0 10px;border-radius:13px;background:var(--ac);color:var(--onac);font-size:12px;font-weight:700;align-items:center}
+</style>
+</helmet>
+<div class="r" data-theme="{{theme}}" style="width: 1680px; height: 1040px; padding: 40px 48px; display: flex; flex-direction: column; gap: 28px">
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <p class="lab" style="font-size: 24px; font-weight: 900">共有ボタン4つを、余り列なく均等に並べる</p>
+    <p class="sub" style="font-size: 14px">どの幅でもラベルを折り返さず、横スクロールを出さない。ボタンの高さは 48px でそろえる。主操作の「コピー」だけをアクセント色にする。</p>
+  </div>
+
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 720px">
+      <span class="case">案A 721px 以上: 4列</span>
+      <div class="fr">
+        <div class="pre"></div>
+        <div class="g" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
+          <button class="sb cp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>コピー</button>
+          <a class="sb x" href="#x">𝕏 でシェア</a>
+          <a class="sb ln" href="#line">LINE で送信</a>
+          <button class="sb lk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1"/><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>リンクをコピー</button>
+        </div>
+      </div>
+      <p class="sub">1段で並ぶ。使う頻度の高い「コピー」を左端に置く。ただし実際のカードの中身は最大 662px で、1つ 158px になり「リンクをコピー」が2行に折れる（今の実装で確認）。採るならカードの最大幅を 800px 程度に広げる。</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 720px">
+      <span class="case">案B 721px 以上: 意味ごとの2×2</span>
+      <div class="fr">
+        <div class="pre"></div>
+        <div class="g" style="grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+          <div class="grp"><p class="gl">コピーする</p><div class="g" style="grid-template-columns: repeat(2, minmax(0, 1fr))"><button class="sb cp">コピー</button><button class="sb lk">リンクをコピー</button></div></div>
+          <div class="grp"><p class="gl">送る</p><div class="g" style="grid-template-columns: repeat(2, minmax(0, 1fr))"><a class="sb x" href="#x">𝕏 でシェア</a><a class="sb ln" href="#line">LINE で送信</a></div></div>
+        </div>
+      </div>
+      <p class="sub">「手元にコピー」と「その場で送る」を分ける。小見出しのぶん 20px 高くなる。実際のカードの中身 662px では1つ 157px になり、案A と同じく幅が足りない。</p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 560px">
+      <span class="case">おすすめ 481px 以上: 2列×2段</span>
+      <div class="fr">
+        <div class="g" style="grid-template-columns: repeat(2, minmax(0, 1fr))">
+          <button class="sb cp">コピー</button><button class="sb lk">リンクをコピー</button>
+          <a class="sb x" href="#x">𝕏 でシェア</a><a class="sb ln" href="#line">LINE で送信</a>
+        </div>
+      </div>
+      <p class="sub">コピー系を上段、送る系を下段に置く。カードの中身が最大の 662px でも1つ 326px あり、どの幅でも折り返さない。切り替えは 480px の1か所だけになる。「画面全体」の2枚はこの並びで描いた。</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 375px">
+      <span class="case" style="background: var(--mu)">480px 以下: 1列（375px）</span>
+      <div class="fr">
+        <div class="g" style="grid-template-columns: repeat(1, minmax(0, 1fr))">
+          <button class="sb cp">コピー</button><button class="sb lk">リンクをコピー</button>
+          <a class="sb x" href="#x">𝕏 でシェア</a><a class="sb ln" href="#line">LINE で送信</a>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 320px">
+      <span class="case" style="background: var(--mu)">320px</span>
+      <div class="fr" style="padding: 16px">
+        <div class="g" style="grid-template-columns: repeat(1, minmax(0, 1fr))">
+          <button class="sb cp">コピー</button><button class="sb lk">リンクをコピー</button>
+          <a class="sb x" href="#x">𝕏 でシェア</a><a class="sb ln" href="#line">LINE で送信</a>
+        </div>
+      </div>
+      <p class="sub">確かめる幅: 320 / 375 / 428 / 720px</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1680,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'light' }; }
+}
+</script>
+</body>
+</html>
