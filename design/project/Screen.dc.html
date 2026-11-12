@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>画面全体（PC）</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic&amp;family=Zen+Maru+Gothic:wght@400;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}a:hover{color:inherit}
+.r{--bg1:#eef2fb;--bg2:#e4e9f5;--sf:#ffffff;--sfm:#f6f8fc;--bd:#dde3ef;--tx:#1c2333;--mu:#5b6478;--ac:#2f5fe0;--acs:#1f47b8;--act:#e9eefc;--onac:#ffffff;--ok:#137a54;--xbg:#14171a;--xbd:#14171a;--sh:0 20px 45px -25px rgba(31,43,92,.35),0 2px 8px -2px rgba(31,43,92,.12);background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--tx);font-family:'Zen Maru Gothic','Hiragino Sans','Noto Sans JP',sans-serif;box-sizing:border-box}
+.r[data-theme=dark]{--bg1:#141824;--bg2:#0a0c12;--sf:#1a1e2b;--sfm:#23283a;--bd:#2d3245;--tx:#e8ebf4;--mu:#9aa2b8;--ac:#6d8bff;--acs:#8ca0ff;--act:#232b47;--onac:#0b0e17;--ok:#3fcf94;--xbg:#0b0d12;--xbd:#565e7a;--sh:none}
+.r *{box-sizing:border-box}
+.shell{width:100%;max-width:720px;display:flex;flex-direction:column;gap:16px;container-type:inline-size}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ttl{margin:0;font-size:32px;font-weight:900;letter-spacing:.02em;line-height:1.3}
+.sub{margin:4px 0 0;color:var(--mu);font-size:14px;line-height:1.6;text-wrap:balance}
+.tg{flex-shrink:0;width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:var(--sf);color:var(--tx);display:grid;place-items:center;cursor:pointer}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--sh);padding:28px;display:flex;flex-direction:column;gap:20px}
+.fld{display:flex;flex-direction:column;gap:8px}
+.lab{margin:0;font-size:13.5px;font-weight:700;color:var(--mu)}
+.ta{width:100%;min-height:96px;resize:vertical;padding:12px 14px;border:1.5px solid var(--bd);border-radius:14px;background:var(--sfm);color:var(--tx);font:400 16px/1.5 'BIZ UDGothic','Noto Sans Mono CJK JP',monospace}
+.ta::placeholder{color:var(--mu)}
+.hint{margin:0;font-size:13px;line-height:1.6;color:var(--mu)}
+.opts{display:flex;flex-wrap:wrap;gap:4px 20px}
+.ck{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14.5px;cursor:pointer}
+.ck input{width:18px;height:18px;margin:0;accent-color:var(--ac)}
+.ck.off{color:var(--mu);cursor:not-allowed}
+.shapes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.sp{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:8px;border:1.5px solid var(--bd);background:var(--sfm);color:var(--tx);font:700 13.5px 'Zen Maru Gothic',sans-serif;cursor:pointer}
+.sp[aria-checked=true]{border-color:var(--ac);background:var(--act);color:var(--acs)}
+.pv{position:relative;border:1.5px solid var(--bd);border-radius:14px;background:var(--sfm);min-height:160px;overflow:hidden}
+.pvs{overflow-x:auto;padding:20px}
+.pre{margin:0;font:400 16px/1.5 'BIZ UDGothic','Noto Sans Mono CJK JP',monospace;white-space:pre;color:var(--tx)}
+.share{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sb{height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;border:1.5px solid transparent;font:700 15px 'Zen Maru Gothic',sans-serif;white-space:nowrap;padding:0 12px;text-decoration:none;cursor:pointer}
+.cp{background:var(--ac);color:var(--onac)}
+.lk{background:var(--sfm);color:var(--tx);border-color:var(--bd)}
+.x{background:var(--xbg);color:#ffffff;border-color:var(--xbd)}
+.ln{background:#037a33;color:#ffffff}
+.st{display:flex;align-items:center;gap:6px;min-height:24px;margin:0;font-size:13.5px;font-weight:700;color:var(--ok)}
+.note{margin:0;font-size:12.5px;line-height:1.7;color:var(--mu)}
+.ft{margin:0;text-align:center;font-size:12.5px;color:var(--mu)}
+@container (max-width: 480px){
+.ttl{font-size:24px}
+.card{padding:16px}
+.shapes{grid-template-columns:repeat(2,minmax(0,1fr))}
+.share{grid-template-columns:repeat(1,minmax(0,1fr))}
+}
+</style>
+</helmet>
+<div class="r" data-theme="{{theme}}" style="padding: 48px 16px 56px; display: flex; justify-content: center">
+  <div class="shell">
+    <div class="hd">
+      <div>
+        <h1 class="ttl">＞　突然の死　＜</h1>
+        <p class="sub">入力すると即プレビュー。生成ボタンは不要です。</p>
+      </div>
+      <button class="tg" type="button" aria-label="明るい表示と暗い表示を切り替える"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </div>
+
+    <div class="card">
+      <div class="fld">
+        <label class="lab" for="sd-input">テキスト入力</label>
+        <textarea class="ta" id="sd-input" rows="4" placeholder="ここにテキストを入力…（空のままなら「突然の死」を表示）"></textarea>
+        <div class="opts">
+          <label class="ck"><input type="checkbox">縦書き表示</label>
+          <label class="ck"><input type="checkbox">余白</label>
+        </div>
+      </div>
+
+      <div class="fld">
+        <p class="lab" id="sd-shape">スタイル選択</p>
+        <div class="shapes" role="radiogroup" aria-labelledby="sd-shape">
+          <button class="sp" type="button" role="radio" aria-checked="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3v8l-3 3-3-3-3 3-3-3-3 3-3-3z"/></svg>通常</button>
+          <button class="sp" type="button" role="radio" aria-checked="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="1"/></svg>四角形</button>
+          <button class="sp" type="button" role="radio" aria-checked="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="5" width="8" height="16" rx="1"/><path d="M12 2v3"/></svg>短冊</button>
+          <button class="sp" type="button" role="radio" aria-checked="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l9 5-9 5 9 5"/><path d="M15 18h-4"/><path d="M15 18v-4"/></svg>ストレス</button>
+        </div>
+      </div>
+
+      <div class="fld">
+        <p class="lab" id="sd-preview">プレビュー</p>
+        <div class="pv" role="region" aria-labelledby="sd-preview">
+          <div class="pvs">
+<pre class="pre">＿人人人人人人＿
+＞　突然の死　＜
+￣Y^Y^Y^Y^Y^Y^￣</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="fld">
+        <div class="share">
+          <button class="sb cp" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>コピー済み</button>
+          <button class="sb lk" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1"/><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>リンクをコピー</button>
+          <a class="sb x" href="#x">𝕏 でシェア</a>
+          <a class="sb ln" href="#line">LINE で送信</a>
+        </div>
+        <p class="st" role="status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>コピーしました</p>
+        <p class="note">※ X・LINE は等幅フォントで表示されないため、貼り付け先で AA がズレる場合があります。 ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。</p>
+      </div>
+    </div>
+
+    <p class="ft">Preact + Vite + TypeScript で構築。参考: <a href="#echo-sd">echo-sd</a> / <a href="#sacnoha">突然の死ジェネレーター</a></p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1024}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'light' }; }
+}
+</script>
+</body>
+</html>
