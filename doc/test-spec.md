@@ -34,7 +34,7 @@ CI再開後はPRごとに同じ検証が走り、`browser-regression-<SHA>` に�
 
 - ビルド: `npm run build`（本番ビルド）
 - サーバー: `npm run preview` で本番ビルドを配信
-- 検証ツール: Playwright 1.56.1（Chromium 141）
+- 検証ツール: Playwright 1.56.1（Chromium 141。2026-11-02 UTC の実行。上の「現行の自動検証」と同じ回）
 - 自動テスト: `vitest run`（`src/core/*.test.ts`）
 
 ---
