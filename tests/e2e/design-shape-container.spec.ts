@@ -1,18 +1,19 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// デザイン差分監査 行15: スタイル選択の列数は「カードの中身の幅」が 480px 以下で 2 列。
-// 画面幅ではなくカードの中身の幅（content box）で測る。
+// デザイン差分監査 行15。デザイン(Screen.dc.html / Screen390.dc.html)は .shell（画面の列全体）を
+// container にして @container (max-width:480px) で 見出し 24px / カード余白 16px / 形選択 2列
+// に切り替える。ここでは列(.app-shell)の幅で判定されていることを測る。
 
 async function measure(page: Page) {
   return page.evaluate(() => {
-    const card = document.querySelector(".card") as HTMLElement;
-    const cs = getComputedStyle(card);
-    const content =
-      card.getBoundingClientRect().width -
-      parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) -
-      parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
-    const cols = getComputedStyle(document.querySelector(".shape-picker")!).gridTemplateColumns.split(" ").length;
-    return { content, cols };
+    const shell = document.querySelector(".app-shell")!.getBoundingClientRect().width;
+    const card = getComputedStyle(document.querySelector(".card")!);
+    return {
+      shell,
+      cols: getComputedStyle(document.querySelector(".shape-picker")!).gridTemplateColumns.split(" ").length,
+      h1: getComputedStyle(document.querySelector(".app-title")!).fontSize,
+      padding: card.paddingLeft,
+    };
   });
 }
 
@@ -21,29 +22,32 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
 });
 
-test("カードの中身が 480px 以下なら 2 列、超えたら 4 列（画面幅 320〜800 を 1px ずつ）", async ({ page }) => {
-  let sawTwo = false;
-  let sawFour = false;
-  // 旧実装（viewport 480px 未満で 2 列）は 480〜540px 付近で中身 480px 以下なのに 4 列だった。
+test("列(.app-shell)が 480px 以下なら 2列・見出し24px・カード余白16px、超えたら 4列・32px・28px（画面幅 320〜800 を 1px ずつ）", async ({ page }) => {
+  let switchAt = 0;
   for (let w = 320; w <= 800; w++) {
     await page.setViewportSize({ width: w, height: 900 });
-    const { content, cols } = await measure(page);
-    expect(cols, `viewport ${w}px / カードの中身 ${content.toFixed(1)}px`).toBe(content <= 480 ? 2 : 4);
-    if (cols === 2) sawTwo = true;
-    else sawFour = true;
+    const m = await measure(page);
+    const narrow = m.shell <= 480;
+    expect(m, `viewport ${w}px / 列 ${m.shell}px`).toMatchObject(
+      narrow ? { cols: 2, h1: "24px", padding: "16px" } : { cols: 4, h1: "32px", padding: "28px" },
+    );
+    if (!narrow && !switchAt) switchAt = w;
   }
-  expect(sawTwo && sawFour).toBe(true);
+  // 列は画面幅 - 左右 16px。512px で列が 480px、513px で超える。
+  expect(switchAt).toBe(513);
 });
 
 for (const [width, cols] of [
   [320, 2],
   [390, 2],
   [481, 2],
+  [512, 2],
+  [513, 4],
   [560, 4],
   [720, 4],
   [1440, 4],
 ] as const) {
-  test(`viewport ${width}px: ${cols} 列で、カード内が横にはみ出さない`, async ({ page }) => {
+  test(`viewport ${width}px: ${cols} 列で、カード内・ページが横にはみ出さない`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     expect((await measure(page)).cols).toBe(cols);
     const overflow = await page.evaluate(() => {
