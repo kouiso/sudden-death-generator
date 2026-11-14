@@ -102,3 +102,4 @@ needs owner (added):
 for main session:
 - Vercel 無料枠 api-deployments-free-per-day に到達（13:59Z）。他の lane の PR も同じチームなら影響
 REVIEW G4 FAIL must1 (body numbers 69/76 wrong; base 73, failure is icon box 28) -> body fixed, re-review | DECIDED lead: G4 line-height 1.2 approved (design shorthand = normal -> 76px), flagged owner | G6 PASS nit3 | G5 PASS nit1 (body fixed)
+PRs opened 13:58-14:03Z: #105->PR112 #106->113 #107->114 #108->115 #109->116 #102->117 #104->118 #88->119 #89->120 #90->121 #93->122 #100->123 #101->124 (124 comments pending) | GitHub secondary rate limit again 14:03Z, retry ~14:56Z | remaining to post: 95 92 96 94 98 97 g1 g2 r40 (+ g4 g6 g5 after review) | PR121 body needs update (old 概要)
