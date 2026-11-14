@@ -32,7 +32,7 @@ for (const [width, height] of [
     await expect(page.getByRole("button", { name: /リンクをコピー/ })).toBeEnabled();
 
     const before = await measure(page);
-    await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
+    await page.getByRole("button", { name: "コピー", exact: true }).click();
     await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
     const during = await measure(page);
     await expect(page.locator('[role="status"]:not(:empty)')).toHaveCount(0);
@@ -88,7 +88,7 @@ for (const [width, height] of [
       await page.getByRole("textbox").fill("復帰");
       const before = await measure(page);
 
-      await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
+      await page.getByRole("button", { name: "コピー", exact: true }).click();
       const status = page.getByRole("status");
       await expect(status).toHaveText(/コピーできませんでした。もう一度押してください$/);
       const during = await measure(page);

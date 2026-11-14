@@ -1,5 +1,6 @@
 import type { ComponentChildren } from "preact";
 import { buildLineShareUrl, buildXShareUrl } from "../core";
+import { CheckIcon, CopyIcon, LinkIcon } from "./icon";
 
 export interface ShareBarProps {
   output: string;
@@ -36,7 +37,8 @@ export function ShareBar({
     <div>
       <div className="share-bar">
         <button type="button" className="share-button share-button--copy" onClick={onCopy}>
-          📋 {copyStatus === "success" ? "コピー済み" : "コピー"}
+          {copyStatus === "success" ? <CheckIcon /> : <CopyIcon />}
+          {copyStatus === "success" ? "コピー済み" : "コピー"}
         </button>
         <a
           className="share-button share-button--x"
@@ -73,7 +75,8 @@ export function ShareBar({
           disabled={linkCopyDisabled}
           title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
         >
-          🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
+          {linkCopyStatus === "success" ? <CheckIcon /> : <LinkIcon />}
+          {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
       </div>
       {notice}
