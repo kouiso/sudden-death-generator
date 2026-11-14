@@ -88,7 +88,7 @@ export function App() {
         message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
       />
     ) : shareTooLong ? (
-      // 押せない理由は title に入れても pointer-events:none と tabIndex=-1 で誰にも出ない。
+      // 押せない理由は title に入れても、タッチでは出ず tabIndex=-1 でキーボードにも出ない。
       // コピー結果と同じ行に出せば、行の高さを先に確保済みなのでカードの高さが変わらない。
       // コピーの知らせが出ている間はそちらを優先し、消えれば理由に戻る。
       <Notice status="info" message="入力が長すぎるため、X・LINEでの共有はできません" />

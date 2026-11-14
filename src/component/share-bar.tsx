@@ -50,8 +50,8 @@ export function ShareBar({
         </button>
         <a
           className="share-button share-button--x"
-          // href を外すだけでは pointer-events:none を敷いていないマウス操作で単にページ内
-          // アンカーへ飛ぶだけの不具合になる。onClick で確実に無効化する。
+          // 押せなくするのは href を外す・tabIndex=-1・onClick の preventDefault の3つ。
+          // pointer-events:none にするとデザインの cursor:not-allowed が出ないため使わない。
           href={shareDisabled ? undefined : buildXShareUrl(output)}
           target="_blank"
           rel="noreferrer"
