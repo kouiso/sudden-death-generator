@@ -9,11 +9,6 @@ START 2026-11-14T12:51Z lane sudden-death-generator (plan small-lot)
 worktree /home/user/sudden-death-generator main clean | nothing unpushed (04daef7 = origin/main)
 DECIDED | merges to main are production -> no lane merges; every PR ends at GATE and waits OWNER for merge (G5) | reason Vercel git integration deploys main to production | revert owner says main may merge
 DECIDED | iteration board (project 49) unreadable: gh token invalid, connector has no Projects tool | reason tooling | revert read board when a route appears; meanwhile non-claude-cloud first
-LEDGER (repo rows from packet)
-id	state	who	depends_on	text
-SD-4	todo	wait	Q-SL4	sudden-death-generator do 24 件を 1件1PR・審査つき（マージは本番なので本人）
-V-5	blocked	wait	SD-4,...	答えの後に変わった所だけ回し直す
-F-02	blocked	wait	V-5,...	仕上げ
 needs owner:
 - main へのマージ＝本番(ito-games.vercel.app)。審査・GATE 済み PR をマージしてよいか（はい／1本ずつ見る／いいえ）。推奨: はい（GATE 済みのみ）
 for main session:
@@ -114,3 +109,9 @@ FOLLOW-UPS (carried wants/nits from passed reviews; do after owner merges, as sm
 - G2: tests for disabled X/LINE no hover colour, :active unchanged
 - #101+#104: app.tsx import of ./core/shape -> ./core after both merge
 - G3 (audit row 11 「効きません」+font): needs #89 and #104 merged first
+CYCLE 1 T=2026-11-14T12:51Z | PRs 0 | issues 37 | ledger rows 3 (list: cycle-1.tsv, written 14:07Z)
+LEDGER
+id	state	who	depends_on	text
+SD-4	doing	agent	Q-SL4	sudden-death-generator do: 19 SBI PRs + 6 design PRs opened/queued; merges are production -> owner
+V-5	blocked	wait	SD-4	答えの後に変わった所だけ回し直す
+F-02	blocked	wait	V-5	仕上げ

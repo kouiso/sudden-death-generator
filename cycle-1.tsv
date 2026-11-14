@@ -1,0 +1,47 @@
+kind	number	state	queue	head
+issue	88	open	OWNER(merge=production)	PR119 7fd92b7
+issue	89	open	OWNER(merge=production)	PR120 15f9460
+issue	90	open	OWNER(merge=production)	PR121 90c85a5
+issue	92	open	LAND-pending-post	PR- 381d053
+issue	93	open	OWNER(merge=production)	PR122 b73f648
+issue	94	open	LAND-pending-post	PR- 56dc02d
+issue	95	open	LAND-pending-post	PR- 07ea392
+issue	96	open	LAND-pending-post	PR- 7d0a7b9
+issue	97	open	LAND-pending-post	PR- 7367188
+issue	98	open	LAND-pending-post	PR- a4645e1
+issue	100	open	OWNER(merge=production)	PR123 38d1a5e
+issue	101	open	OWNER(merge=production)	PR124 bb6de7b
+issue	102	open	OWNER(merge=production)	PR117 0ac96a2
+issue	104	open	OWNER(merge=production)	PR118 a8ace61
+issue	105	open	OWNER(merge=production)	PR112 65bdf04
+issue	106	open	OWNER(merge=production)	PR113 cd93e4a
+issue	107	open	OWNER(merge=production)	PR114 dc561f1
+issue	108	open	OWNER(merge=production)	PR115 b46e077
+issue	109	open	OWNER(merge=production)	PR116 3cb58dd
+issue	31	open	OWNER (devin; deploy creds)	-
+issue	61	open	OWNER (devin; automation)	-
+issue	82	open	OWNER (build image save?)	-
+issue	83	open	OWNER (prod domain)	-
+issue	86	open	OWNER (CI resume?)	-
+issue	91	open	OWNER (share layout)	-
+issue	99	open	OWNER (X limit rule)	-
+issue	103	open	OWNER (row allocation/hint)	-
+issue	76	open	PARENT (close when children merged)	-
+issue	77	open	PARENT (close when children merged)	-
+issue	78	open	PARENT (close when children merged)	-
+issue	79	open	PARENT (close when children merged)	-
+issue	80	open	PARENT (close when children merged)	-
+issue	81	open	PARENT (close when children merged)	-
+issue	84	open	PARENT (close when children merged)	-
+issue	85	open	PARENT (close when children merged)	-
+issue	87	open	PARENT (close when children merged)	-
+issue	69	open	CLOSE (pending GitHub write)	-
+branch	design-g1	pushed	LAND-pending-post	5632d66
+branch	design-g4	pushed	LAND-pending-post	bff642c
+branch	design-g6	pushed	LAND-pending-post	073b8cd
+branch	design-g5	pushed	LAND-pending-post	75dd3c4
+branch	design-g2	pushed	LAND-pending-post	911e85a
+branch	design-r40	pushed	LAND-pending-post	53e7cd7
+ledger	SD-4	doing	agent	19 SBI PRs
+ledger	V-5	blocked	wait	-
+ledger	F-02	blocked	wait	-
