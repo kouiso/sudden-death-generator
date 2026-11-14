@@ -16,7 +16,7 @@ sudden-death-generator - kouiso プロジェクト。「突然の死」AA をリ
 ### Setup
 
 ```bash
-npm install
+npm ci
 ```
 
 ### Code Style

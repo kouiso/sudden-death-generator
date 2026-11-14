@@ -2,7 +2,7 @@
 
 ## Setup
 1. リポジトリをクローン
-2. `npm install` で依存関係をインストール
+2. `npm ci` で依存関係をインストール
 
 ## Build & Test
 ```bash
