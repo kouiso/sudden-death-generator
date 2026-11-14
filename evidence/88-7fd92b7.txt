@@ -1,0 +1,5 @@
+head 7fd92b7 (Chromium 1243, not 1254; override config /tmp/pw.88.config.ts)
+base 04daef7 fail: share-notice.spec 1440: Expected 702 Received 762 / 390: Expected 939 Received 999
+head: card 734/734/734 (1440), 971/971/971 (390); notice 24px, 8px below share-bar
+390x844 notice top=971 bottom=995 (below 844; copy button top=751)
+contrast light 5.33, dark 8.35; no hscroll; no console errors
