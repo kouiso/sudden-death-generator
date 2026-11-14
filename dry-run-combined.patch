@@ -1,0 +1,3090 @@
+diff --git a/.agent/environment.yaml b/.agent/environment.yaml
+index 7a1933e..8749d4b 100644
+--- a/.agent/environment.yaml
++++ b/.agent/environment.yaml
+@@ -1,4 +1,4 @@
+ setup:
+-  install: "npm install"
++  install: "npm ci"
+   test: "npm test"
+   lint: "npm run lint"
+diff --git a/.agent/skill/development/SKILL.md b/.agent/skill/development/SKILL.md
+index d62d735..cca515d 100644
+--- a/.agent/skill/development/SKILL.md
++++ b/.agent/skill/development/SKILL.md
+@@ -2,7 +2,7 @@
+ 
+ ## Setup
+ 1. リポジトリをクローン
+-2. `npm install` で依存関係をインストール
++2. `npm ci` で依存関係をインストール
+ 
+ ## Build & Test
+ ```bash
+diff --git a/.github/mcp-config.json b/.github/mcp-config.json
+deleted file mode 100644
+index 087d979..0000000
+--- a/.github/mcp-config.json
++++ /dev/null
+@@ -1,8 +0,0 @@
+-{
+-  "mcpServers": {
+-    "playwright": {
+-      "command": "npx",
+-      "args": ["-y", "@anthropic-ai/mcp-server-playwright"]
+-    }
+-  }
+-}
+diff --git a/AGENTS.md b/AGENTS.md
+index c1bb52e..79cdc8c 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -16,7 +16,7 @@ sudden-death-generator - kouiso プロジェクト。「突然の死」AA をリ
+ ### Setup
+ 
+ ```bash
+-npm install
++npm ci
+ ```
+ 
+ ### Code Style
+@@ -35,8 +35,18 @@ npm run preview    # 本番ビルドをローカルで確認
+ npm run lint       # oxlint
+ npm run typecheck  # tsc --noEmit
+ npm test           # vitest run
++npm run test:e2e   # Playwright (ローカル: 初回のみ `npx playwright install chromium`)
+ ```
+ 
++クラウド環境には固定版と異なる Chromium が入っていて既定の起動先が存在しないため、`PW_CHROMIUM_PATH` で実行ファイルを指す。
++設定は Playwright 1.65.0 の固定版 Chromium 1254 を前提にしているが、クラウドイメージには Chromium 1243 しか入っていない。イメージが変わったらこのパスも更新すること:
++
++```bash
++PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run test:e2e -- --trace off
++```
++
++`--trace off` は全テストでトレースを記録する CPU コストをクラウドの作業場で避けるため。失敗を調べるときは、その 1 テストだけを `--trace on` で再実行する。
++
+ ### Font subset の再生成
+ 
+ `public/font/sd-symbols.woff2` は罫線・矢印の表示崩れ対策のサブセットフォント。
+diff --git a/README.md b/README.md
+index 112a6c2..dca00f7 100644
+--- a/README.md
++++ b/README.md
+@@ -30,7 +30,7 @@
+ ## コマンド
+ 
+ ```bash
+-npm install        # 依存関係インストール
++npm ci             # 依存関係インストール（package-lock.json を書き換えない）
+ npm run dev        # 開発サーバー起動 (http://localhost:5173)
+ npm run build      # 本番ビルド (dist/)
+ npm run preview    # 本番ビルドをローカルで確認
+diff --git a/doc/test-spec.md b/doc/test-spec.md
+index c71e02e..b74db89 100644
+--- a/doc/test-spec.md
++++ b/doc/test-spec.md
+@@ -34,7 +34,7 @@ CI再開後はPRごとに同じ検証が走り、`browser-regression-<SHA>` に
+ 
+ - ビルド: `npm run build`（本番ビルド）
+ - サーバー: `npm run preview` で本番ビルドを配信
+-- 検証ツール: Playwright 1.56.1（Chromium 141）
++- 検証ツール: Playwright 1.56.1（Chromium 141。2026-11-02 UTC の実行。上の「現行の自動検証」と同じ回）
+ - 自動テスト: `vitest run`（`src/core/*.test.ts`）
+ 
+ ---
+diff --git a/index.html b/index.html
+index 5fd9e63..83f00e4 100644
+--- a/index.html
++++ b/index.html
+@@ -24,7 +24,7 @@
+     />
+     <meta name="twitter:card" content="summary" />
+     <script>
+-      // テーマの初回チラつき防止。Farm が注入する <link rel=stylesheet> より前に
++      // テーマの初回チラつき防止。Vite がビルド時に注入する <link rel=stylesheet> より前に
+       // 同期実行させる必要があるため、head内の他要素より先に置く（インラインscriptは
+       // パーサーを止めて即実行されるので、後続のスタイルシート適用より先に間に合う）。
+       // useTheme.ts と同じキー・同じ「手動選択が無ければ何もしない」ロジックをここで
+diff --git a/package.json b/package.json
+index 8e31cb1..d37a10d 100644
+--- a/package.json
++++ b/package.json
+@@ -4,6 +4,7 @@
+   "version": "1.0.0",
+   "type": "module",
+   "license": "MIT",
++  "packageManager": "npm@11.21.2",
+   "engines": {
+     "node": ">=22.12.0"
+   },
+diff --git a/playwright.config.ts b/playwright.config.ts
+index 9b76b50..4fbf583 100644
+--- a/playwright.config.ts
++++ b/playwright.config.ts
+@@ -1,6 +1,11 @@
+ import { defineConfig, devices } from "@playwright/test";
+ import { execFileSync } from "node:child_process";
+ 
++// クラウドの作業場には固定版と異なる Chromium が入っており、既定の起動先が存在しない。
++// そのため PW_CHROMIUM_PATH があるときだけ実行ファイルを差し替える。
++// 未設定ならこれまでどおり Playwright 管理のブラウザを使い、README のローカル手順は変わらない。
++const chromiumPath = process.env.PW_CHROMIUM_PATH;
++
+ export default defineConfig({
+   testDir: "./tests/e2e",
+   forbidOnly: !!process.env.CI,
+@@ -19,7 +24,15 @@ export default defineConfig({
+     trace: "retain-on-failure",
+     screenshot: "only-on-failure",
+   },
+-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
++  projects: [
++    {
++      name: "chromium",
++      use: {
++        ...devices["Desktop Chrome"],
++        ...(chromiumPath ? { launchOptions: { executablePath: chromiumPath } } : {}),
++      },
++    },
++  ],
+   webServer: {
+     command: "npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort",
+     url: "http://127.0.0.1:4173",
+diff --git a/script/ui-font-corpus.txt b/script/ui-font-corpus.txt
+index 7cfa261..1182cf9 100644
+--- a/script/ui-font-corpus.txt
++++ b/script/ui-font-corpus.txt
+@@ -46,3 +46,4 @@ URLの同期に失敗しました
+ ☀️
+ ⚠️
+ ✅
++コピーできませんでした。もう一度押してください
+diff --git a/src/app.tsx b/src/app.tsx
+index 3c3eafe..ad8782d 100644
+--- a/src/app.tsx
++++ b/src/app.tsx
+@@ -1,11 +1,21 @@
+ import { useEffect, useMemo, useState } from "preact/hooks";
+-import { renderSuddenDeath, type ShapeKind } from "./core";
+-import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
++import {
++  buildPermalinkQuery,
++  isPermalinkQueryTooLong,
++  isShareTooLong,
++  isVerticalDisabled,
++  parsePermalink,
++  renderSuddenDeath,
++  resolveVertical,
++  verticalHintOf,
++  type ShapeKind,
++} from "./core";
+ import { Editor } from "./component/editor";
+ import { Preview } from "./component/preview";
+ import { ShapePicker } from "./component/shape-picker";
+ import { ShareBar } from "./component/share-bar";
+-import { Toast } from "./component/toast";
++import { MoonIcon, SunIcon } from "./component/icon";
++import { Notice } from "./component/notice";
+ import { useClipboard } from "./hook/use-clipboard";
+ import { useTheme } from "./hook/use-theme";
+ 
+@@ -59,10 +69,10 @@ export function App() {
+   // （render.ts のコメント参照）ため、同様にチェックボックスを無効化する。無効化しないと
+   // チェックを切り替えても見た目が変わらないのに permalink には vertical=1 が残る
+   // という不整合が起きる（Codex bot 指摘）。
+-  const effectiveVertical = shape === "tanzaku" ? true : vertical;
+-  const verticalDisabled = shape === "tanzaku" || shape === "stress";
+-  const verticalDisabledHint =
+-    shape === "tanzaku" ? "（短冊は常に縦書き）" : shape === "stress" ? "（ストレスには影響しません）" : "";
++  // 規則は src/core/shape.ts の定義表が持つ。
++  const effectiveVertical = resolveVertical(shape, vertical);
++  const verticalDisabled = isVerticalDisabled(shape);
++  const verticalDisabledHint = verticalHintOf(shape);
+ 
+   // 純粋関数なので useMemo だけで生成ボタン無しのリアルタイムプレビューが成立する。
+   const output = useMemo(
+@@ -72,10 +82,28 @@ export function App() {
+   // X/LINE のシェアURLも同じ危険（一部環境のURL長制限に引っかかって開けない）を抱える。
+   // むしろ本体出力（枠のパディング込みで入力テキストより常に長い）を丸ごと載せるため、
+   // パーマリンク（入力テキストのみ）より長くなりやすく、パーマリンクは安全と判定された
+-  // 入力でもこちらは超過しうる（自己レビューで指摘）。パーマリンクと同じ基準
+-  // （MAX_PERMALINK_QUERY_LENGTH）を「text=<encode後の出力>」というクエリ片に対して適用し、
+-  // 新たな閾値を当て推量で作らず同じ安全マージンを流用する。
+-  const shareTooLong = isPermalinkQueryTooLong(`text=${encodeURIComponent(output)}`);
++  // 入力でもこちらは超過しうる（自己レビューで指摘）。判定は URL 組み立てと同じ
++  // core/share.ts のクエリ関数の結果で行い、URL の形が変わっても判定がずれないようにする。
++  const shareTooLong = isShareTooLong(output);
++
++  // コピーの知らせ。「コピー」と「リンクをコピー」は同じ1行を共有し、直近に押した側を出す
++  // （従来どおり本体コピーの結果を優先する）。
++  const notice =
++    copyStatus !== "idle" ? (
++      <Notice status={copyStatus} message={copyStatus === "success" ? "コピーしました" : "コピーできませんでした。もう一度押してください"} />
++    ) : linkCopyStatus !== "idle" ? (
++      <Notice
++        status={linkCopyStatus}
++        message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
++      />
++    ) : shareTooLong ? (
++      // 押せない理由は title に入れても、タッチでは出ず tabIndex=-1 でキーボードにも出ない。
++      // コピー結果と同じ行に出せば、行の高さを先に確保済みなのでカードの高さが変わらない。
++      // コピーの知らせが出ている間はそちらを優先し、消えれば理由に戻る。
++      <Notice status="info" message="入力が長すぎるため、X・LINEでの共有はできません" />
++    ) : (
++      <Notice status={null} message="" />
++    );
+ 
+   return (
+     <div className="app-shell">
+@@ -90,7 +118,7 @@ export function App() {
+           onClick={toggleTheme}
+           aria-label={theme === "dark" ? "ライトモードに切り替え" : "ダークモードに切り替え"}
+         >
+-          <span aria-hidden="true">{theme === "dark" ? "☀️" : "🌙"}</span>
++          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+         </button>
+       </header>
+ 
+@@ -111,7 +139,7 @@ export function App() {
+           <ShapePicker value={shape} onChange={setShape} />
+         </div>
+ 
+-        <Preview output={output} />
++        <Preview output={output} shape={shape} />
+ 
+         <ShareBar
+           output={output}
+@@ -121,20 +149,8 @@ export function App() {
+           onCopyLink={() => copyLink(permalinkHref)}
+           linkCopyDisabled={permalinkTooLong}
+           shareDisabled={shareTooLong}
++          notice={notice}
+         />
+-
+-        {copyStatus !== "idle" && (
+-          <Toast
+-            status={copyStatus}
+-            message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"}
+-          />
+-        )}
+-        {copyStatus === "idle" && linkCopyStatus !== "idle" && (
+-          <Toast
+-            status={linkCopyStatus}
+-            message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
+-          />
+-        )}
+       </div>
+ 
+       <footer className="app-footer">
+diff --git a/src/component/icon.tsx b/src/component/icon.tsx
+new file mode 100644
+index 0000000..3153f76
+--- /dev/null
++++ b/src/component/icon.tsx
+@@ -0,0 +1,121 @@
++import type { ComponentChildren } from "preact";
++
++// アイコンを絵文字にすると端末ごとに絵柄・幅が変わり、文字色（テーマ）にも従わない（des-07）。
++// 線のインライン SVG にして stroke を currentColor にし、親要素の color に追従させる。
++// 装飾なので aria-hidden にし、読み上げ名は常にボタン・行の文言側に任せる。
++// path/viewBox/線幅は design/project/Screen.dc.html・Screen390.dc.html の写し。
++
++interface BaseProps {
++  size: number;
++  strokeWidth?: number;
++  children: ComponentChildren;
++}
++
++function Svg({ size, strokeWidth = 2, children }: BaseProps) {
++  return (
++    <svg
++      width={size}
++      height={size}
++      viewBox="0 0 24 24"
++      fill="none"
++      stroke="currentColor"
++      stroke-width={strokeWidth}
++      stroke-linecap="round"
++      stroke-linejoin="round"
++      aria-hidden="true"
++      focusable="false"
++    >
++      {children}
++    </svg>
++  );
++}
++
++export function NormalIcon() {
++  return (
++    <Svg size={24}>
++      <path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3v8l-3 3-3-3-3 3-3-3-3 3-3-3z" />
++    </Svg>
++  );
++}
++
++export function SquareIcon() {
++  return (
++    <Svg size={24}>
++      <rect x="3" y="6" width="18" height="12" rx="1" />
++    </Svg>
++  );
++}
++
++export function TanzakuIcon() {
++  return (
++    <Svg size={24}>
++      <rect x="8" y="5" width="8" height="16" rx="1" />
++      <path d="M12 2v3" />
++    </Svg>
++  );
++}
++
++export function StressIcon() {
++  return (
++    <Svg size={24}>
++      <path d="M6 3l9 5-9 5 9 5" />
++      <path d="M15 18h-4" />
++      <path d="M15 18v-4" />
++    </Svg>
++  );
++}
++
++export function CopyIcon() {
++  return (
++    <Svg size={18}>
++      <rect x="8" y="8" width="12" height="12" rx="2" />
++      <path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" />
++    </Svg>
++  );
++}
++
++export function LinkIcon() {
++  return (
++    <Svg size={18}>
++      <path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1" />
++      <path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1" />
++    </Svg>
++  );
++}
++
++/** コピー済みボタン用（18px）。デザインの states.dc.html どおり線幅 2.4。 */
++export function CheckIcon({ size = 18 }: { size?: 16 | 18 }) {
++  return (
++    <Svg size={size} strokeWidth={2.4}>
++      <path d="M5 12l5 5 9-10" />
++    </Svg>
++  );
++}
++
++export function MoonIcon() {
++  return (
++    <Svg size={20}>
++      <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
++    </Svg>
++  );
++}
++
++/**
++ * 太陽。デザインには月しか描かれていない（ダーク時の切替先の絵が無い）ため、
++ * 月と同じ 24 のグリッド（viewBox）・描画 20px・線幅 2・丸端で、円（r=4）＋放射8本として実装側で描いた。
++ */
++export function SunIcon() {
++  return (
++    <Svg size={20}>
++      <circle cx="12" cy="12" r="4" />
++      <path d="M12 2v2" />
++      <path d="M12 20v2" />
++      <path d="M2 12h2" />
++      <path d="M20 12h2" />
++      <path d="M4.93 4.93l1.41 1.41" />
++      <path d="M17.66 17.66l1.41 1.41" />
++      <path d="M4.93 19.07l1.41-1.41" />
++      <path d="M17.66 6.34l1.41-1.41" />
++    </Svg>
++  );
++}
+diff --git a/src/component/notice.tsx b/src/component/notice.tsx
+new file mode 100644
+index 0000000..f33ee50
+--- /dev/null
++++ b/src/component/notice.tsx
+@@ -0,0 +1,28 @@
++import { CheckIcon } from "./icon";
++
++export interface NoticeProps {
++  /** 知らせの種類。info は押せない理由（アイコン無し）。null は何も出さない（行の高さだけ確保したまま空にする）。 */
++  status: "success" | "error" | "info" | null;
++  message: string;
++}
++
++/**
++ * コピー結果の知らせ行。共有ボタンのすぐ下に置く。
++ * 行そのものは常に描画し高さ（24px）を先に確保する。出る・消えるたびに行を差し込むと
++ * カードの高さが変わり、下の要素が押し下げられて操作中のボタンがずれるため。
++ * role="status" も常に DOM に置く。後から現れる live region は読み上げられない
++ * スクリーンリーダーがあるので、中身だけを差し替える。
++ */
++export function Notice({ status, message }: NoticeProps) {
++  return (
++    <p className={`notice ${status === "error" ? "notice--error" : ""} ${status === "info" ? "notice--info" : ""}`} role="status" aria-live="polite">
++      {status !== null && (
++        <>
++          {/* 失敗は色（--color-danger）と文言だけで示す。デザインの states.dc.html に失敗用の絵が無いため。 */}
++          {status === "success" && <CheckIcon size={16} />}
++          <span>{message}</span>
++        </>
++      )}
++    </p>
++  );
++}
+diff --git a/src/component/preview.tsx b/src/component/preview.tsx
+index f9d1c3a..7d264b5 100644
+--- a/src/component/preview.tsx
++++ b/src/component/preview.tsx
+@@ -1,7 +1,11 @@
+ import { useEffect, useRef, useState } from "preact/hooks";
+ 
++import type { ShapeKind } from "../core";
++
+ export interface PreviewProps {
+   output: string;
++  /** 行の高さを形ごとに切り替えるために CSS へ渡す（global.css の .preview-pre[data-shape]）。 */
++  shape: ShapeKind;
+ }
+ 
+ // 生成ボタンが無くキー入力ごとに即再描画されるため、aria-live を output に直結すると
+@@ -21,7 +25,7 @@ function buildAnnouncement(lineCount: number, tick: boolean): string {
+   return `プレビューを更新しました（${lineCount}行）${tick ? "​" : ""}`;
+ }
+ 
+-export function Preview({ output }: PreviewProps) {
++export function Preview({ output, shape }: PreviewProps) {
+   const [announcement, setAnnouncement] = useState("");
+   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+   const tickRef = useRef(false);
+@@ -52,7 +56,9 @@ export function Preview({ output }: PreviewProps) {
+       <span className="field-label">プレビュー</span>
+       <div className="preview-panel" role="region" aria-label="生成結果">
+         <div className="preview-scroll">
+-          <pre className="preview-pre">{output}</pre>
++          <pre className="preview-pre" data-shape={shape}>
++            {output}
++          </pre>
+         </div>
+       </div>
+       <span className="visually-hidden" aria-live="polite" aria-atomic="true">
+diff --git a/src/component/shape-picker.tsx b/src/component/shape-picker.tsx
+index 448b4a5..ddfa060 100644
+--- a/src/component/shape-picker.tsx
++++ b/src/component/shape-picker.tsx
+@@ -1,6 +1,8 @@
+ import { useRef } from "preact/hooks";
+-import type { TargetedKeyboardEvent } from "preact";
++import type { ComponentType, TargetedKeyboardEvent } from "preact";
+ import type { ShapeKind } from "../core";
++import { SHAPE_KINDS } from "../core";
++import { NormalIcon, SquareIcon, StressIcon, TanzakuIcon } from "./icon";
+ 
+ export interface ShapePickerProps {
+   value: ShapeKind;
+@@ -8,12 +10,15 @@ export interface ShapePickerProps {
+ }
+ 
+ // accessKey は echo-sd のショートカット割り当て(N/4/T/S)に合わせる（機能面の参考、コードは転記していない）。
+-const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; icon: string; accessKey: string }> = [
+-  { value: "normal", label: "通常", icon: "📝", accessKey: "n" },
+-  { value: "square", label: "四角形", icon: "⬜", accessKey: "4" },
+-  { value: "tanzaku", label: "短冊", icon: "🎋", accessKey: "t" },
+-  { value: "stress", label: "ストレス", icon: "💢", accessKey: "s" },
+-];
++// 形状の一覧と順序は core の定義表から導出し、ここは表示用の属性だけを持つ
++// （Record にすることで、形状が増えたときに型エラーで追記漏れに気づける）。
++const SHAPE_VIEW: Record<ShapeKind, { label: string; Icon: ComponentType; accessKey: string }> = {
++  normal: { label: "通常", Icon: NormalIcon, accessKey: "n" },
++  square: { label: "四角形", Icon: SquareIcon, accessKey: "4" },
++  tanzaku: { label: "短冊", Icon: TanzakuIcon, accessKey: "t" },
++  stress: { label: "ストレス", Icon: StressIcon, accessKey: "s" },
++};
++const SHAPES = SHAPE_KINDS.map((value) => ({ value, ...SHAPE_VIEW[value] }));
+ 
+ export function ShapePicker({ value, onChange }: ShapePickerProps) {
+   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+@@ -56,7 +61,7 @@ export function ShapePicker({ value, onChange }: ShapePickerProps) {
+             onKeyDown={(e) => handleKeyDown(e, index)}
+           >
+             <span className="shape-icon" aria-hidden="true">
+-              {shape.icon}
++              <shape.Icon />
+             </span>
+             <span>{shape.label}</span>
+           </button>
+diff --git a/src/component/share-bar.tsx b/src/component/share-bar.tsx
+index b8b6de2..5527a44 100644
+--- a/src/component/share-bar.tsx
++++ b/src/component/share-bar.tsx
+@@ -1,3 +1,7 @@
++import type { ComponentChildren } from "preact";
++import { buildLineShareUrl, buildXShareUrl } from "../core";
++import { CheckIcon, CopyIcon, LinkIcon } from "./icon";
++
+ export interface ShareBarProps {
+   output: string;
+   copyStatus: "idle" | "success" | "error";
+@@ -15,21 +19,10 @@ export interface ShareBarProps {
+    * （自己レビューで指摘: パーマリンクだけ上限を設けてX/LINEシェアには無かった不整合）。
+    */
+   shareDisabled: boolean;
++  /** コピー結果の知らせ行。ボタン群のすぐ下（注記より上）に置く。 */
++  notice: ComponentChildren;
+ }
+ 
+-function buildXShareUrl(text: string): string {
+-  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+-}
+-
+-function buildLineShareUrl(text: string): string {
+-  // LINE 公式ドキュメントが現在案内する共有スキームは R/share?text=。
+-  // 旧 R/msg/text/ は非掲載でクライアントによっては共有ピッカーが開かない
+-  // (実機で開かないため Codex bot 指摘を受け確認・修正)。
+-  return `https://line.me/R/share?text=${encodeURIComponent(text)}`;
+-}
+-
+-const SHARE_DISABLED_TITLE = "入力が長すぎるため、この方法では共有できません";
+-
+ export function ShareBar({
+   output,
+   copyStatus,
+@@ -38,23 +31,28 @@ export function ShareBar({
+   onCopyLink,
+   linkCopyDisabled,
+   shareDisabled,
++  notice,
+ }: ShareBarProps) {
+   return (
+     <div>
+       <div className="share-bar">
+         <button type="button" className="share-button share-button--copy" onClick={onCopy}>
+-          📋 {copyStatus === "success" ? "コピー済み" : "コピー"}
++          {copyStatus === "success" ? <CheckIcon /> : <CopyIcon />}
++          {copyStatus === "success" ? "コピー済み" : "コピー"}
+         </button>
+         <a
+           className="share-button share-button--x"
+-          // href を外すだけでは pointer-events:none を敷いていないマウス操作で単にページ内
+-          // アンカーへ飛ぶだけの不具合になる。onClick で確実に無効化する。
++          // 押せなくするのは href を外す・onClick の preventDefault。tabIndex は付けない
++          // （href の無い <a> は tabindex が無ければフォーカスできず、Tab 順にも入らない。
++          // tabIndex=-1 を付けるとマウスクリックでフォーカスが移り、キー操作で枠が出る）。
++          // pointer-events:none にするとデザインの cursor:not-allowed が出ないため使わない。
+           href={shareDisabled ? undefined : buildXShareUrl(output)}
+           target="_blank"
+           rel="noreferrer"
+           aria-disabled={shareDisabled}
+-          tabIndex={shareDisabled ? -1 : undefined}
+-          title={shareDisabled ? SHARE_DISABLED_TITLE : undefined}
++          onMouseDown={(event) => {
++            if (shareDisabled) event.preventDefault();
++          }}
+           onClick={(event) => {
+             if (shareDisabled) event.preventDefault();
+           }}
+@@ -67,8 +65,9 @@ export function ShareBar({
+           target="_blank"
+           rel="noreferrer"
+           aria-disabled={shareDisabled}
+-          tabIndex={shareDisabled ? -1 : undefined}
+-          title={shareDisabled ? SHARE_DISABLED_TITLE : undefined}
++          onMouseDown={(event) => {
++            if (shareDisabled) event.preventDefault();
++          }}
+           onClick={(event) => {
+             if (shareDisabled) event.preventDefault();
+           }}
+@@ -82,22 +81,23 @@ export function ShareBar({
+           disabled={linkCopyDisabled}
+           title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
+         >
+-          🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
++          {linkCopyStatus === "success" ? <CheckIcon /> : <LinkIcon />}
++          {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
+         </button>
+       </div>
++      {notice}
+       {/*
+        * shareDisabled と linkCopyDisabled は独立した基準（前者は本体出力の長さ、後者は
+        * 入力テキストの長さ）で判定しており、同時に true になり得る。片方だけ表示すると、
+        * もう一方も無効なのに理由が説明文から消えてユーザーが混乱する
+        * （CodeRabbit 指摘: 長文入力で両方無効になる帯域を実測して確認した不具合）。
+-       * 該当する理由を全部つなげて表示する。
++       * X・LINE が押せない理由は押せないボタンの直下（notice 行）に出すので、ここには
++       * リンクの理由だけを置く。同じ文を二度出さない。
+        */}
+       <p className="share-note">
+         ※ X・LINE は等幅フォントで表示されないため、貼り付け先で AA がズレる場合があります。
+-        {shareDisabled && " ※ 入力が長すぎるため、X・LINEでの共有はできません。"}
+         {linkCopyDisabled && " ※ 入力が長すぎるため、リンクでの共有はできません。"}
+-        {!shareDisabled &&
+-          !linkCopyDisabled &&
++        {!linkCopyDisabled &&
+           " ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。"}
+       </p>
+     </div>
+diff --git a/src/component/toast.tsx b/src/component/toast.tsx
+deleted file mode 100644
+index 8e6361a..0000000
+--- a/src/component/toast.tsx
++++ /dev/null
+@@ -1,13 +0,0 @@
+-export interface ToastProps {
+-  status: "success" | "error";
+-  message: string;
+-}
+-
+-export function Toast({ status, message }: ToastProps) {
+-  return (
+-    <div className={`toast ${status === "error" ? "toast--error" : ""}`} role="status" aria-live="polite">
+-      <span aria-hidden="true">{status === "error" ? "⚠️" : "✅"}</span>
+-      <span>{message}</span>
+-    </div>
+-  );
+-}
+diff --git a/src/core/index.ts b/src/core/index.ts
+index fa30c11..151a520 100644
+--- a/src/core/index.ts
++++ b/src/core/index.ts
+@@ -1,6 +1,14 @@
+-export { renderSuddenDeath, DEFAULT_TEXT } from "./render";
+-export type { ShapeKind, RenderOptions, CharWidth, FrameGlyphs } from "./type";
+-export { charWidth, stringWidth, maxLineWidth, evenCeil, padEndToWidth, padCenterToWidth } from "./width";
+-export { toVerticalGlyph } from "./vertical";
+-export { parsePermalink, buildPermalinkQuery } from "./permalink";
+-export type { PermalinkState } from "./permalink";
++// core の唯一の入口。UI（src/app.tsx, src/component/*）はここからだけ読み込む。
++// 画面が使うものだけを出す。内部でしか使わない関数（幅計算など）は各ファイルから
++// 直接読み込めば足りるので、ここには出さない（公開面を狭く保つ）。
++export { renderSuddenDeath } from "./render";
++export type { ShapeKind } from "./type";
++export {
++  parsePermalink,
++  buildPermalinkQuery,
++  isPermalinkQueryTooLong,
++  MAX_PERMALINK_QUERY_LENGTH,
++} from "./permalink";
++export { buildXShareUrl, buildLineShareUrl, isShareTooLong } from "./share";
++// [dry-run] #104 の定義表を #101 の「画面は ./core の入口だけから読む」に合わせて入口から出す。
++export { SHAPE_KINDS, isVerticalDisabled, resolveVertical, verticalHintOf } from "./shape";
+diff --git a/src/core/permalink.ts b/src/core/permalink.ts
+index 45ef95d..260b810 100644
+--- a/src/core/permalink.ts
++++ b/src/core/permalink.ts
+@@ -1,3 +1,4 @@
++import { isShapeKind, isVerticalMeaningful } from "./shape";
+ import type { ShapeKind } from "./type";
+ 
+ /** URL に載せる状態。text は入力テキスト全文（複数行可）。 */
+@@ -16,12 +17,6 @@ export interface PermalinkState {
+ // URLへの同期・コピーの両方を行わない。
+ export const MAX_PERMALINK_QUERY_LENGTH = 4000;
+ 
+-const SHAPE_VALUES: readonly ShapeKind[] = ["normal", "square", "tanzaku", "stress"];
+-
+-function isShapeKind(value: string | null): value is ShapeKind {
+-  return value !== null && (SHAPE_VALUES as readonly string[]).includes(value);
+-}
+-
+ /**
+  * クエリ文字列から状態を復元する。パラメータが無い・不正な場合は各項目 undefined を返し、
+  * 呼び出し側の既定値（空文字・normal・false 等）にフォールバックさせる。
+@@ -62,18 +57,17 @@ export function parsePermalink(search: string): Partial<PermalinkState> {
+ /**
+  * 状態からクエリ文字列（先頭 "?" 無し）を組み立てる。既定値と同じ項目は省略し、URL を短く保つ。
+  *
+- * tanzaku は常に縦書き、stress は縦書きオプションの影響を受けない（render.ts 参照）ため、
+- * これらの形状では vertical の値に関わらず同じ見た目・同じ復元結果になる。内部 state に
++ * 縦書きオプションが効かない形状（shape.ts の定義表で free 以外）では、
++ *  vertical の値に関わらず同じ見た目・同じ復元結果になる。内部 state に
+  * 残った vertical=1 をそのまま query に書くと、見た目が同じなのに URL が一意にならない。
+- * そのため vertical を載せるのは値が意味を持つ形状（normal/square）のときだけに限定する
++ * そのため vertical を載せるのは値が意味を持つ形状（定義表で free）のときだけに限定する
+  * （UI 側の state は保持したまま、URL 表現だけを canonical にする）。
+  */
+ export function buildPermalinkQuery(state: PermalinkState): string {
+   const params = new URLSearchParams();
+   if (state.text !== "") params.set("text", state.text);
+   if (state.shape !== "normal") params.set("shape", state.shape);
+-  const verticalMeaningful = state.shape === "normal" || state.shape === "square";
+-  if (state.vertical && verticalMeaningful) params.set("vertical", "1");
++  if (state.vertical && isVerticalMeaningful(state.shape)) params.set("vertical", "1");
+   if (state.padding) params.set("padding", "1");
+   return params.toString();
+ }
+diff --git a/src/core/render.test.ts b/src/core/render.test.ts
+index d66e5c5..82462a0 100644
+--- a/src/core/render.test.ts
++++ b/src/core/render.test.ts
+@@ -162,3 +162,55 @@ describe("renderSuddenDeath — 書記素クラスタ（結合文字・VS16・ZW
+     expectUniformWidth(output);
+   });
+ });
++
++describe("renderSuddenDeath — ストレス形状の空入力（ux-01a）", () => {
++  // 以下の期待値は変更前の main の出力を固定したもの。並び順（1〜4行目がストレス、5行目から枠）と
++  // 1〜4行入力時の枠の既定値は未決定・変更対象外なので、1文字も変わらないことをここで縛る。
++  const stress = (input: string, padding = false) =>
++    renderSuddenDeath(input, { ...base, shape: "stress", padding });
++
++  it("空入力ならストレス4段が「仕事のストレス」、枠が「突然の死」になる", () => {
++    expect(stress("").split("\n")).toEqual([
++      "仕事のストレス",
++      "　　　　↘",
++      "　　　仕事のストレス",
++      "　　　　↙",
++      "仕事のストレス",
++      "　　　　↘",
++      "　　　仕事のストレス",
++      "　　　　↙",
++      "＿人人人人人人＿",
++      "＞　突然の死　＜",
++      "￣Y^Y^Y^Y^Y^Y^￣",
++    ]);
++  });
++
++  it("空白・空行だけの入力も空入力として扱う", () => {
++    expect(stress("   \n\n")).toBe(stress(""));
++  });
++
++  it("5行（残業・終電・休日出勤・上司の圧・限界）の出力は変更前と同一", () => {
++    const input = "残業\n終電\n休日出勤\n上司の圧\n限界";
++    expect(stress(input).split("\n")).toEqual(["残業", "　　　　↘", "　　　終電", "　　　　↙", "休日出勤", "　　　　↘", "　　　上司の圧", "　　　　↙", "＿人人人人＿", "＞　限界　＜", "￣Y^Y^Y^Y^￣"]);
++    expect(stress(input, true).split("\n")).toEqual(["残業", "　　　　↘", "　　　終電", "　　　　↙", "休日出勤", "　　　　↘", "　　　上司の圧", "　　　　↙", "＿人人人人＿", "＞　　　　＜", "＞　限界　＜", "＞　　　　＜", "￣Y^Y^Y^Y^￣"]);
++  });
++
++  it("1行・4行入力の出力は変更前と同一（枠の既定値は「仕事のストレス」のまま）", () => {
++    expect(stress("残業").split("\n")).toEqual(["残業", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "仕事のストレス", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "＿人人人人人人人人人＿", "＞　仕事のストレス　＜", "￣Y^Y^Y^Y^Y^Y^Y^Y^Y^￣"]);
++    expect(stress("残業", true).split("\n")).toEqual(["残業", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "仕事のストレス", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "＿人人人人人人人人人＿", "＞　　　　　　　　　＜", "＞　仕事のストレス　＜", "＞　　　　　　　　　＜", "￣Y^Y^Y^Y^Y^Y^Y^Y^Y^￣"]);
++    expect(stress("残業\n終電\n休日出勤\n上司の圧").split("\n")).toEqual(["残業", "　　　　↘", "　　　終電", "　　　　↙", "休日出勤", "　　　　↘", "　　　上司の圧", "　　　　↙", "＿人人人人人人人人人＿", "＞　仕事のストレス　＜", "￣Y^Y^Y^Y^Y^Y^Y^Y^Y^￣"]);
++    expect(stress("残業\n終電\n休日出勤\n上司の圧", true).split("\n")).toEqual(["残業", "　　　　↘", "　　　終電", "　　　　↙", "休日出勤", "　　　　↘", "　　　上司の圧", "　　　　↙", "＿人人人人人人人人人＿", "＞　　　　　　　　　＜", "＞　仕事のストレス　＜", "＞　　　　　　　　　＜", "￣Y^Y^Y^Y^Y^Y^Y^Y^Y^￣"]);
++  });
++
++  it("「突然の死」と打った入力は空入力と区別され、変更前と同一の出力になる", () => {
++    expect(stress("突然の死").split("\n")).toEqual(["突然の死", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "仕事のストレス", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "＿人人人人人人人人人＿", "＞　仕事のストレス　＜", "￣Y^Y^Y^Y^Y^Y^Y^Y^Y^￣"]);
++    expect(stress("突然の死", true).split("\n")).toEqual(["突然の死", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "仕事のストレス", "　　　　↘", "　　　仕事のストレス", "　　　　↙", "＿人人人人人人人人人＿", "＞　　　　　　　　　＜", "＞　仕事のストレス　＜", "＞　　　　　　　　　＜", "￣Y^Y^Y^Y^Y^Y^Y^Y^Y^￣"]);
++    expect(stress("突然の死")).not.toBe(stress(""));
++  });
++
++  it("他の形は空入力で従来どおり既定文言にフォールバックする", () => {
++    for (const shape of ["normal", "square", "tanzaku"] as const) {
++      expect(renderSuddenDeath("", { ...base, shape })).toBe(renderSuddenDeath("突然の死", { ...base, shape }));
++    }
++  });
++});
+diff --git a/src/core/render.ts b/src/core/render.ts
+index fe1eed1..d633b89 100644
+--- a/src/core/render.ts
++++ b/src/core/render.ts
+@@ -1,6 +1,7 @@
+ import type { FrameGlyphs, RenderOptions } from "./type";
+ import { evenCeil, maxLineWidth, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
+ import { toVerticalGlyph } from "./vertical";
++import { resolveVertical } from "./shape";
+ 
+ /** 入力が空のときに使う既定文言。リアルタイムプレビューでも常に何かが見えるようにする。 */
+ const DEFAULT_TEXT = "突然の死";
+@@ -31,9 +32,17 @@ const ZIGZAG_DOWN = "　　　　↘";
+ const ZIGZAG_UP = "　　　　↙";
+ const STRESS_INDENT = "　　　";
+ 
+-/** 空行を除いた入力行を返す。全て空なら既定文言1行にフォールバックする。 */
++/**
++ * 空行を除いた入力行を返す。全て空なら空配列のまま返す。
++ * 既定文言への置換をここでやると、空入力と「突然の死」と打った入力が区別できなくなる。
++ * ストレス形だけは両者で出力を変える必要があるため、置換は形ごとに呼び出し側で行う。
++ */
+ function parseLines(rawInput: string): string[] {
+-  const lines = rawInput.split("\n").filter((line) => line.trim().length > 0);
++  return rawInput.split("\n").filter((line) => line.trim().length > 0);
++}
++
++/** 空入力のとき既定文言1行にフォールバックする（ストレス形以外の共通挙動）。 */
++function withDefaultText(lines: string[]): string[] {
+   return lines.length > 0 ? lines : [DEFAULT_TEXT];
+ }
+ 
+@@ -120,7 +129,10 @@ const STRESS_DEFAULT_MESSAGE = "仕事のストレス";
+ /**
+  * ストレス形状。入力行を先頭から最大4個消費してジグザグ（字下げなし↘字下げあり↙の2往復）を
+  * 組み、4個に満たない分は既定文言「仕事のストレス」で埋める。5個目以降が残っていればそれを
+- * そのまま最後の枠に流し込み、何も残っていなければ枠も既定文言になる。ストレスの蓄積 →
++ * そのまま最後の枠に流し込み、何も残っていなければ枠も「仕事のストレス」になる。
++ * ただし入力が完全に空のときだけは、ストレス4段が「仕事のストレス」、枠が「突然の死」になる
++ * （形を選んだ直後に見せ場の形で出すため）。「突然の死」と打った入力は空入力ではないので、
++ * 従来どおり1段目に入る。ストレスの蓄積 →
+  * 突然の死、という見せ方そのものが形状の定義なので、縦書きオプションはこの形状には影響しない
+  * （内部の枠だけを縦書きにすると蓄積ラインとの整合が崩れるため、意図的に対象外とする）。
+  */
+@@ -135,23 +147,26 @@ function renderStress(lines: readonly string[], padding: boolean): string {
+     zigzag.push(step % 2 === 0 ? ZIGZAG_DOWN : ZIGZAG_UP);
+   }
+ 
+-  const boxLines = remaining.length > 0 ? remaining : [STRESS_DEFAULT_MESSAGE];
++  // 1〜4行入力時の枠の既定値は未決定のため従来の「仕事のストレス」のまま据え置く。
++  const emptyBox = lines.length === 0 ? DEFAULT_TEXT : STRESS_DEFAULT_MESSAGE;
++  const boxLines = remaining.length > 0 ? remaining : [emptyBox];
+   return [...zigzag, ...renderFramed(boxLines, NORMAL_GLYPHS, padding)].join("\n");
+ }
+ 
+ /** 入力テキストとオプションから AA 文字列を生成する。純粋関数で副作用を持たない。 */
+ export function renderSuddenDeath(rawInput: string, options: RenderOptions): string {
+-  const lines = parseLines(rawInput);
++  const parsed = parseLines(rawInput);
+ 
++  if (options.shape === "stress") {
++    return renderStress(parsed, options.padding);
++  }
++  const lines = withDefaultText(parsed);
+   if (options.shape === "tanzaku") {
+     return renderTanzaku(lines, options.padding);
+   }
+-  if (options.shape === "stress") {
+-    return renderStress(lines, options.padding);
+-  }
+ 
+   const glyphs = options.shape === "square" ? SQUARE_GLYPHS : NORMAL_GLYPHS;
+-  const contentLines = options.vertical ? buildVerticalRows(lines) : lines;
++  const contentLines = resolveVertical(options.shape, options.vertical) ? buildVerticalRows(lines) : lines;
+   return renderFramed(contentLines, glyphs, options.padding).join("\n");
+ }
+ 
+diff --git a/src/core/shape.test.ts b/src/core/shape.test.ts
+new file mode 100644
+index 0000000..44f12ae
+--- /dev/null
++++ b/src/core/shape.test.ts
+@@ -0,0 +1,84 @@
++import { describe, expect, it } from "vitest";
++import { buildPermalinkQuery, parsePermalink } from "./permalink";
++import { renderSuddenDeath } from "./render";
++import {
++  SHAPE_KINDS,
++  SHAPE_TABLE,
++  isShapeKind,
++  isVerticalDisabled,
++  isVerticalMeaningful,
++  resolveVertical,
++  verticalHintOf,
++  verticalRuleOf,
++} from "./shape";
++
++describe("形状の定義表", () => {
++  it("形状一覧は表の順序どおりで、重複しない", () => {
++    expect(SHAPE_KINDS).toEqual(["normal", "square", "tanzaku", "stress"]);
++    expect(new Set(SHAPE_KINDS).size).toBe(SHAPE_TABLE.length);
++  });
++
++  it("各形状の縦書き規則", () => {
++    expect(verticalRuleOf("normal")).toBe("free");
++    expect(verticalRuleOf("square")).toBe("free");
++    expect(verticalRuleOf("tanzaku")).toBe("always");
++    expect(verticalRuleOf("stress")).toBe("none");
++  });
++
++  it("縦書きの解決: always だけ強制 true、それ以外は入力値のまま", () => {
++    for (const v of [true, false]) {
++      expect(resolveVertical("normal", v)).toBe(v);
++      expect(resolveVertical("square", v)).toBe(v);
++      expect(resolveVertical("stress", v)).toBe(v);
++      expect(resolveVertical("tanzaku", v)).toBe(true);
++    }
++  });
++
++  it("UI の無効化・説明文・permalink の対象は規則から導かれる", () => {
++    expect(SHAPE_KINDS.filter(isVerticalDisabled)).toEqual(["tanzaku", "stress"]);
++    expect(SHAPE_KINDS.filter(isVerticalMeaningful)).toEqual(["normal", "square"]);
++    expect(verticalHintOf("normal")).toBe("");
++    expect(verticalHintOf("square")).toBe("");
++    expect(verticalHintOf("tanzaku")).toBe("（短冊は常に縦書き）");
++    expect(verticalHintOf("stress")).toBe("（ストレスには影響しません）");
++  });
++
++  it("isShapeKind は表にある値だけを通す", () => {
++    for (const kind of SHAPE_KINDS) expect(isShapeKind(kind)).toBe(true);
++    expect(isShapeKind("invalid")).toBe(false);
++    expect(isShapeKind(null)).toBe(false);
++  });
++});
++
++describe("全形状の permalink 往復", () => {
++  for (const shape of SHAPE_KINDS) {
++    for (const vertical of [true, false]) {
++      it(`${shape} / vertical=${vertical} を build → parse で復元できる`, () => {
++        const state = { text: "突然の死", shape, vertical, padding: true };
++        const restored = parsePermalink(buildPermalinkQuery(state));
++        expect(restored.shape ?? "normal").toBe(shape);
++        expect(restored.text).toBe(state.text);
++        // vertical は意味を持つ形状でだけ復元される。それ以外は URL に載らず、見た目も同じ
++        expect(restored.vertical ?? false).toBe(isVerticalMeaningful(shape) ? vertical : false);
++      });
++    }
++  }
++});
++
++describe("縦書き規則と描画の整合", () => {
++  it("always / none の形状は vertical の値で出力が変わらない", () => {
++    for (const shape of SHAPE_KINDS.filter((s) => verticalRuleOf(s) !== "free")) {
++      const on = renderSuddenDeath("あい\nう", { shape, vertical: true, padding: false });
++      const off = renderSuddenDeath("あい\nう", { shape, vertical: false, padding: false });
++      expect(on).toBe(off);
++    }
++  });
++
++  it("free の形状は vertical の値で出力が変わる", () => {
++    for (const shape of SHAPE_KINDS.filter((s) => verticalRuleOf(s) === "free")) {
++      const on = renderSuddenDeath("あい", { shape, vertical: true, padding: false });
++      const off = renderSuddenDeath("あい", { shape, vertical: false, padding: false });
++      expect(on).not.toBe(off);
++    }
++  });
++});
+diff --git a/src/core/shape.ts b/src/core/shape.ts
+new file mode 100644
+index 0000000..bb44d38
+--- /dev/null
++++ b/src/core/shape.ts
+@@ -0,0 +1,57 @@
++/**
++ * 形状の定義表。「どの形状があるか」と「縦書きオプションがどう効くか」の唯一の出所。
++ * 以前は形状一覧が型・permalink・UI に、縦書きの規則が render・permalink・UI に
++ * 別々の式で書かれており、形状を足すたびに全部を直す必要があった。
++ * 表示順（UI のピッカー順）もこの配列の順序に従う。
++ *
++ * vertical の意味:
++ * - "free":   縦書きオプションが効く（通常・四角形）
++ * - "always": 常に縦書き。紙の短冊自体が縦長のため、オプションは無視される（短冊）
++ * - "none":   縦書きが適用外。蓄積ラインとの整合が崩れるため、オプションは効かない（ストレス）
++ */
++export const SHAPE_TABLE = [
++  { value: "normal", vertical: "free" },
++  { value: "square", vertical: "free" },
++  { value: "tanzaku", vertical: "always", verticalHint: "（短冊は常に縦書き）" },
++  { value: "stress", vertical: "none", verticalHint: "（ストレスには影響しません）" },
++] as const;
++
++export type ShapeKind = (typeof SHAPE_TABLE)[number]["value"];
++export type VerticalRule = (typeof SHAPE_TABLE)[number]["vertical"];
++
++/** 表の順に並んだ形状値の一覧。 */
++export const SHAPE_KINDS: readonly ShapeKind[] = SHAPE_TABLE.map((entry) => entry.value);
++
++export function isShapeKind(value: string | null): value is ShapeKind {
++  return value !== null && (SHAPE_KINDS as readonly string[]).includes(value);
++}
++
++export function verticalRuleOf(shape: ShapeKind): VerticalRule {
++  // 表に無い値は型で排除されているので、find は必ず見つかる
++  return SHAPE_TABLE.find((entry) => entry.value === shape)!.vertical;
++}
++
++/** 縦書きオプションの値が見た目・復元結果を左右する形状か（permalink に vertical を載せる条件）。 */
++export function isVerticalMeaningful(shape: ShapeKind): boolean {
++  return verticalRuleOf(shape) === "free";
++}
++
++/** UI のチェックボックスを無効化すべき形状か（値が見た目に影響しない形状）。 */
++export function isVerticalDisabled(shape: ShapeKind): boolean {
++  return verticalRuleOf(shape) !== "free";
++}
++
++/** 無効化されたチェックボックスに添える説明。無効化しない形状では空文字。 */
++export function verticalHintOf(shape: ShapeKind): string {
++  const entry = SHAPE_TABLE.find((e) => e.value === shape)!;
++  return "verticalHint" in entry ? entry.verticalHint : "";
++}
++
++/**
++ * ユーザーが選んだ縦書き値を、形状の規則に従って実際に使う値へ解決する。
++ * "always" だけ強制的に true にする。"none" は値をそのまま通す（描画側が無視し、
++ * UI のチェック状態は形状を切り替えて戻したときに保たれる）。
++ */
++export function resolveVertical(shape: ShapeKind, vertical: boolean): boolean {
++  return verticalRuleOf(shape) === "always" ? true : vertical;
++}
+diff --git a/src/core/share.test.ts b/src/core/share.test.ts
+new file mode 100644
+index 0000000..3fdccba
+--- /dev/null
++++ b/src/core/share.test.ts
+@@ -0,0 +1,95 @@
++import { describe, expect, it } from "vitest";
++import { MAX_PERMALINK_QUERY_LENGTH } from "./permalink";
++import { buildLineShareUrl, buildShareQuery, buildXShareUrl, isShareTooLong } from "./share";
++
++// 旧実装（share-bar.tsx 内の buildXShareUrl / buildLineShareUrl）の出力を、リファクタ前の
++// コードで実際に生成して控えた文字列。href が 1 バイトも変わらない事の証拠なので、
++// 期待値を実装から導出せず固定値のまま置く。
++const LEGACY_HREFS: { input: string; x: string; line: string }[] = [
++  {
++    input: "",
++    x: "https://twitter.com/intent/tweet?text=",
++    line: "https://line.me/R/share?text=",
++  },
++  {
++    input: "abc",
++    x: "https://twitter.com/intent/tweet?text=abc",
++    line: "https://line.me/R/share?text=abc",
++  },
++  {
++    input: "突然の死",
++    x: "https://twitter.com/intent/tweet?text=%E7%AA%81%E7%84%B6%E3%81%AE%E6%AD%BB",
++    line: "https://line.me/R/share?text=%E7%AA%81%E7%84%B6%E3%81%AE%E6%AD%BB",
++  },
++  {
++    input: "＿人人人＿\n＞ 突然の死 ＜\n￣Y^Y^Y￣",
++    x: "https://twitter.com/intent/tweet?text=%EF%BC%BF%E4%BA%BA%E4%BA%BA%E4%BA%BA%EF%BC%BF%0A%EF%BC%9E%20%E7%AA%81%E7%84%B6%E3%81%AE%E6%AD%BB%20%EF%BC%9C%0A%EF%BF%A3Y%5EY%5EY%EF%BF%A3",
++    line: "https://line.me/R/share?text=%EF%BC%BF%E4%BA%BA%E4%BA%BA%E4%BA%BA%EF%BC%BF%0A%EF%BC%9E%20%E7%AA%81%E7%84%B6%E3%81%AE%E6%AD%BB%20%EF%BC%9C%0A%EF%BF%A3Y%5EY%5EY%EF%BF%A3",
++  },
++  {
++    input: "🔥絵文字👨‍👩‍👧 & a=b?c#d%e+f /g",
++    x: "https://twitter.com/intent/tweet?text=%F0%9F%94%A5%E7%B5%B5%E6%96%87%E5%AD%97%F0%9F%91%A8%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%20%26%20a%3Db%3Fc%23d%25e%2Bf%20%2Fg",
++    line: "https://line.me/R/share?text=%F0%9F%94%A5%E7%B5%B5%E6%96%87%E5%AD%97%F0%9F%91%A8%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%20%26%20a%3Db%3Fc%23d%25e%2Bf%20%2Fg",
++  },
++  {
++    input: "  半角 space\tタブ\r\nCRLF  ",
++    x: "https://twitter.com/intent/tweet?text=%20%20%E5%8D%8A%E8%A7%92%20space%09%E3%82%BF%E3%83%96%0D%0ACRLF%20%20",
++    line: "https://line.me/R/share?text=%20%20%E5%8D%8A%E8%A7%92%20space%09%E3%82%BF%E3%83%96%0D%0ACRLF%20%20",
++  },
++  {
++    input: "あいうえおあいうえおあいうえおあいうえおあいうえおあいうえおあいうえおあいうえおあいうえおあいうえおあいうえおあいうえお",
++    x: "https://twitter.com/intent/tweet?text=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A",
++    line: "https://line.me/R/share?text=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A",
++  },
++];
++
++describe("X・LINE の共有 URL（旧実装と同一）", () => {
++  for (const { input, x, line } of LEGACY_HREFS) {
++    it(`X: ${JSON.stringify(input).slice(0, 30)}`, () => {
++      expect(buildXShareUrl(input)).toBe(x);
++    });
++    it(`LINE: ${JSON.stringify(input).slice(0, 30)}`, () => {
++      expect(buildLineShareUrl(input)).toBe(line);
++    });
++  }
++});
++
++describe("buildShareQuery", () => {
++  it("URL のクエリ部分と一致する（判定と組み立てが同じ結果を見る）", () => {
++    const text = "突然の死\n🔥";
++    expect(buildXShareUrl(text).endsWith(`?${buildShareQuery(text)}`)).toBe(true);
++    expect(buildLineShareUrl(text).endsWith(`?${buildShareQuery(text)}`)).toBe(true);
++  });
++});
++
++describe("isShareTooLong の境界", () => {
++  // クエリは "text=" (5文字) + エンコード後の本文。半角英字はエンコードで増えない。
++  const PREFIX = "text=".length;
++  const room = MAX_PERMALINK_QUERY_LENGTH - PREFIX;
++  const exactly = "a".repeat(room);
++
++  it("上限ちょうどは長すぎない", () => {
++    expect(buildShareQuery(exactly).length).toBe(MAX_PERMALINK_QUERY_LENGTH);
++    expect(isShareTooLong(exactly)).toBe(false);
++  });
++
++  it("上限を 1 文字超えると長すぎる", () => {
++    const over = `${exactly}a`;
++    expect(buildShareQuery(over).length).toBe(MAX_PERMALINK_QUERY_LENGTH + 1);
++    expect(isShareTooLong(over)).toBe(true);
++  });
++
++  it("エンコードで膨らむ文字はエンコード後の長さで数える", () => {
++    // 全角1文字は 9 文字、改行は 3 文字（パーセント符号3つ分ではなく %0A の3文字）に膨らむ。
++    const kanji = "あ".repeat(Math.floor(room / 9));
++    expect(isShareTooLong(kanji)).toBe(false);
++    expect(isShareTooLong(`${kanji}あ`)).toBe(true);
++    const breaks = "\n".repeat(Math.floor(room / 3));
++    expect(isShareTooLong(breaks)).toBe(false);
++    expect(isShareTooLong(`${breaks}\n`)).toBe(true);
++  });
++
++  it("空文字は長すぎない", () => {
++    expect(isShareTooLong("")).toBe(false);
++  });
++});
+diff --git a/src/core/share.ts b/src/core/share.ts
+new file mode 100644
+index 0000000..b321588
+--- /dev/null
++++ b/src/core/share.ts
+@@ -0,0 +1,34 @@
++import { isPermalinkQueryTooLong } from "./permalink";
++
++const X_SHARE_BASE = "https://twitter.com/intent/tweet";
++// LINE 公式ドキュメントが現在案内する共有スキームは R/share?text=。
++// 旧 R/msg/text/ は非掲載でクライアントによっては共有ピッカーが開かない
++// (実機で開かないため Codex bot 指摘を受け確認・修正)。
++const LINE_SHARE_BASE = "https://line.me/R/share";
++
++/**
++ * X・LINE 共通の共有 URL のクエリ部分（先頭 "?" 無し）。
++ * URL の組み立てと「長すぎる」判定の両方がこの 1 関数の結果を使う。判定側が別の式で
++ * 同じ形を再現していると、URL の形を変えた時に判定だけ取り残されてずれるため。
++ */
++export function buildShareQuery(text: string): string {
++  return `text=${encodeURIComponent(text)}`;
++}
++
++export function buildXShareUrl(text: string): string {
++  return `${X_SHARE_BASE}?${buildShareQuery(text)}`;
++}
++
++export function buildLineShareUrl(text: string): string {
++  return `${LINE_SHARE_BASE}?${buildShareQuery(text)}`;
++}
++
++/**
++ * 共有 URL が安全な長さの上限を超えるか。超えると一部環境の URL 長制限で開けない。
++ * X/LINE の URL は本体出力（枠のパディング込み）を丸ごと載せるため、入力テキストだけを
++ * 載せるパーマリンクより長くなりやすい。新たな閾値を当て推量で作らず、パーマリンクと
++ * 同じ上限（MAX_PERMALINK_QUERY_LENGTH）を共有クエリに当てる。
++ */
++export function isShareTooLong(text: string): boolean {
++  return isPermalinkQueryTooLong(buildShareQuery(text));
++}
+diff --git a/src/core/type.ts b/src/core/type.ts
+index e11de17..c302037 100644
+--- a/src/core/type.ts
++++ b/src/core/type.ts
+@@ -1,5 +1,7 @@
+-/** 生成する枠の形状。短冊は常に縦書きになる（紙の短冊自体が縦長のため）。 */
+-export type ShapeKind = "normal" | "square" | "tanzaku" | "stress";
++import type { ShapeKind } from "./shape";
++
++/** 生成する枠の形状。一覧と縦書きの規則は shape.ts の定義表が持つ。 */
++export type { ShapeKind };
+ 
+ export interface RenderOptions {
+   shape: ShapeKind;
+diff --git a/src/style/font.css b/src/style/font.css
+index 5d075a8..b442f39 100644
+--- a/src/style/font.css
++++ b/src/style/font.css
+@@ -8,6 +8,17 @@
+   font-family: "SD Symbols Mono";
+   src: url("/font/sd-symbols.woff2") format("woff2");
+   font-display: block;
++  /*
++   * 罫線グリフは縦方向に y=-120〜880（ちょうど 1em）を満たすが、フォント本来の hhea は
++   * ascent 1160 / descent 288（計 1.448em）で、行ボックスの中心がグリフの中心より 56/1000em
++   * 上にずれる。行を line-height: 1 まで詰めると、このずれでグリフが行ボックスの下へ
++   * はみ出し（overflow:hidden の枠で切れる恐れ）、行ごとの位置もずれる。そこで
++   * ascent/descent をグリフの実寸(880/120)に合わせ、「グリフ = 行ボックス」にする。
++   * フォントファイル自体は変えない（line-gap は元から 0 だが念のため明示）。
++   */
++  ascent-override: 88%;
++  descent-override: 12%;
++  line-gap-override: 0%;
+   /*
+    * ASCII印字可能域(U+0020-007E)を丸ごと含む。表示幅モデルは「半角=全角ちょうど半分」を
+    * 前提にしており、ASCIIを和文フォントより先に評価されるLatin専用等幅フォント
+diff --git a/src/style/global.css b/src/style/global.css
+index 4b6f2cf..6bdadb1 100644
+--- a/src/style/global.css
++++ b/src/style/global.css
+@@ -23,7 +23,9 @@ body {
+   min-height: 100vh;
+   display: flex;
+   justify-content: center;
+-  padding: clamp(16px, 4vw, 48px) 16px;
++  padding: clamp(16px, 4vw, 48px) 16px clamp(2rem, 1.28rem + 2.9vw, 3.5rem);
++  /* 下余白はデザインの 390px=32px / PC=56px を滑らかにつなぐ（上より少し厚くして
++   * 末尾のフッターが画面下端に張り付かないようにする）。 */
+ }
+ 
+ button {
+@@ -42,6 +44,11 @@ button {
+   display: flex;
+   flex-direction: column;
+   gap: 16px;
++  /* デザインの .shell と同じく、画面の列全体を container にして 480px 以下の切替を
++   * 1 か所に集める（下の @container shell）。画面幅ではなく列の幅で判定するので、
++   * 親の余白が変わっても切替点がずれない。#91 の共有ボタンも同じ container を使える。 */
++  container-type: inline-size;
++  container-name: shell;
+ }
+ 
+ .app-header {
+@@ -53,21 +60,26 @@ button {
+ 
+ .app-title {
+   margin: 0;
+-  font-size: clamp(1.5rem, 4vw, 2rem);
++  font-size: 2rem;
+   font-weight: 900;
+   letter-spacing: 0.02em;
++  line-height: 1.3;
+ }
+ 
+ .app-subtitle {
+   margin: 4px 0 0;
+   color: var(--color-text-muted);
+-  font-size: 0.9rem;
++  font-size: 0.875rem;
++  line-height: 1.6;
++  /* 狭い幅で「で/す。」のように 1〜2 文字だけ孤立して折り返すのを防ぐ。 */
++  text-wrap: balance;
+ }
+ 
+ .theme-toggle {
+   flex-shrink: 0;
+-  width: 40px;
+-  height: 40px;
++  /* タップ領域はデザインの 44x44（PBI #79 で見送った des-08 を持ち主の指示で実施）。 */
++  width: 44px;
++  height: 44px;
+   border-radius: 50%;
+   border: 1px solid var(--color-border);
+   background: var(--color-surface);
+@@ -75,7 +87,8 @@ button {
+   place-items: center;
+   cursor: pointer;
+   font-size: 1.1rem;
+-  box-shadow: var(--shadow-sm);
++  /* デザインはライト・ダークとも影なし（枠線だけで面を区切る）。 */
++  box-shadow: none;
+ }
+ 
+ .card {
+@@ -83,7 +96,7 @@ button {
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   box-shadow: var(--shadow-card);
+-  padding: clamp(16px, 3vw, 28px);
++  padding: 1.75rem;
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+@@ -91,13 +104,16 @@ button {
+ 
+ .field-label {
+   display: block;
+-  font-size: 0.85rem;
++  font-size: 0.84375rem;
+   font-weight: 700;
+   color: var(--color-text-muted);
+   margin-bottom: 8px;
+ }
+ 
+ .editor-textarea {
++  /* inline-block のままだと下に行内の隙間(約5px)が残り、直下のチェックボックス行との
++   * 間隔がデザインの 8px にならない。 */
++  display: block;
+   width: 100%;
+   min-height: 96px;
+   resize: vertical;
+@@ -112,6 +128,13 @@ button {
+   transition: border-color 0.15s ease;
+ }
+ 
++/* UA 既定の灰色(#757575)はダークで面(#23283a)に対し約 2.6:1 しか無いため、
++ * デザインどおりミュートトークンを使う。Firefox は既定で opacity を掛けるので 1 に固定する。 */
++.editor-textarea::placeholder {
++  color: var(--color-text-muted);
++  opacity: 1;
++}
++
+ .editor-textarea:focus-visible {
+   border-color: var(--color-accent);
+   outline: none;
+@@ -121,38 +144,64 @@ button {
+ .option-row {
+   display: flex;
+   flex-wrap: wrap;
+-  gap: 16px;
++  /* 行間 4px / 列間 20px（デザインの .opts）。行自体が 44px あるので行間は小さくてよい。 */
++  gap: 4px 20px;
+ }
+ 
+ .option-row--spaced {
+-  margin-top: 12px;
++  /* デザインはテキストエリアとの間が fld の gap 8px。 */
++  margin-top: 8px;
+ }
+ 
+ .checkbox-label {
+   display: inline-flex;
+   align-items: center;
+   gap: 8px;
+-  font-size: 0.9rem;
++  /* 指で押せる最小の高さ 44px。ラベル全体が押せるのでチェックボックス自体は 18px のまま。 */
++  min-height: 44px;
++  font-size: 0.90625rem;
+   cursor: pointer;
+   user-select: none;
+ }
+ 
++/* 無効の縦書きチェック（短冊・ストレス）は、ミュート色と not-allowed で無効だと見た目でも分かるようにする。 */
++.checkbox-label:has(input:disabled) {
++  color: var(--color-text-muted);
++  cursor: not-allowed;
++}
++
++.checkbox-label input:disabled {
++  cursor: not-allowed;
++}
++
+ .checkbox-label input {
+   width: 18px;
+   height: 18px;
++  /* UA 既定の margin を消して、ラベルとの間隔をデザインの gap 8px だけにする。 */
++  margin: 0;
+   accent-color: var(--color-accent);
+   cursor: pointer;
+ }
+ 
+ .shape-picker {
+   display: grid;
+-  grid-template-columns: repeat(2, 1fr);
++  grid-template-columns: repeat(4, 1fr);
+   gap: 8px;
+ }
+ 
+-@media (min-width: 480px) {
++/* デザインの @container (max-width: 480px)。列の幅が 480px 以下で
++ * 見出し 24px・カード余白 16px・形選択 2 列に切り替わる。 */
++@container shell (max-width: 480px) {
++  .app-title {
++    font-size: 1.5rem;
++  }
++
++  .card {
++    padding: 1rem;
++  }
++
+   .shape-picker {
+-    grid-template-columns: repeat(4, 1fr);
++    grid-template-columns: repeat(2, 1fr);
+   }
+ }
+ 
+@@ -160,25 +209,35 @@ button {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+-  gap: 4px;
+-  padding: 10px 8px;
++  gap: 0.375rem;
++  padding: 0.75rem 0.5rem;
+   border-radius: var(--radius-sm);
+   border: 1.5px solid var(--color-border);
+   background: var(--color-surface-muted);
+   cursor: pointer;
+-  font-size: 0.82rem;
++  font-size: 0.84375rem;
+   font-weight: 700;
++  /* デザインは line-height 未指定（normal）で、描画された高さは約 73px。normal は書体の
++   * ascent/descent 次第で 16〜19px と揺れる（実装の UI 書体だと 19px で 76px になる）ため、
++   * 1 行のラベルは 1.2 に固定してデザインの高さを書体に依存せず再現する。 */
++  line-height: 1.2;
+   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+ }
+ 
+ .shape-button[aria-checked="true"] {
+   border-color: var(--color-accent);
+-  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
++  background: var(--color-accent-tint);
+   color: var(--color-accent-strong);
+ }
+ 
+ .shape-icon {
+-  font-size: 1.2rem;
++  /* SVG を行内に置くと行ボックスの分だけ下に余白が出るため、flex にして絵の高さ（24px）だけにする。 */
++  /* [dry-run] display は #97=inline-flex / g5=block で衝突。要判断。暫定で後順の g5 (block) を採用。 */
++  /* デザインのアイコン枠は 24x24（SVG）。文字アイコンは書体の ascent/descent で行が
++   * 約 28px まで伸びて、ボタンがデザインの約 73px より高くなっていたため高さを固定する。 */
++  display: block;
++  height: 24px;
++  line-height: 24px;
+ }
+ 
+ /* スクリーンリーダー専用テキスト（視覚的には非表示だが読み上げ対象には残す）。 */
+@@ -211,10 +270,8 @@ button {
+   margin: 0;
+   font-family: var(--font-mono);
+   font-size: 1rem;
+-  /* サブセットフォント(sd-symbols.woff2)の hhea ascent(1160)+|descent|(288) が
+-   * unitsPerEm(1000) の 1.448 倍あり、line-height がそれを下回ると隣接行の
+-   * グリフが重なって完全に見えなくなる（実機で四角形・短冊の枠が消えるのを確認した
+-   * 不具合）。余裕を見て 1.5 にする。 */
++  /* デザイン(design/project/Screen.dc.html)の 16px/1.5 を既定にする。通常・ストレスは
++   * ＞／＜ と ＿／￣ が接して読みにくくなるため詰めない。 */
+   line-height: 1.5;
+   white-space: pre;
+   /* タブのタブストップ可変幅描画を width.ts の固定幅計算（タブ=半角1）と一致させる。 */
+@@ -222,6 +279,15 @@ button {
+   color: var(--color-text);
+ }
+ 
++/* 四角形・短冊だけ行の送りを 1em にする。罫線グリフは 1em の高さちょうどなので、1.5 だと
++ * 角と縦線の間に 0.5em の隙間が開いて枠がばらばらに見える。font.css の ascent/descent-override
++ * は、この 1em のグリフを行ボックスの中央に置き、行ボックスの下へ約 0.9px はみ出さない
++ * ようにしている（1 未満にすると隣の行のグリフが重なるので詰めすぎない）。 */
++.preview-pre[data-shape="square"],
++.preview-pre[data-shape="tanzaku"] {
++  line-height: 1;
++}
++
+ .share-bar {
+   display: grid;
+   /* ボタンは4つ（コピー / X / LINE / リンクをコピー）。3列固定だと4つ目だけ
+@@ -237,11 +303,16 @@ button {
+   gap: 8px;
+   padding: 12px 16px;
+   border-radius: var(--radius-sm);
+-  border: none;
++  /* 全ボタンに同じ太さの枠線を持たせる（塗りのボタンは透明）。「リンクをコピー」だけ枠線が
++   * あると、その分 2px 高くなって2列の段で高さがずれていた。高さも 48px を下限にそろえる。 */
++  border: 1.5px solid transparent;
++  min-height: 48px;
++  /* X/LINE は <a> のため UA 既定の下線が出る。<button> のコピー系と見た目をそろえる。 */
++  text-decoration: none;
+   font-weight: 700;
+   font-size: 0.92rem;
+   cursor: pointer;
+-  transition: transform 0.1s ease, filter 0.15s ease;
++  transition: transform 0.1s ease;
+ }
+ 
+ .share-button:active {
+@@ -249,18 +320,41 @@ button {
+ }
+ 
+ .share-button--copy {
+-  background: var(--color-success);
++  /* 主操作の「コピー」はアクセント色（青）。緑の LINE と並んだ時に見分けがつくよう、緑は
++   * LINE と「コピーしました」の知らせだけに残す。値はデザインの --ac / --onac / --ach。 */
++  background: var(--color-accent);
+   color: var(--color-accent-contrast);
+ }
+ 
+ .share-button--copy:hover {
+-  filter: brightness(1.05);
+-  background: var(--color-success-strong);
++  /* デザインの hover は --ach（--color-accent-strong）の塗りだけ。brightness フィルタを
++   * 重ねるとデザインより明るくなるため掛けない。 */
++  background: var(--color-accent-strong);
+ }
+ 
+ .share-button--x {
+   background: #14171a;
+   color: #ffffff;
++  /* デザインの --xbd。ライトは塗りと同色（見た目は従来どおり）。 */
++  border-color: #14171a;
++}
++
++/* hover の塗りはデザインの #2a2f36（ライト・ダーク共通）。無効時は操作できないので変えない。 */
++.share-button--x:hover:not([aria-disabled="true"]) {
++  background: #2a2f36;
++}
++
++/* ダークではカード(#1a1e2b)と塗り(#14171a)がほぼ同色で輪郭が消えるため、デザインどおり
++ * 枠線 #565e7a を付ける（カード比 2.59:1。WCAG 1.4.11 の 3:1 には届かない既知の差）。
++ * token.css と同じく手動指定と OS 追従の両方を書く。 */
++:root[data-theme="dark"] .share-button--x {
++  border-color: #565e7a;
++}
++
++@media (prefers-color-scheme: dark) {
++  :root:not([data-theme="light"]) .share-button--x {
++    border-color: #565e7a;
++  }
+ }
+ 
+ .share-button--line {
+@@ -270,13 +364,20 @@ button {
+   color: #ffffff;
+ }
+ 
++/* hover の塗りはデザインの #026a2c。白文字とのコントラストは通常時より高い。 */
++.share-button--line:hover:not([aria-disabled="true"]) {
++  background: #026a2c;
++}
++
+ .share-button--link {
+   background: var(--color-surface-muted);
+   color: var(--color-text);
+-  border: 1.5px solid var(--color-border);
++  border-color: var(--color-border);
+ }
+ 
+ .share-button--link:hover:not(:disabled) {
++  /* デザインの .lkh は文字色・枠線とも --ac。枠線だけ変えて文字が --tx のままだった。 */
++  color: var(--color-accent);
+   border-color: var(--color-accent);
+ }
+ 
+@@ -289,15 +390,23 @@ button {
+ 
+ /* <a> は disabled 属性を持たないため aria-disabled で判定する。X/LINE シェアURLが安全な
+  * 長さの上限を超える場合（ShareBar の shareDisabled 参照）に同じ見た目・操作不可を適用する。 */
++/* pointer-events:none を敷くとマウスが下の要素扱いになり、デザインの「押せない時はマウスの形も
++ * not-allowed」が実際には出ない。操作できないことは href 無し・tabindex 無し・onClick の
++ * preventDefault（ShareBar 参照）で担保し、ポインタ自体は受けて cursor を見せる。 */
+ .share-button[aria-disabled="true"] {
+   opacity: 0.5;
+   cursor: not-allowed;
+-  pointer-events: none;
++}
++
++/* ポインタを受けるようにしたので、押せないボタンが「押し込まれた」ように動かないよう明示する。 */
++.share-button[aria-disabled="true"]:active {
++  transform: none;
+ }
+ 
+ .share-note {
+   margin: 0;
+-  font-size: 0.78rem;
++  font-size: 0.78125rem;
++  line-height: 1.7;
+   color: var(--color-text-muted);
+ }
+ 
+@@ -312,29 +421,41 @@ button {
+ }
+ 
+ /*
+- * position:fixed の画面下部オーバーレイだと、スマホの短い画面高さやスクロール位置次第で
+- * share-bar と重なってボタンのラベルを覆ってしまい、固定オフセット値では画面サイズごとの
+- * 組み合わせを網羅できないことを実機幅マトリクス（iPhone SE/12/Pro Max, Pixel）で確認した。
+- * ドキュメントフロー内（ShareBar の直下）に置くことで、画面サイズ・スクロール位置に関わらず
+- * 他要素と重ならないことを構造的に保証する。
++ * コピー結果の知らせ行（design/project/states.dc.html）。共有ボタンのすぐ下に置き、
++ * 高さ 24px を先に確保する。出ても消えてもカードの高さが変わらず、スマホでも押した
++ * ボタンのそばで見える。ドキュメントフロー内なので他要素と重ならない。
++ * 背景の塗りは持たず、文字色だけで成功/失敗を示す（カード面に対する文字のコントラスト）。
+  */
+-.toast {
+-  margin: 0 auto;
+-  width: fit-content;
+-  background: var(--color-success);
+-  color: var(--color-accent-contrast);
+-  padding: 10px 20px;
+-  border-radius: 999px;
+-  font-size: 0.88rem;
+-  font-weight: 700;
+-  box-shadow: var(--shadow-card);
++.notice {
+   display: flex;
+   align-items: center;
+-  gap: 8px;
++  gap: 6px;
++  min-height: 24px;
++  margin: 8px 0 0;
++  font-size: 0.875rem;
++  font-weight: 700;
++  color: var(--color-success);
++}
++
++.notice--error {
++  color: var(--color-danger);
+ }
+ 
+-.toast--error {
+-  background: var(--color-danger);
++/* 押せない理由。成功・失敗ではないので色で意味付けせず、注記と同じ控えめな文字色にする。 */
++.notice--info {
++  color: var(--color-text-muted);
++}
++
++/*
++ * 失敗の文言「コピーできませんでした。もう一度押してください」は約 340px あり、カード内の幅が
++ * それを下回る狭いスマホ（390px で 324px）では 2 行に折り返す。1 行分（24px）しか確保して
++ * いないと失敗が出た時にカードが伸びて下の要素が動くので、狭い幅では 2 行分を先に確保する。
++ * デザインの 24px は 1 行で収まる幅の前提で描かれている（要確認事項として PR に記載）。
++ */
++@media (max-width: 430px) {
++  .notice {
++    min-height: 40px;
++  }
+ }
+ 
+ /* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では4列だと
+diff --git a/src/style/token.css b/src/style/token.css
+index b16ea5e..be8037c 100644
+--- a/src/style/token.css
++++ b/src/style/token.css
+@@ -12,11 +12,15 @@
+   --color-accent: #2f5fe0;
+   --color-accent-strong: #1f47b8;
+   --color-accent-contrast: #ffffff;
++  /* 選択中のスタイルボタンの背景。デザインの --act（color-mix の近似ではなく実値）。 */
++  --color-accent-tint: #e9eefc;
+   /* 白文字を乗せた時に WCAG AA (4.5:1) を満たす濃さまで暗くしている
+    * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
+   --color-success: #137a54;
+   --color-success-strong: #0f6a48;
+-  --color-danger: #d1425a;
++  /* カード面(#fff)に対し 4.5:1 を満たす濃さ。旧 #d1425a は約 4.1:1 で通常テキストの基準未満。
++   * 値は design/project/states.dc.html の --ng。 */
++  --color-danger: #b3243f;
+   --color-focus-ring: #2f5fe0;
+ 
+   --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
+@@ -35,14 +39,16 @@
+   --radius-lg: 20px;
+ 
+   --shadow-card: 0 20px 45px -25px rgb(31 43 92 / 0.35), 0 2px 8px -2px rgb(31 43 92 / 0.12);
+-  --shadow-sm: 0 1px 2px rgb(31 43 92 / 0.08);
++  /* トーストはカードとは別の面なので、ダークでカードの影を消しても影を保つよう分けている
++   * （デザインの --sh はカード専用で、トーストの影は指定が無い）。 */
++  --shadow-toast: 0 20px 45px -25px rgb(31 43 92 / 0.35), 0 2px 8px -2px rgb(31 43 92 / 0.12);
+ 
+   color-scheme: light;
+ }
+ 
+ :root[data-theme="dark"] {
+   --color-bg: #10131c;
+-  --color-bg-gradient-start: #14182430;
++  --color-bg-gradient-start: #141824;
+   --color-bg-gradient-end: #0a0c12;
+   --color-surface: #1a1e2b;
+   --color-surface-muted: #23283a;
+@@ -52,10 +58,13 @@
+   --color-accent: #6d8bff;
+   --color-accent-strong: #8ca0ff;
+   --color-accent-contrast: #0b0e17;
++  --color-accent-tint: #232b47;
+   --color-success: #3fcf94;
+   --color-success-strong: #63dba8;
+   --color-danger: #ff7a90;
+   --color-focus-ring: #6d8bff;
++  /* 暗い面では影が効かず濁るだけなので、デザイン(--sh:none)どおり消す。 */
++  --shadow-card: none;
+ 
+   color-scheme: dark;
+ }
+@@ -63,7 +72,7 @@
+ @media (prefers-color-scheme: dark) {
+   :root:not([data-theme="light"]) {
+     --color-bg: #10131c;
+-    --color-bg-gradient-start: #14182430;
++    --color-bg-gradient-start: #141824;
+     --color-bg-gradient-end: #0a0c12;
+     --color-surface: #1a1e2b;
+     --color-surface-muted: #23283a;
+@@ -73,10 +82,12 @@
+     --color-accent: #6d8bff;
+     --color-accent-strong: #8ca0ff;
+     --color-accent-contrast: #0b0e17;
++    --color-accent-tint: #232b47;
+     --color-success: #3fcf94;
+     --color-success-strong: #63dba8;
+     --color-danger: #ff7a90;
+     --color-focus-ring: #6d8bff;
++    --shadow-card: none;
+ 
+     color-scheme: dark;
+   }
+diff --git a/tests/e2e/app.spec.ts b/tests/e2e/app.spec.ts
+index 1f5a212..87f75f6 100644
+--- a/tests/e2e/app.spec.ts
++++ b/tests/e2e/app.spec.ts
+@@ -72,10 +72,11 @@ test("縦書きと余白の切り替えで出力が変わる", async ({ page })
+ test("実クリップボードへのコピーと通知の自動消去", async ({ page }) => {
+   await page.getByRole("textbox").fill("コピー😀 & 改行\n確認");
+   const output = await page.locator(".preview-pre").innerText();
+-  await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
++  await page.getByRole("button", { name: "コピー", exact: true }).click();
+   await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
+   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(output);
+-  await expect(page.getByRole("status")).toHaveCount(0);
++  // 知らせの行は高さごと先に確保して常に DOM にあるので、消えた事は「中身が空」で確かめる。
++  await expect(page.locator('[role="status"]:not(:empty)')).toHaveCount(0);
+ });
+ 
+ test("リンクコピー直後と再読み込み後に全文と全オプションを復元する", async ({ page }) => {
+@@ -134,7 +135,7 @@ test("矢印キーで4形状を巡回し、Tabでグループを抜ける", asyn
+     await expect(page.locator('[role="radio"][tabindex="0"]')).toHaveCount(1);
+   }
+   await page.keyboard.press("Tab");
+-  await expect(page.getByRole("button", { name: "📋 コピー", exact: true })).toBeFocused();
++  await expect(page.getByRole("button", { name: "コピー", exact: true })).toBeFocused();
+ });
+ 
+ test("長文では共有と古いURLを無効にし、短文へ戻すと復帰する", async ({ page }) => {
+@@ -181,7 +182,7 @@ for (const width of [375, 428]) {
+               textLines: rows.length,
+             };
+           }),
+-          toast: document.querySelector(".toast") ? box(document.querySelector(".toast")!) : null,
++          toast: document.querySelector(".notice") ? box(document.querySelector(".notice")!) : null,
+           preview: box(document.querySelector(".preview-panel")!),
+           scroll: {
+             client: document.querySelector(".preview-scroll")!.clientWidth,
+@@ -206,7 +207,7 @@ for (const width of [375, 428]) {
+       }
+     };
+     await assertLayout();
+-    await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
++    await page.getByRole("button", { name: "コピー", exact: true }).click();
+     await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
+     await assertLayout();
+     await page.screenshot({ path: test.info().outputPath(`mobile-${width}.png`), fullPage: true });
+diff --git a/tests/e2e/box-frame.spec.ts b/tests/e2e/box-frame.spec.ts
+new file mode 100644
+index 0000000..e0ce297
+--- /dev/null
++++ b/tests/e2e/box-frame.spec.ts
+@@ -0,0 +1,163 @@
++import { test, expect, type Page } from "@playwright/test";
++
++/**
++ * 四角形・短冊の枠が「上の線・縦棒・下の線」のばらばらの部品に見える不具合（PBI #80, des-12）の検証。
++ * 罫線グリフが行ボックスを満たしていないと行間に背景色の隙間が出る。
++ * 逆に行を詰めすぎると隣の行のグリフと重なるので、4形状とも重なりと切れを見る。
++ * 実描画のピクセルを測るため、スクリーンショットをブラウザ内の canvas で読み出して判定する。
++ */
++
++type ShapeCase = { name: string; input: string };
++
++const shapes: ShapeCase[] = [
++  { name: "通常", input: "突然の死\n二行目" },
++  { name: "四角形", input: "突然の死\n二行目\n三行目" },
++  { name: "短冊", input: "突然の死" },
++  { name: "ストレス", input: "一行目\n二行目\n三行目\n四行目" },
++];
++
++const DPR = 3;
++test.use({ deviceScaleFactor: DPR, viewport: { width: 1440, height: 900 } });
++
++test.beforeEach(async ({ page }) => {
++  await page.goto("/");
++  await page.evaluate(() => document.fonts.ready);
++});
++
++async function select(page: Page, shape: ShapeCase) {
++  await page.getByRole("textbox", { name: "テキスト入力" }).fill(shape.input);
++  await page.getByRole("radio", { name: shape.name, exact: true }).click();
++  await expect(page.getByRole("radio", { name: shape.name, exact: true })).toHaveAttribute("aria-checked", "true");
++  // 罫線サブセットフォントは使われて初めて読み込まれるため、描画前に確実に待つ。
++  await page.evaluate(() => document.fonts.ready);
++}
++
++/**
++ * PNG を canvas に展開し、背景(左上の画素)との差が最大差の4割を超える画素を「インク」とみなして測る。
++ * 画素配列を Playwright 越しに渡すと遅いので、判定はブラウザ内で済ませて要約だけ返す。
++ * 文字色と背景の差の4割以下の薄い画素（アンチエイリアスの縁）は隙間側に数える。
++ */
++type Measure = { colGaps: number[]; colFirst: number; rowTop: number; rowBottom: number };
++
++async function measure(page: Page, png: Buffer, column?: number): Promise<Measure> {
++  return page.evaluate(
++    async ({ b64, column }) => {
++      const img = new Image();
++      img.src = "data:image/png;base64," + b64;
++      await img.decode();
++      const c = document.createElement("canvas");
++      c.width = img.width;
++      c.height = img.height;
++      const ctx = c.getContext("2d")!;
++      ctx.drawImage(img, 0, 0);
++      const d = ctx.getImageData(0, 0, img.width, img.height).data;
++      const px = (i: number) => d[i] ?? 0;
++      const n = img.width * img.height;
++      const dist = new Float32Array(n);
++      let max = 0;
++      for (let i = 0; i < n; i++) {
++        const v = Math.abs(px(i * 4) - px(0)) + Math.abs(px(i * 4 + 1) - px(1)) + Math.abs(px(i * 4 + 2) - px(2));
++        dist[i] = v;
++        if (v > max) max = v;
++      }
++      const ink = (x: number, y: number) => (dist[y * img.width + x] ?? 0) > max * 0.4;
++      let rowTop = -1;
++      let rowBottom = -1;
++      for (let y = 0; y < img.height; y++) {
++        for (let x = 0; x < img.width; x++) {
++          if (ink(x, y)) {
++            if (rowTop < 0) rowTop = y;
++            rowBottom = y;
++            break;
++          }
++        }
++      }
++      let colFirst = -1;
++      let colLast = -1;
++      const colGaps: number[] = [];
++      if (column !== undefined) {
++        // 縦棒は 0.04〜0.12em と細く中心列が薄くなるため、左右1画素を併せて見る。
++        const hit = (y: number) => [-1, 0, 1].some((dx) => ink(column + dx, y));
++        for (let y = 0; y < img.height; y++) {
++          if (hit(y)) {
++            if (colFirst < 0) colFirst = y;
++            colLast = y;
++          }
++        }
++        for (let y = colFirst; colFirst >= 0 && y <= colLast; y++) if (!hit(y)) colGaps.push(y);
++      }
++      return { colGaps, colFirst, rowTop, rowBottom };
++    },
++    { b64: png.toString("base64"), column },
++  );
++}
++
++test.describe("行の高さは枠の形だけ詰める", () => {
++  // デザインは 16px/1.5 (=24px)。四角形・短冊だけ罫線をつなぐため 1em (=16px) にする。
++  const expected: Record<string, string> = { 通常: "24px", 四角形: "16px", 短冊: "16px", ストレス: "24px" };
++  for (const shape of shapes) {
++    test(`${shape.name}: line-height は ${expected[shape.name]}`, async ({ page }) => {
++      await select(page, shape);
++      await expect(page.locator(".preview-pre")).toHaveCSS("line-height", expected[shape.name]!);
++      await expect(page.locator(".preview-pre")).toHaveCSS("font-size", "16px");
++    });
++  }
++});
++
++test.describe("四角形・短冊の枠は行をまたいでつながって見える", () => {
++  for (const shape of shapes.filter((s) => s.name === "四角形" || s.name === "短冊")) {
++    test(`${shape.name}: 先頭文字の縦線に行間の隙間が無い`, async ({ page }) => {
++      await select(page, shape);
++      const pre = page.locator(".preview-pre");
++      const box = (await pre.boundingBox())!;
++      // 各行の先頭文字（┌│└ / ┏┃┗）の中心 x と行数を取る。罫線の縦棒は字幅の中央にある。
++      const info = await pre.evaluate((el) => {
++        const node = el.firstChild as Text;
++        const text = node.data;
++        const first = new Range();
++        first.setStart(node, 0);
++        first.setEnd(node, 1);
++        const r = first.getBoundingClientRect();
++        return { rows: text.split("\n").length, centerX: r.left + r.width / 2 };
++      });
++      expect(info.rows).toBeGreaterThanOrEqual(3);
++      const px = Math.round((info.centerX - box.x) * DPR);
++      const m = await measure(page, await pre.screenshot(), px);
++      expect(m.colFirst, "縦線のインクが見つかる").toBeGreaterThanOrEqual(0);
++      expect(m.colGaps, `縦線(x=${px}px)の途切れ画素y`).toEqual([]);
++    });
++  }
++});
++
++test.describe("行間を詰めても隣の行と重ならず、切れない", () => {
++  for (const shape of shapes) {
++    test(`${shape.name}: 行ごとのインクが重ならず表示領域に収まる`, async ({ page }) => {
++      await select(page, shape);
++      const scroll = page.locator(".preview-scroll");
++      const pre = page.locator(".preview-pre");
++      const original = (await pre.textContent())!;
++      const lines = original.split("\n");
++      expect(lines.length).toBeGreaterThanOrEqual(2);
++      const area = (await scroll.boundingBox())!;
++      // 切れの有無は、はみ出しを許した状態の実インクが表示領域に収まるかで見る。
++      await scroll.evaluate((el) => { (el as HTMLElement).style.overflow = "visible"; });
++      const margin = 12; // パネルの余白(20px)内に収め、クリップ内を単色の背景にする
++      const clip = { x: area.x, y: Math.max(0, area.y - margin), width: area.width, height: area.height + margin * 2 };
++      const spans: { top: number; bottom: number }[] = [];
++      for (let i = 0; i < lines.length; i++) {
++        // 他の行を空白に置き換えると、その行だけの字のインク範囲を隣の行に邪魔されず測れる。
++        await pre.evaluate((el, text) => { el.textContent = text; }, lines.map((l, j) => (j === i ? l : " ".repeat(l.length))).join("\n"));
++        const m = await measure(page, await page.screenshot({ clip }));
++        expect(m.rowTop, `${i + 1}行目のインクが見える`).toBeGreaterThanOrEqual(0);
++        spans.push({ top: clip.y + m.rowTop / DPR, bottom: clip.y + (m.rowBottom + 1) / DPR });
++      }
++      for (let i = 0; i + 1 < spans.length; i++) {
++        const [cur, next] = [spans[i]!, spans[i + 1]!];
++        // 縦に並ぶ罫線は端が接するだけが正常。1CSS px を超える食い込みを重なりとみなす。
++        expect(cur.bottom - next.top, `${i + 1}行目と${i + 2}行目のインクの食い込み(px)`).toBeLessThanOrEqual(1);
++      }
++      expect(spans[0]!.top, "先頭行が上で切れない").toBeGreaterThanOrEqual(area.y - 0.5);
++      expect(spans.at(-1)!.bottom, "最終行が下で切れない").toBeLessThanOrEqual(area.y + area.height + 0.5);
++    });
++  }
++});
+diff --git a/tests/e2e/design-dark-surfaces.spec.ts b/tests/e2e/design-dark-surfaces.spec.ts
+new file mode 100644
+index 0000000..28b44af
+--- /dev/null
++++ b/tests/e2e/design-dark-surfaces.spec.ts
+@@ -0,0 +1,50 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// デザイン(design/project 版9)との差分監査 行6・47・48・49 の測定テスト。
++// 値は getComputedStyle で測る（見た目の目視ではなく数値で固定する）。
++
++type Theme = "light" | "dark";
++
++async function open(page: Page, theme: Theme) {
++  // テーマはアプリ自身の保存キーで指定する（use-theme.ts の STORAGE_KEY）。
++  await page.addInitScript((t) => localStorage.setItem("sudden-death-theme", t), theme);
++  await page.goto("/");
++  await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
++}
++
++const read = (page: Page) =>
++  page.evaluate(() => {
++    const toggle = getComputedStyle(document.querySelector(".theme-toggle")!);
++    const card = getComputedStyle(document.querySelector(".card")!);
++    const body = getComputedStyle(document.body);
++    return { toggleShadow: toggle.boxShadow, cardShadow: card.boxShadow, bodyBg: body.backgroundImage };
++  });
++
++for (const theme of ["light", "dark"] as const) {
++  test(`${theme}: テーマ切替ボタンに影が無い（行6・49）`, async ({ page }) => {
++    await open(page, theme);
++    expect((await read(page)).toggleShadow).toBe("none");
++  });
++}
++
++test("light: カードの影はデザインの --sh のまま残る", async ({ page }) => {
++  await open(page, "light");
++  const { cardShadow } = await read(page);
++  expect(cardShadow).toContain("rgba(31, 43, 92, 0.35)");
++  expect(cardShadow).toContain("rgba(31, 43, 92, 0.12)");
++});
++
++test("dark: カードの影が無い（行47, --sh:none）", async ({ page }) => {
++  await open(page, "dark");
++  expect((await read(page)).cardShadow).toBe("none");
++});
++
++test("dark: 背景グラデーションは #141824 → #0a0c12 でアルファ無し（行48）", async ({ page }) => {
++  await open(page, "dark");
++  expect((await read(page)).bodyBg).toBe("linear-gradient(160deg, rgb(20, 24, 36), rgb(10, 12, 18))");
++});
++
++test("light: 背景グラデーションは #eef2fb → #e4e9f5", async ({ page }) => {
++  await open(page, "light");
++  expect((await read(page)).bodyBg).toBe("linear-gradient(160deg, rgb(238, 242, 251), rgb(228, 233, 245))");
++});
+diff --git a/tests/e2e/design-disabled-cursor.spec.ts b/tests/e2e/design-disabled-cursor.spec.ts
+new file mode 100644
+index 0000000..3b81073
+--- /dev/null
++++ b/tests/e2e/design-disabled-cursor.spec.ts
+@@ -0,0 +1,113 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// デザイン states.dc.html の注記「押せない時は、マウスの形も『押せない』にそろえる」。
++// 以前は pointer-events:none のため cursor:not-allowed が CSS にあっても実際には出なかった。
++// ポインタが届く要素（elementFromPoint）の computed cursor で測る。押せないままであることも確かめる。
++
++const errors = new WeakMap<Page, string[]>();
++
++test.beforeEach(async ({ page }) => {
++  const messages: string[] = [];
++  errors.set(page, messages);
++  page.on("pageerror", (error) => messages.push(error.message));
++  page.on("console", (message) => {
++    if (message.type() === "error") messages.push(message.text());
++  });
++  await page.goto("/");
++  await page.evaluate(() => document.fonts.ready);
++  await page.getByRole("textbox").fill("あ".repeat(200));
++});
++
++test.afterEach(async ({ page }) => {
++  expect(errors.get(page), "ブラウザの例外・console.error").toEqual([]);
++});
++
++for (const [name, selector] of [
++  ["X", ".share-button--x"],
++  ["LINE", ".share-button--line"],
++] as const) {
++  test(`${name}: 押せない時、マウスを乗せた先の cursor が not-allowed で、クリックしても何も開かない`, async ({
++    page,
++    context,
++  }) => {
++    const target = page.locator(selector);
++    await expect(target).toHaveAttribute("aria-disabled", "true");
++
++    // elementFromPoint は表示領域外だと null を返すため、先に画面内へ入れる。
++    await target.scrollIntoViewIfNeeded();
++    // ボタンの中心にポインタが届く要素（pointer-events:none だと背面の別要素になる）。
++    const box = (await target.boundingBox())!;
++    const hit = await page.evaluate(
++      ({ x, y }) => {
++        const el = document.elementFromPoint(x, y)!;
++        return { cls: el.className, cursor: getComputedStyle(el).cursor };
++      },
++      { x: box.x + box.width / 2, y: box.y + box.height / 2 },
++    );
++    expect(hit.cls, JSON.stringify(hit)).toContain("share-button");
++    expect(hit.cursor, JSON.stringify(hit)).toBe("not-allowed");
++
++    // 実際に hover しても同じ（hover 規則で cursor が上書きされない）。
++    await target.hover();
++    expect(await target.evaluate((el) => getComputedStyle(el).cursor)).toBe("not-allowed");
++
++    // 押せないまま: href が無く、Tab 順にも入らない。
++    await expect(target).not.toHaveAttribute("href");
++
++    // クリック（通常・中・Ctrl・Meta・Shift）とキー（Enter・Space）で、新しいタブも遷移も起きない。
++    // 入力に応じた URL 同期（?text=）が落ち着いてから基準を取る。
++    await expect(page.getByRole("status")).toHaveText(/共有はできません/);
++    await page.waitForTimeout(500);
++    const urlBefore = page.url();
++    const textbox = page.getByRole("textbox");
++    await textbox.focus();
++    let opened = 0;
++    context.on("page", () => opened++);
++    const focusOf = () =>
++      page.evaluate(() => `${document.activeElement?.tagName}.${document.activeElement?.className}`);
++    const focusBefore = await focusOf();
++    const clicks = [
++      {},
++      { button: "middle" as const },
++      { modifiers: ["Control" as const] },
++      { modifiers: ["Meta" as const] },
++      { modifiers: ["Shift" as const] },
++    ];
++    for (const options of clicks) {
++      await target.click(options);
++      // クリックでフォーカスが移らない（移ると後のキー操作で枠が出る）。
++      expect(await focusOf(), JSON.stringify(options)).toBe(focusBefore);
++    }
++    // Enter・Space はテキスト欄に入ると本文を書き換えるため、フォーカスを外してから押す。
++    await page.evaluate(() => (document.activeElement as HTMLElement).blur());
++    await page.keyboard.press("Enter");
++    await page.keyboard.press("Space");
++    await page.waitForTimeout(300);
++    expect(opened, "新しいタブが開いた").toBe(0);
++    expect(page.url()).toBe(urlBefore);
++    expect(context.pages()).toHaveLength(1);
++    expect(await target.evaluate((el) => el.matches(":focus-visible"))).toBe(false);
++    // tabindex を付けるとクリックでフォーカスできてしまう（Tab 順に入れない事は別テストで測る）。
++    await expect(target).not.toHaveAttribute("tabindex");
++  });
++}
++
++test("押せない X・LINE は Tab 順に入らない", async ({ page }) => {
++  await page.getByRole("button", { name: "📋 コピー", exact: true }).focus();
++  const visited: string[] = [];
++  for (let i = 0; i < 3; i++) {
++    await page.keyboard.press("Tab");
++    visited.push(await page.evaluate(() => document.activeElement?.className ?? ""));
++  }
++  expect(visited.join("|")).not.toMatch(/share-button--(x|line)/);
++  expect(visited[0]).toContain("share-button--link");
++});
++
++test("押せる時の X・LINE は pointer のまま（not-allowed にならない）", async ({ page }) => {
++  await page.getByRole("textbox").fill("短い入力");
++  for (const selector of [".share-button--x", ".share-button--line"]) {
++    const target = page.locator(selector);
++    await expect(target).toHaveAttribute("href", /text=/);
++    expect(await target.evaluate((el) => getComputedStyle(el).cursor)).toBe("pointer");
++  }
++});
+diff --git a/tests/e2e/design-hover.spec.ts b/tests/e2e/design-hover.spec.ts
+new file mode 100644
+index 0000000..8017eab
+--- /dev/null
++++ b/tests/e2e/design-hover.spec.ts
+@@ -0,0 +1,94 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// デザイン states.dc.html の「マウスを乗せた」列（.cph / .xh / .lnh / .lkh）の値。
++// 色は transition 中に途中の値を返しうるため、最終値になるまで expect.poll で待つ。
++
++const errors = new WeakMap<Page, string[]>();
++
++test.beforeEach(async ({ page }) => {
++  const messages: string[] = [];
++  errors.set(page, messages);
++  page.on("pageerror", (error) => messages.push(error.message));
++  page.on("console", (message) => {
++    if (message.type() === "error") messages.push(message.text());
++  });
++  await page.goto("/");
++  await page.evaluate(() => document.fonts.ready);
++});
++
++test.afterEach(async ({ page }) => {
++  expect(errors.get(page), "ブラウザの例外・console.error").toEqual([]);
++});
++
++function luminance(css: string): number {
++  const m = css.match(/[\d.]+/g)!.map(Number);
++  const [r, g, b] = m.slice(0, 3).map((v) => {
++    const c = v / 255;
++    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
++  });
++  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
++}
++function contrast(a: string, b: string): number {
++  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
++  return (hi! + 0.05) / (lo! + 0.05);
++}
++
++const buttons = {
++  copy: { selector: ".share-button--copy" },
++  x: { selector: ".share-button--x" },
++  line: { selector: ".share-button--line" },
++  link: { selector: ".share-button--link" },
++} as const;
++
++type Name = keyof typeof buttons;
++
++// ライトは --ach #1f47b8 / ダークは --ach #8ca0ff。X・LINE の塗りは両テーマ共通。
++const expected: Record<
++  "light" | "dark",
++  Record<Name, { bg: string; color: string; border?: string }>
++> = {
++  light: {
++    copy: { bg: "rgb(31, 71, 184)", color: "rgb(255, 255, 255)" },
++    x: { bg: "rgb(42, 47, 54)", color: "rgb(255, 255, 255)" },
++    line: { bg: "rgb(2, 106, 44)", color: "rgb(255, 255, 255)" },
++    link: { bg: "rgb(246, 248, 252)", color: "rgb(47, 95, 224)", border: "rgb(47, 95, 224)" },
++  },
++  dark: {
++    copy: { bg: "rgb(140, 160, 255)", color: "rgb(11, 14, 23)" },
++    x: { bg: "rgb(42, 47, 54)", color: "rgb(255, 255, 255)" },
++    line: { bg: "rgb(2, 106, 44)", color: "rgb(255, 255, 255)" },
++    link: { bg: "rgb(35, 40, 58)", color: "rgb(109, 139, 255)", border: "rgb(109, 139, 255)" },
++  },
++};
++
++for (const theme of ["light", "dark"] as const) {
++  for (const name of Object.keys(buttons) as Name[]) {
++    test(`${theme}: ${name} に hover した時の色がデザインどおり・文字コントラスト4.5以上`, async ({
++      page,
++    }) => {
++      await page.evaluate((t) => document.documentElement.setAttribute("data-theme", t), theme);
++      const target = page.locator(buttons[name].selector);
++      await target.hover();
++      const want = expected[theme][name];
++      const read = () =>
++        target.evaluate((el) => {
++          const s = getComputedStyle(el);
++          return {
++            bg: s.backgroundColor,
++            color: s.color,
++            border: s.borderTopColor,
++            filter: s.filter,
++          };
++        });
++      await expect
++        .poll(async () => (await read()).bg, { message: `${theme} ${name} 背景` })
++        .toBe(want.bg);
++      await expect.poll(async () => (await read()).color).toBe(want.color);
++      const final = await read();
++      // コピーの hover は色だけ。brightness フィルタを重ねるとデザインより明るくなる。
++      expect(final.filter, JSON.stringify(final)).toBe("none");
++      if (want.border) expect(final.border, JSON.stringify(final)).toBe(want.border);
++      expect(contrast(final.color, final.bg), JSON.stringify(final)).toBeGreaterThanOrEqual(4.5);
++    });
++  }
++}
+diff --git a/tests/e2e/design-shape-container.spec.ts b/tests/e2e/design-shape-container.spec.ts
+new file mode 100644
+index 0000000..8547561
+--- /dev/null
++++ b/tests/e2e/design-shape-container.spec.ts
+@@ -0,0 +1,68 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// デザイン差分監査 行15。デザイン(Screen.dc.html / Screen390.dc.html)は .shell（画面の列全体）を
++// container にして @container (max-width:480px) で 見出し 24px / カード余白 16px / 形選択 2列
++// に切り替える。ここでは列(.app-shell)の幅で判定されていることを測る。
++
++async function measure(page: Page) {
++  return page.evaluate(() => {
++    const shell = document.querySelector(".app-shell")!.getBoundingClientRect().width;
++    const card = getComputedStyle(document.querySelector(".card")!);
++    return {
++      shell,
++      cols: getComputedStyle(document.querySelector(".shape-picker")!).gridTemplateColumns.split(" ").length,
++      h1: getComputedStyle(document.querySelector(".app-title")!).fontSize,
++      padding: card.paddingLeft,
++    };
++  });
++}
++
++test.beforeEach(async ({ page }) => {
++  await page.goto("/");
++  await page.evaluate(() => document.fonts.ready);
++});
++
++test("列(.app-shell)が 480px 以下なら 2列・見出し24px・カード余白16px、超えたら 4列・32px・28px（画面幅 320〜800 を 1px ずつ）", async ({ page }) => {
++  let switchAt = 0;
++  for (let w = 320; w <= 800; w++) {
++    await page.setViewportSize({ width: w, height: 900 });
++    const m = await measure(page);
++    const narrow = m.shell <= 480;
++    expect(m, `viewport ${w}px / 列 ${m.shell}px`).toMatchObject(
++      narrow ? { cols: 2, h1: "24px", padding: "16px" } : { cols: 4, h1: "32px", padding: "28px" },
++    );
++    if (!narrow && !switchAt) switchAt = w;
++  }
++  // 列は画面幅 - 左右 16px。512px で列が 480px、513px で超える。
++  expect(switchAt).toBe(513);
++});
++
++for (const [width, cols] of [
++  [320, 2],
++  [390, 2],
++  [481, 2],
++  [512, 2],
++  [513, 4],
++  [560, 4],
++  [720, 4],
++  [1440, 4],
++] as const) {
++  test(`viewport ${width}px: ${cols} 列で、カード内・ページが横にはみ出さない`, async ({ page }) => {
++    await page.setViewportSize({ width, height: 900 });
++    expect((await measure(page)).cols).toBe(cols);
++    const overflow = await page.evaluate(() => {
++      const card = document.querySelector(".card")!.getBoundingClientRect();
++      const out: string[] = [];
++      for (const el of document.querySelectorAll(".card *")) {
++        if (el.closest(".preview-scroll")) continue; // AA は横スクロールが仕様。
++        const r = el.getBoundingClientRect();
++        if (r.width > 0 && (r.right > card.right + 0.5 || r.left < card.left - 0.5)) out.push(`${el.className || el.tagName}`);
++      }
++      return {
++        out,
++        pageScroll: document.documentElement.scrollWidth > innerWidth,
++      };
++    });
++    expect(overflow).toEqual({ out: [], pageScroll: false });
++  });
++}
+diff --git a/tests/e2e/design-tap-targets.spec.ts b/tests/e2e/design-tap-targets.spec.ts
+new file mode 100644
+index 0000000..5b1bf62
+--- /dev/null
++++ b/tests/e2e/design-tap-targets.spec.ts
+@@ -0,0 +1,63 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// デザイン差分監査 行5・9（タップ領域）。テーマ切替 44x44、チェックボックス行は高さ 44px /
++// 14.5px / 行間 4px・列間 20px。
++
++type Theme = "light" | "dark";
++
++async function open(page: Page, theme: Theme, width: number) {
++  await page.setViewportSize({ width, height: 900 });
++  await page.addInitScript((t) => localStorage.setItem("sudden-death-theme", t), theme);
++  await page.goto("/");
++  await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
++}
++
++for (const theme of ["light", "dark"] as const) {
++  for (const width of [1440, 390]) {
++    test(`${theme} ${width}px: テーマ切替ボタンは 44x44（行5）`, async ({ page }) => {
++      await open(page, theme, width);
++      const box = await page.locator(".theme-toggle").boundingBox();
++      expect({ w: box?.width, h: box?.height }).toEqual({ w: 44, h: 44 });
++    });
++
++    test(`${theme} ${width}px: チェックボックス行は高さ 44px・14.5px（行9）`, async ({ page }) => {
++      await open(page, theme, width);
++      const rows = page.locator(".checkbox-label");
++      await expect(rows).toHaveCount(2);
++      for (let i = 0; i < 2; i++) {
++        const row = rows.nth(i);
++        expect((await row.boundingBox())?.height).toBe(44);
++        expect(await row.evaluate((e) => getComputedStyle(e).fontSize)).toBe("14.5px");
++        // 18px のチェックボックスとラベル文字の間は 8px だけ（UA 既定の margin を持ち込まない）。
++        expect(await row.locator("input").evaluate((e) => getComputedStyle(e).margin)).toBe("0px");
++      }
++    });
++  }
++}
++
++test("チェックボックス行の間隔: 列間 20px・行間 4px・上は 8px（行9）", async ({ page }) => {
++  await open(page, "light", 1440);
++  const v = await page.evaluate(() => {
++    const row = document.querySelector(".option-row") as HTMLElement;
++    const s = getComputedStyle(row);
++    const [a, b] = [...row.children].map((e) => e.getBoundingClientRect());
++    const ta = document.querySelector(".editor-textarea")!.getBoundingClientRect();
++    return { rowGap: s.rowGap, columnGap: s.columnGap, between: b!.left - a!.right, top: a!.top - ta.bottom };
++  });
++  expect(v.rowGap).toBe("4px");
++  expect(v.columnGap).toBe("20px");
++  expect(v.between).toBe(20);
++  expect(v.top).toBe(8);
++});
++
++test("390px: 2 つのチェックボックス行が折り返しても横スクロールが出ない", async ({ page }) => {
++  await open(page, "light", 390);
++  const scroll = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
++  expect(scroll).toBe(false);
++  const header = await page.evaluate(() => {
++    const t = document.querySelector(".theme-toggle")!.getBoundingClientRect();
++    const card = document.querySelector(".card")!.getBoundingClientRect();
++    return t.right <= card.right + 0.5;
++  });
++  expect(header).toBe(true);
++});
+diff --git a/tests/e2e/design-type-spacing.spec.ts b/tests/e2e/design-type-spacing.spec.ts
+new file mode 100644
+index 0000000..e71760a
+--- /dev/null
++++ b/tests/e2e/design-type-spacing.spec.ts
+@@ -0,0 +1,120 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// デザイン(design/project 版9)との差分監査 行1,2,3,4,8,10,12,13,14,46 の測定テスト。
++// rem で書いた値は 16px 基準の px に換算して getComputedStyle と比べる。
++
++type Theme = "light" | "dark";
++
++async function open(page: Page, theme: Theme, width: number) {
++  await page.setViewportSize({ width, height: 900 });
++  await page.addInitScript((t) => localStorage.setItem("sudden-death-theme", t), theme);
++  await page.goto("/");
++  await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
++}
++
++const num = (v: string | undefined) => Number.parseFloat(v ?? "");
++
++const css = (page: Page, selector: string, props: string[]): Promise<Record<string, string>> =>
++  page.evaluate(
++    ([sel, ps]) => {
++      const s = getComputedStyle(document.querySelector(sel as string)!);
++      return Object.fromEntries((ps as string[]).map((p) => [p, s.getPropertyValue(p)]));
++    },
++    [selector, props],
++  ) as Promise<Record<string, string>>;
++
++test("ページ下余白: 1440 は 56px、390 は 32px（行1・2）", async ({ page }) => {
++  await open(page, "light", 1440);
++  expect((await css(page, "#app", ["padding-bottom"]))["padding-bottom"]).toBe("56px");
++  await open(page, "light", 390);
++  expect((await css(page, "#app", ["padding-bottom"]))["padding-bottom"]).toBe("32px");
++});
++
++test("h1 の line-height は 1.3（行3）", async ({ page }) => {
++  await open(page, "light", 1440);
++  const v = await css(page, ".app-title", ["line-height", "font-size"]);
++  expect(num(v["line-height"])).toBeCloseTo(num(v["font-size"]) * 1.3, 1);
++  expect(v["font-size"]).toBe("32px");
++});
++
++test("サブタイトルは 14px / 1.6 / balance（行4）", async ({ page }) => {
++  await open(page, "light", 390);
++  const v = await css(page, ".app-subtitle", ["font-size", "line-height", "text-wrap-style"]);
++  expect(v["font-size"]).toBe("14px");
++  expect(num(v["line-height"])).toBeCloseTo(22.4, 1);
++  expect(v["text-wrap-style"]).toBe("balance");
++});
++
++test("ラベルは 13.5px（行8）", async ({ page }) => {
++  await open(page, "light", 1440);
++  expect((await css(page, ".field-label", ["font-size"]))["font-size"]).toBe("13.5px");
++});
++
++for (const [theme, muted] of [
++  ["light", "rgb(91, 100, 120)"],
++  ["dark", "rgb(154, 162, 184)"],
++] as const) {
++  test(`${theme}: placeholder の色はミュートトークン（行12）`, async ({ page }) => {
++    await open(page, theme, 1440);
++    const color = await page.evaluate(() => getComputedStyle(document.querySelector(".editor-textarea")!, "::placeholder").color);
++    expect(color).toBe(muted);
++  });
++}
++
++test("スタイル選択ボタン: padding 12px 8px / gap 6px / 13.5px（行13）", async ({ page }) => {
++  await open(page, "light", 1440);
++  const v = await css(page, ".shape-button", ["padding-top", "padding-bottom", "padding-left", "padding-right", "row-gap", "font-size"]);
++  expect([v["padding-top"], v["padding-right"], v["padding-bottom"], v["padding-left"]]).toEqual(["12px", "8px", "12px", "8px"]);
++  expect(v["row-gap"]).toBe("6px");
++  expect(v["font-size"]).toBe("13.5px");
++});
++
++test("スタイル選択ボタンの高さはデザインの約 73px（±1px）、アイコン枠は 24px（行13）", async ({ page }) => {
++  for (const width of [1440, 390]) {
++    await open(page, "light", width);
++    const h = await page.evaluate(() => {
++      const b = document.querySelector(".shape-button")!;
++      return { button: b.getBoundingClientRect().height, icon: b.querySelector(".shape-icon")!.getBoundingClientRect().height };
++    });
++    expect(Math.abs(h.button - 73), `${width}px: ${h.button}`).toBeLessThanOrEqual(1);
++    expect(h.icon).toBe(24);
++  }
++});
++
++for (const [theme, act] of [
++  ["light", "rgb(233, 238, 252)"],
++  ["dark", "rgb(35, 43, 71)"],
++] as const) {
++  test(`${theme}: 選択中スタイルの背景は --act（行14）`, async ({ page }) => {
++    await open(page, theme, 1440);
++    const bg = await page.evaluate(() => getComputedStyle(document.querySelector('.shape-button[aria-checked="true"]')!).backgroundColor);
++    expect(bg).toBe(act);
++  });
++}
++
++test("注記は 12.5px / 1.7（行46）", async ({ page }) => {
++  await open(page, "light", 1440);
++  const v = await css(page, ".share-note", ["font-size", "line-height"]);
++  expect(v["font-size"]).toBe("12.5px");
++  expect(num(v["line-height"])).toBeCloseTo(21.25, 1);
++});
++
++for (const [theme, muted] of [
++  ["light", "rgb(91, 100, 120)"],
++  ["dark", "rgb(154, 162, 184)"],
++] as const) {
++  test(`${theme}: 無効の縦書きチェックはミュート色 + not-allowed、有効側は変えない（行10）`, async ({ page }) => {
++    await open(page, theme, 390);
++    const vertical = page.locator(".checkbox-label", { hasText: "縦書き" });
++    const enabledColor = await vertical.evaluate((e) => getComputedStyle(e).color);
++    expect(await vertical.evaluate((e) => getComputedStyle(e).cursor)).toBe("pointer");
++    await page.getByRole("radio", { name: "ストレス", exact: true }).click();
++    await expect(vertical.locator("input")).toBeDisabled();
++    const v = await vertical.evaluate((e) => ({ color: getComputedStyle(e).color, cursor: getComputedStyle(e).cursor }));
++    expect(v).toEqual({ color: muted, cursor: "not-allowed" });
++    expect(enabledColor).not.toBe(muted);
++    // 余白チェックは影響を受けない。
++    const other = page.locator(".checkbox-label", { hasText: "余白" });
++    expect(await other.evaluate((e) => getComputedStyle(e).cursor)).toBe("pointer");
++  });
++}
+diff --git a/tests/e2e/followup-theme-media.spec.ts b/tests/e2e/followup-theme-media.spec.ts
+new file mode 100644
+index 0000000..4a3778a
+--- /dev/null
++++ b/tests/e2e/followup-theme-media.spec.ts
+@@ -0,0 +1,142 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// #96 / G2 のレビューで残った穴を埋める追加テスト。いずれも「今の挙動」を固定するもので、
++// 実装は変えていない（変更前でも通る）。
++
++const errors = new WeakMap<Page, string[]>();
++
++test.afterEach(async ({ page }) => {
++  expect(errors.get(page), "ブラウザの例外・console.error").toEqual([]);
++});
++
++async function open(page: Page, scheme?: "light" | "dark") {
++  const messages: string[] = [];
++  errors.set(page, messages);
++  page.on("pageerror", (error) => messages.push(error.message));
++  page.on("console", (message) => {
++    if (message.type() === "error") messages.push(message.text());
++  });
++  // goto より前に OS 設定を決める。localStorage は新規コンテキストなので空（手動選択なし）。
++  if (scheme) await page.emulateMedia({ colorScheme: scheme });
++  await page.goto("/");
++  await page.evaluate(() => document.fonts.ready);
++}
++
++function luminance(css: string): number {
++  const m = css.match(/[\d.]+/g)!.map(Number);
++  const [r, g, b] = m.slice(0, 3).map((v) => {
++    const c = v / 255;
++    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
++  });
++  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
++}
++function contrast(a: string, b: string): number {
++  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
++  return (hi! + 0.05) / (lo! + 0.05);
++}
++
++// --- 1. data-theme が無い時の prefers-color-scheme フォールバック ---
++// アプリは useTheme の effect が起動直後に必ず data-theme を付ける（手動選択が無くても
++// OS の値を反映する）ため、そのままでは CSS の media フォールバックは使われない。
++// フォールバックそのものを測るには、読み込み後に属性を外して CSS だけの結果を見る。
++// emulateMedia の切り替えは useTheme の change リスナーが data-theme を付け直すので、
++// ライト/ダークは別々のページ読み込みで測る（競合を避ける）。
++const fallback = {
++  dark: { xBorder: "rgb(86, 94, 122)", copyBg: "rgb(109, 139, 255)" },
++  light: { xBorder: "rgb(20, 23, 26)", copyBg: "rgb(47, 95, 224)" },
++} as const;
++
++for (const scheme of ["dark", "light"] as const) {
++  test(`data-theme 無し・OS が ${scheme}: CSS の media フォールバックで X の枠線とコピーの塗りが決まる`, async ({
++    page,
++  }) => {
++    await open(page, scheme);
++    // 手動選択が無いので、アプリが付けた data-theme は OS の値と一致しているはず。
++    expect(
++      await page.evaluate(() => localStorage.getItem("sudden-death-theme")),
++    ).toBeNull();
++    await page.evaluate(() =>
++      document.documentElement.removeAttribute("data-theme"),
++    );
++    expect(
++      await page.evaluate(() =>
++        document.documentElement.hasAttribute("data-theme"),
++      ),
++    ).toBe(false);
++    const x = page.locator(".share-button--x");
++    const copy = page.locator(".share-button--copy");
++    await expect
++      .poll(() => x.evaluate((el) => getComputedStyle(el).borderTopColor), {
++        message: "X 枠線",
++      })
++      .toBe(fallback[scheme].xBorder);
++    await expect
++      .poll(() => copy.evaluate((el) => getComputedStyle(el).backgroundColor), {
++        message: "コピー背景",
++      })
++      .toBe(fallback[scheme].copyBg);
++  });
++}
++
++// --- 2. :active は今の押し込み（1px 下へ）のまま ---
++for (const name of ["copy", "x", "line", "link"] as const) {
++  test(`${name}: mousedown 中の transform は translateY(1px)`, async ({
++    page,
++  }) => {
++    await open(page);
++    const target = page.locator(`.share-button--${name}`);
++    await expect(target).toBeVisible();
++    if (name === "link") await expect(target).toBeEnabled();
++    else await expect(target).not.toHaveAttribute("aria-disabled", "true");
++    await target.hover();
++    await page.mouse.down();
++    try {
++      await expect
++        .poll(() => target.evaluate((el) => getComputedStyle(el).transform), {
++          message: `${name} :active`,
++        })
++        .toBe("matrix(1, 0, 0, 1, 0, 1)");
++    } finally {
++      // 要素の外で離して click を発火させない（X/LINE は別タブを開くため）。
++      await page.mouse.move(0, 0);
++      await page.mouse.up();
++    }
++    await expect
++      .poll(() => target.evaluate((el) => getComputedStyle(el).transform))
++      .toBe("none");
++  });
++}
++
++// --- 3. ダークで X / LINE に hover しても文字コントラストが落ちず、X の枠線は変わらない ---
++for (const name of ["x", "line"] as const) {
++  test(`dark: ${name} に hover しても文字コントラスト4.5以上${name === "x" ? "・枠線は #565e7a のまま" : ""}`, async ({
++    page,
++  }) => {
++    await open(page);
++    await page.evaluate(() =>
++      document.documentElement.setAttribute("data-theme", "dark"),
++    );
++    const target = page.locator(`.share-button--${name}`);
++    await target.hover();
++    const read = () =>
++      target.evaluate((el) => {
++        const s = getComputedStyle(el);
++        return {
++          bg: s.backgroundColor,
++          color: s.color,
++          border: s.borderTopColor,
++        };
++      });
++    // hover の塗りに遷移し終えるまで待つ（transition 中の途中色で測らない）。
++    await expect
++      .poll(async () => (await read()).bg)
++      .toBe(name === "x" ? "rgb(42, 47, 54)" : "rgb(2, 106, 44)");
++    const final = await read();
++    expect(
++      contrast(final.color, final.bg),
++      JSON.stringify(final),
++    ).toBeGreaterThanOrEqual(4.5);
++    if (name === "x")
++      expect(final.border, JSON.stringify(final)).toBe("rgb(86, 94, 122)");
++  });
++}
+diff --git a/tests/e2e/icons.spec.ts b/tests/e2e/icons.spec.ts
+new file mode 100644
+index 0000000..f6abfa8
+--- /dev/null
++++ b/tests/e2e/icons.spec.ts
+@@ -0,0 +1,115 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// des-07: アイコンは絵文字ではなく、文字色（currentColor）に従う線の SVG にする。
++// 端末ごとに絵柄が変わらない事・テーマで色が変わる事・絵文字が画面の文字に残っていない事を測る。
++
++const EMOJI = /\p{Extended_Pictographic}/u;
++
++async function visibleText(page: Page) {
++  return page.evaluate(() => document.body.innerText);
++}
++
++test("通常・コピー成功・コピー失敗・長文入力のどの状態でも、画面の文字に絵文字が無い", async ({ page }) => {
++  await page.goto("/");
++  await page.getByRole("textbox").fill("復帰");
++  expect(await visibleText(page)).not.toMatch(EMOJI);
++
++  await page.getByRole("button", { name: "コピー", exact: true }).click();
++  await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
++  expect(await visibleText(page)).not.toMatch(EMOJI);
++
++  // 失敗: clipboard 書き込みを失敗させる
++  await page.evaluate(() => {
++    Object.defineProperty(navigator.clipboard, "writeText", { value: () => Promise.reject(new Error("denied")), configurable: true });
++  });
++  await expect(page.locator('[role="status"]:not(:empty)')).toHaveCount(0, { timeout: 5000 });
++  await page.getByRole("button", { name: "コピー", exact: true }).click();
++  await expect(page.getByRole("status")).toContainText("コピーできませんでした");
++  expect(await visibleText(page)).not.toMatch(EMOJI);
++  // 失敗の知らせはデザイン（states.dc.html）どおり色と文言だけで、絵（svg）を持たない。
++  await expect(page.getByRole("status").locator("svg")).toHaveCount(0);
++
++  await page.getByRole("textbox").fill("長い入力".repeat(200));
++  await expect(page.getByRole("status")).toHaveText("入力が長すぎるため、X・LINEでの共有はできません");
++  expect(await visibleText(page)).not.toMatch(EMOJI);
++});
++
++test("形の選択・コピー・リンク・テーマ切替のアイコンは currentColor の inline svg で aria-hidden", async ({ page }) => {
++  await page.goto("/");
++  const buttons = [
++    ...["通常", "四角形", "短冊", "ストレス"].map((n) => page.getByRole("radio", { name: n })),
++    page.getByRole("button", { name: "コピー", exact: true }),
++    page.getByRole("button", { name: "リンクをコピー" }),
++    page.getByRole("button", { name: /に切り替え$/ }),
++  ];
++  for (const button of buttons) {
++    const svg = button.locator("svg");
++    await expect(svg).toHaveCount(1);
++    await expect(svg).toHaveAttribute("aria-hidden", "true");
++    await expect(svg).toHaveAttribute("stroke", "currentColor");
++    await expect(svg).toHaveAttribute("fill", "none");
++  }
++});
++
++test("アイコンの色は文字色に従い、明暗を切り替えると変わる", async ({ page }) => {
++  await page.goto("/");
++  const read = () =>
++    page.evaluate(() => {
++      const pick = (el: Element) => {
++        const svg = el.querySelector("svg")!;
++        return { button: getComputedStyle(el).color, icon: getComputedStyle(svg).color };
++      };
++      return {
++        theme: document.documentElement.dataset.theme ?? "",
++        toggle: pick(document.querySelector(".theme-toggle")!),
++        radio: pick(document.querySelector('[role="radio"]')!),
++        link: pick(document.querySelector(".share-button--link")!),
++      };
++    });
++  // .shape-button などは color に 0.15s の transition があり、切替直後は途中の色を読んでしまう。
++  // 製品 CSS は変えず、色が落ち着く（250ms 空けた2回の読みが一致する）まで待ってから比べる。
++  const settled = async () => {
++    let result = await read();
++    await expect
++      .poll(async () => {
++        const before = JSON.stringify(result);
++        await page.waitForTimeout(250);
++        result = await read();
++        return JSON.stringify(result) === before;
++      })
++      .toBe(true);
++    return result;
++  };
++  const toggle = page.locator(".theme-toggle");
++  const first = await settled();
++  await toggle.click();
++  await expect.poll(async () => (await read()).theme).not.toBe(first.theme);
++  const second = await settled();
++  for (const key of ["toggle", "radio", "link"] as const) {
++    expect(first[key].icon).toBe(first[key].button);
++    expect(second[key].icon).toBe(second[key].button);
++    expect(first[key].icon).not.toBe(second[key].icon);
++  }
++});
++
++test("コピー成功の直後、コピー・リンクのボタンはチェックの svg と「コピー済み」を出し、知らせにもチェックが付く", async ({ page }) => {
++  await page.goto("/");
++  await page.getByRole("textbox").fill("復帰");
++  const checkPath = 'path[d="M5 12l5 5 9-10"]';
++
++  await page.getByRole("button", { name: "コピー", exact: true }).click();
++  const copied = page.getByRole("button", { name: "コピー済み" });
++  await expect(copied).toHaveCount(1);
++  await expect(copied.locator(`svg ${checkPath}`)).toHaveCount(1);
++  await expect(page.getByRole("status").locator(`svg ${checkPath}`)).toHaveCount(1);
++  await expect(page.getByRole("status")).toHaveText("コピーしました");
++});
++
++test("リンクコピー成功の直後もチェックの svg と「コピー済み」になる", async ({ page }) => {
++  await page.goto("/");
++  await page.getByRole("textbox").fill("復帰");
++  await page.getByRole("button", { name: "リンクをコピー" }).click();
++  const copied = page.getByRole("button", { name: "コピー済み" });
++  await expect(copied).toHaveCount(1);
++  await expect(copied.locator('svg path[d="M5 12l5 5 9-10"]')).toHaveCount(1);
++});
+diff --git a/tests/e2e/share-disabled-reason.spec.ts b/tests/e2e/share-disabled-reason.spec.ts
+new file mode 100644
+index 0000000..7015698
+--- /dev/null
++++ b/tests/e2e/share-disabled-reason.spec.ts
+@@ -0,0 +1,80 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// 長い入力で X・LINE が押せなくなった時の理由を、押せないボタンのすぐ下に見せる（ux-04）。
++// 以前は title に入れていたが、pointer-events:none と tabIndex=-1 のため誰にも表示されなかった。
++// 実測値（getBoundingClientRect）で「見えている・ボタンの直下・title が無い・高さが動かない」を確かめる。
++
++const REASON = "入力が長すぎるため、X・LINEでの共有はできません";
++const LONG_INPUT = "あ".repeat(200);
++
++async function measure(page: Page) {
++  return page.evaluate(() => {
++    const card = document.querySelector(".card")!.getBoundingClientRect();
++    const bar = document.querySelector(".share-bar")!.getBoundingClientRect();
++    const x = document.querySelector(".share-button--x")!.getBoundingClientRect();
++    const line = document.querySelector(".share-button--line")!.getBoundingClientRect();
++    const row = document.querySelector('[role="status"]')!;
++    const r = row.getBoundingClientRect();
++    return {
++      cardHeight: card.height,
++      barBottom: bar.bottom,
++      buttonsBottom: Math.max(x.bottom, line.bottom),
++      row: { top: r.top, height: r.height, text: row.textContent ?? "" },
++      pageWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
++      viewport: document.documentElement.clientWidth,
++      titles: [".share-button--x", ".share-button--line"].map((s) => document.querySelector(s)!.getAttribute("title")),
++      disabled: [".share-button--x", ".share-button--line"].map((s) => document.querySelector(s)!.getAttribute("aria-disabled")),
++    };
++  });
++}
++
++for (const [width, height] of [
++  [1440, 900],
++  [390, 844],
++] as const) {
++  test(`${width}px: 200字で X・LINE が押せない時、理由がボタンの直下に見え、title は無く、カードの高さが動かない`, async ({ page }) => {
++    await page.setViewportSize({ width, height });
++    await page.goto("/");
++    await page.getByRole("textbox").fill(LONG_INPUT);
++
++    const reason = page.getByRole("status");
++    await expect(reason).toHaveText(REASON);
++    await expect(reason).toBeVisible();
++    const withReason = await measure(page);
++
++    // X・LINE は押せない状態で、title（誰にも見えない説明）は付いていない。
++    expect(withReason.disabled).toEqual(["true", "true"]);
++    expect(withReason.titles).toEqual([null, null]);
++
++    // 理由は X・LINE のすぐ下（隙間 16px 以内）で、行の高さを先に確保している。
++    expect(withReason.row.top).toBeGreaterThanOrEqual(withReason.buttonsBottom);
++    expect(withReason.row.top - withReason.barBottom).toBeLessThanOrEqual(16);
++    expect(withReason.row.height).toBeGreaterThanOrEqual(24);
++    // 画面の中に収まっている（折り返しても行からはみ出さない）。
++    expect(withReason.pageWidth).toBeLessThanOrEqual(withReason.viewport);
++
++    // コピーの知らせが同じ行に出て消えても、理由に戻り、カードの高さと行の位置は同じ。
++    await page.getByRole("button", { name: "コピー", exact: true }).click();
++    await expect(reason).toHaveText(/コピーしました$/);
++    const during = await measure(page);
++    await expect(reason).toHaveText(REASON);
++    const after = await measure(page);
++
++    expect(during.cardHeight).toBe(withReason.cardHeight);
++    expect(after.cardHeight).toBe(withReason.cardHeight);
++    expect(during.row.top).toBe(withReason.row.top);
++    expect(after.row.top).toBe(withReason.row.top);
++    expect(during.row.height).toBe(withReason.row.height);
++
++    // 短い入力（理由なし）の空の行と高さが同じ＝理由が出ても行が伸びない。
++    await page.getByRole("textbox").fill("復帰");
++    await expect(page.locator('[role="status"]:not(:empty)')).toHaveCount(0);
++    const idle = await measure(page);
++    expect(withReason.row.height).toBe(idle.row.height);
++
++    test.info().annotations.push({
++      type: "measure",
++      description: `rowTop=${withReason.row.top} buttonsBottom=${withReason.buttonsBottom} barBottom=${withReason.barBottom} rowH=${withReason.row.height} idleRowH=${idle.row.height} card=${withReason.cardHeight}/${during.cardHeight}/${after.cardHeight}`,
++    });
++  });
++}
+diff --git a/tests/e2e/share-note-gap.spec.ts b/tests/e2e/share-note-gap.spec.ts
+new file mode 100644
+index 0000000..4d63ef0
+--- /dev/null
++++ b/tests/e2e/share-note-gap.spec.ts
+@@ -0,0 +1,25 @@
++import { test, expect } from "@playwright/test";
++
++// 共有ボタン群の下端と注記（.share-note）の間は 8px 以上空ける（des-04）。
++// 以前は .share-note が margin 0 でボタンに貼り付いていた。知らせの行（高さ確保済み）が
++// 間に入る今は、その行が隙間になる。主要幅すべてで実測して確かめる。
++
++const MIN_GAP = 8;
++
++for (const width of [320, 390, 481, 560, 641, 720, 768, 1024, 1440]) {
++  test(`${width}px: 共有ボタンの下端と注記の間が ${MIN_GAP}px 以上`, async ({ page }) => {
++    await page.setViewportSize({ width, height: 900 });
++    await page.goto("/");
++    await page.getByRole("textbox").fill("復帰");
++
++    const m = await page.evaluate(() => {
++      const bottoms = [...document.querySelectorAll(".share-button")].map((b) => b.getBoundingClientRect().bottom);
++      const note = document.querySelector(".share-note")!.getBoundingClientRect();
++      return { buttonsBottom: Math.max(...bottoms), noteTop: note.top };
++    });
++    const gap = m.noteTop - m.buttonsBottom;
++    test.info().annotations.push({ type: "measure", description: `gap=${gap}` });
++    console.log(`width=${width} gap=${gap}`);
++    expect(gap).toBeGreaterThanOrEqual(MIN_GAP);
++  });
++}
+diff --git a/tests/e2e/share-notice.spec.ts b/tests/e2e/share-notice.spec.ts
+new file mode 100644
+index 0000000..9f99096
+--- /dev/null
++++ b/tests/e2e/share-notice.spec.ts
+@@ -0,0 +1,116 @@
++import { test, expect, type Page } from "@playwright/test";
++
++// コピー成功の知らせは共有ボタンのすぐ下の「先に高さを確保した行」に出す（des-05）。
++// 出ても消えてもカードの高さが変わらない事と、知らせが共有ボタン群の直下にある事を
++// 実測値（getBoundingClientRect）で確かめる。
++
++const NOTICE_ROW_HEIGHT = 24; // design/project/states.dc.html の min-height
++
++async function measure(page: Page) {
++  return page.evaluate(() => {
++    const card = document.querySelector(".card")!.getBoundingClientRect();
++    const bar = document.querySelector(".share-bar")!.getBoundingClientRect();
++    const notice = document.querySelector('[role="status"]')?.getBoundingClientRect();
++    return {
++      cardHeight: card.height,
++      barBottom: bar.bottom,
++      notice: notice ? { top: notice.top, height: notice.height } : null,
++      pageWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
++      viewport: document.documentElement.clientWidth,
++    };
++  });
++}
++
++for (const [width, height] of [
++  [1440, 900],
++  [390, 844],
++] as const) {
++  test(`${width}px: 知らせが出る前・出ている間・消えた後でカードの高さが同じで、共有ボタンの直下に出る`, async ({ page }) => {
++    await page.setViewportSize({ width, height });
++    await page.goto("/");
++    await page.getByRole("textbox").fill("復帰");
++    await expect(page.getByRole("button", { name: /リンクをコピー/ })).toBeEnabled();
++
++    const before = await measure(page);
++    await page.getByRole("button", { name: "コピー", exact: true }).click();
++    await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
++    const during = await measure(page);
++    await expect(page.locator('[role="status"]:not(:empty)')).toHaveCount(0);
++    const after = await measure(page);
++
++    expect(during.cardHeight).toBe(before.cardHeight);
++    expect(after.cardHeight).toBe(before.cardHeight);
++
++    // 知らせの行は共有ボタン群のすぐ下（隙間は 16px 以内）にあり、高さ 24px を先に取っている。
++    expect(during.notice).not.toBeNull();
++    expect(during.notice!.top).toBeGreaterThanOrEqual(during.barBottom);
++    expect(during.notice!.top - during.barBottom).toBeLessThanOrEqual(16);
++    expect(during.notice!.height).toBeGreaterThanOrEqual(NOTICE_ROW_HEIGHT);
++    expect(before.notice!.height).toBe(during.notice!.height);
++
++    expect(during.pageWidth).toBeLessThanOrEqual(during.viewport);
++    // 390×844 では共有ボタンが縦積みなので知らせが画面外に出うる。値は報告用に出力する（#91 待ち）。
++    test.info().annotations.push({
++      type: "measure",
++      description: `before=${before.cardHeight} during=${during.cardHeight} after=${after.cardHeight} noticeTop=${during.notice!.top} barBottom=${during.barBottom}`,
++    });
++  });
++}
++
++// コピー失敗（クリップボードへの書き込みが拒否される）時も同じ行に出し、文言はデザイン
++// （states.dc.html）どおり。文字色はカード面に対して WCAG AA の 4.5:1 以上にする。
++function luminance(c: number[]) {
++  const [r, g, b] = [c[0]!, c[1]!, c[2]!];
++  const f = (v: number) => {
++    const s = v / 255;
++    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
++  };
++  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
++}
++const rgb = (css: string) => (css.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
++
++for (const [width, height] of [
++  [1440, 900],
++  [390, 844],
++] as const) {
++  for (const scheme of ["light", "dark"] as const) {
++    test(`${width}px ${scheme}: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上`, async ({
++      page,
++    }) => {
++      await page.emulateMedia({ colorScheme: scheme });
++      await page.setViewportSize({ width, height });
++      await page.addInitScript(() => {
++        Object.defineProperty(navigator, "clipboard", {
++          value: { writeText: () => Promise.reject(new Error("denied")) },
++        });
++      });
++      await page.goto("/");
++      await page.getByRole("textbox").fill("復帰");
++      const before = await measure(page);
++
++      await page.getByRole("button", { name: "コピー", exact: true }).click();
++      const status = page.getByRole("status");
++      await expect(status).toHaveText(/コピーできませんでした。もう一度押してください$/);
++      const during = await measure(page);
++
++      expect(during.cardHeight).toBe(before.cardHeight);
++      // 同じ行（成功時と同じ位置・高さ）に出る。折り返して行が伸びていない。
++      expect(during.notice!.top).toBe(before.notice!.top);
++      expect(during.notice!.height).toBe(before.notice!.height);
++      expect(during.pageWidth).toBeLessThanOrEqual(during.viewport);
++
++      const colors = await page.evaluate(() => ({
++        fg: getComputedStyle(document.querySelector('[role="status"]')!).color,
++        bg: getComputedStyle(document.querySelector(".card")!).backgroundColor,
++      }));
++      const lums = [luminance(rgb(colors.fg)), luminance(rgb(colors.bg))].sort((a, b) => b - a);
++      const [l1, l2] = [lums[0]!, lums[1]!];
++      const ratio = (l1 + 0.05) / (l2 + 0.05);
++      test.info().annotations.push({
++        type: "measure",
++        description: `fg=${colors.fg} bg=${colors.bg} ratio=${ratio.toFixed(2)} noticeH=${during.notice!.height} cardH=${during.cardHeight}`,
++      });
++      expect(ratio).toBeGreaterThanOrEqual(4.5);
++    });
++  }
++}
+diff --git a/tests/e2e/share-style.spec.ts b/tests/e2e/share-style.spec.ts
+new file mode 100644
+index 0000000..19aae19
+--- /dev/null
++++ b/tests/e2e/share-style.spec.ts
+@@ -0,0 +1,132 @@
++import { test, expect, type Page } from "@playwright/test";
++
++const errors = new WeakMap<Page, string[]>();
++
++test.beforeEach(async ({ page }) => {
++  const messages: string[] = [];
++  errors.set(page, messages);
++  page.on("pageerror", (error) => messages.push(error.message));
++  page.on("console", (message) => {
++    if (message.type() === "error") messages.push(message.text());
++  });
++  await page.goto("/");
++  await page.evaluate(() => document.fonts.ready);
++});
++
++test.afterEach(async ({ page }) => {
++  expect(errors.get(page), "ブラウザの例外・console.error").toEqual([]);
++});
++
++test("共有ボタン4つのラベルに下線が出ない（a 要素の X/LINE も button と同じ）", async ({ page }) => {
++  const buttons = page.locator(".share-bar .share-button");
++  await expect(buttons).toHaveCount(4);
++  // a 要素は UA 既定で underline になる。button との差が出ていないかを computed style で測る。
++  const decorations = await buttons.evaluateAll((elements) =>
++    elements.map((element) => ({
++      tag: element.tagName,
++      line: getComputedStyle(element).textDecorationLine,
++    })),
++  );
++  expect(decorations.map((d) => d.tag)).toEqual(["BUTTON", "A", "A", "BUTTON"]);
++  for (const d of decorations) expect(d.line, d.tag).toBe("none");
++});
++
++// 2列になる幅（ラベルが折り返さない幅）。4列幅の折り返しは別 PBI（#91 並びの決定待ち）で扱う。
++for (const width of [481, 560, 640]) {
++  test(`${width}px: 共有ボタン4つの枠線の太さと高さ(48px)がそろう`, async ({ page }) => {
++    await page.setViewportSize({ width, height: 900 });
++    const buttons = page.locator(".share-bar .share-button");
++    await expect(buttons).toHaveCount(4);
++    const metrics = await buttons.evaluateAll((elements) =>
++      elements.map((element) => ({
++        border: getComputedStyle(element).borderTopWidth,
++        height: element.getBoundingClientRect().height,
++      })),
++    );
++    // 「リンクをコピー」だけ枠線を持つと 2px 高くなり、2段目と1段目で高さがずれていた。
++    expect(new Set(metrics.map((m) => m.border)).size, JSON.stringify(metrics)).toBe(1);
++    expect(parseFloat(metrics[0]?.border ?? "0")).toBeGreaterThan(0);
++    for (const m of metrics) expect(m.height, JSON.stringify(metrics)).toBe(48);
++  });
++}
++
++// --- X ボタンの枠線（ダーク）。デザインの --xbd。 ---
++function luminance(css: string): number {
++  const m = css.match(/[\d.]+/g)!.map(Number);
++  const [r, g, b] = m.slice(0, 3).map((v) => {
++    const c = v / 255;
++    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
++  });
++  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
++}
++function contrast(a: string, b: string): number {
++  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
++  return (hi! + 0.05) / (lo! + 0.05);
++}
++
++for (const theme of ["light", "dark"] as const) {
++  test(`${theme}: X ボタンの枠線・文字色`, async ({ page }) => {
++    await page.evaluate((t) => document.documentElement.setAttribute("data-theme", t), theme);
++    const x = await page.locator(".share-button--x").evaluate((el) => {
++      const s = getComputedStyle(el);
++      return {
++        border: s.borderTopColor,
++        width: s.borderTopWidth,
++        bg: s.backgroundColor,
++        color: s.color,
++        card: getComputedStyle(el.closest(".card") ?? document.body).backgroundColor,
++      };
++    });
++    // DPR1 では 1.5px が 1px に丸められて返るため、枠線があること（>0）だけ見る。
++    expect(parseFloat(x.width)).toBeGreaterThan(0);
++    expect(x.bg).toBe("rgb(20, 23, 26)");
++    // 文字と塗りのコントラストは WCAG 1.4.3 の 4.5:1 以上
++    expect(contrast(x.color, x.bg), JSON.stringify(x)).toBeGreaterThanOrEqual(4.5);
++    if (theme === "light") {
++      // ライトは従来と同じ見た目（枠線は塗りと同色）
++      expect(x.border).toBe("rgb(20, 23, 26)");
++    } else {
++      expect(x.border).toBe("rgb(86, 94, 122)");
++      // 閾値 2.5:1（デザイン値は 2.59:1。3:1 未達は PR で明示）
++      expect(contrast(x.border, x.card), JSON.stringify(x)).toBeGreaterThanOrEqual(2.5);
++    }
++  });
++}
++
++// --- 「コピー」を主操作のアクセント色にする（緑は LINE と成功の知らせだけ）。デザインの --ac / --onac。 ---
++const expected = {
++  light: { copy: "rgb(47, 95, 224)", copyText: "rgb(255, 255, 255)" },
++  dark: { copy: "rgb(109, 139, 255)", copyText: "rgb(11, 14, 23)" },
++} as const;
++
++for (const theme of ["light", "dark"] as const) {
++  test(`${theme}: コピーはアクセント色の塗り・LINE は緑のまま・4つとも文字コントラスト4.5以上`, async ({
++    page,
++  }) => {
++    await page.evaluate((t) => document.documentElement.setAttribute("data-theme", t), theme);
++    const styles = await page.locator(".share-bar .share-button").evaluateAll((els) =>
++      els.map((el) => {
++        const s = getComputedStyle(el);
++        return { cls: el.className, bg: s.backgroundColor, color: s.color };
++      }),
++    );
++    const by = (c: string) => styles.find((s) => s.cls.includes(c))!;
++    const copy = by("share-button--copy");
++    const accent = await page.evaluate(() =>
++      getComputedStyle(document.documentElement).getPropertyValue("--color-accent").trim(),
++    );
++    expect(copy.bg, JSON.stringify(copy)).toBe(expected[theme].copy);
++    expect(copy.color).toBe(expected[theme].copyText);
++    // トークン（アプリのアクセント色）と同じ値であること。hex を rgb に直して比べる。
++    const hex = accent.replace("#", "");
++    const rgb = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(", ");
++    expect(copy.bg).toBe(`rgb(${rgb})`);
++    // LINE は緑のまま（コピーと見分けがつく）
++    expect(by("share-button--line").bg).toBe("rgb(3, 122, 51)");
++    expect(copy.bg).not.toBe(by("share-button--line").bg);
++    expect(styles).toHaveLength(4);
++    for (const s of styles) {
++      expect(contrast(s.color, s.bg), JSON.stringify(s)).toBeGreaterThanOrEqual(4.5);
++    }
++  });
++}

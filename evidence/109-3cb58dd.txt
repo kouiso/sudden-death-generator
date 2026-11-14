@@ -1,0 +1,16 @@
+LOCAL-CHECK | head 3cb58dd | 2026-11-14T13:16:02Z
+$ npm run -s lint
+exit 0
+$ npm run -s typecheck
+exit 0
+$ npm test
+ Test Files  4 passed (4)
+      Tests  152 passed (152)
+exit 0
+$ npm run -s build
+✓ built in 77ms
+exit 0
+$ npx playwright test -c /tmp/lc/109/pw.config.ts --trace off --reporter=line
+  13 passed (10.8s)
+exit 0
+Note: Chromium 1243 (not 1254)

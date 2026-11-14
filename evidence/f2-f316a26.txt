@@ -1,0 +1,8 @@
+LOCAL-CHECK | head f316a26 | 2026-11-14T14:21:13Z
+$ npx playwright test -c <override> (full e2e, 3 runs)
+  37 passed / 37 passed / 37 passed
+$ npx playwright test followup-theme-media --repeat-each 5
+  40 passed
+$ npm run lint / typecheck / test / build
+  0 / 0 / 152 passed / ok
+Chromium 1243 (not 1254)

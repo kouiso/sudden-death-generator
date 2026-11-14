@@ -1,0 +1,7 @@
+LOCAL-CHECK | head 955d6d2 | 2026-11-14T14:21:13Z
+$ PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run test:e2e -- --trace off
+  13 passed (12.1s)
+$ npm run lint
+  exit 0
+(reviewer re-ran: 13 passed, lint 0, typecheck 0, vitest 152 passed, build ok)
+Chromium 1243 (not 1254)
