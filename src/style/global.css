@@ -211,11 +211,12 @@ button {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 1rem;
-  /* サブセットフォント(sd-symbols.woff2)の hhea ascent(1160)+|descent|(288) が
-   * unitsPerEm(1000) の 1.448 倍あり、line-height がそれを下回ると隣接行の
-   * グリフが重なって完全に見えなくなる（実機で四角形・短冊の枠が消えるのを確認した
-   * 不具合）。余裕を見て 1.5 にする。 */
-  line-height: 1.5;
+  /* 罫線グリフは 1em の高さちょうどなので、line-height が 1.5 だと行間に 0.5em の隙間が開き
+   * 四角形・短冊の枠がばらばらに見える。1 にすると行の送りがグリフ高と一致して縦線がつながる。
+   * font.css の ascent/descent-override でサブセットフォントの行ボックスをグリフに揃えて
+   * あるので、hhea(1160+288)のままだと重なって消えた以前の不具合は起きない。
+   * 1 より詰めると、隣の行のグリフが重なるので詰めないこと。 */
+  line-height: 1;
   white-space: pre;
   /* タブのタブストップ可変幅描画を width.ts の固定幅計算（タブ=半角1）と一致させる。 */
   tab-size: 1;
