@@ -56,3 +56,5 @@ REVIEW #107 PASS must0 want1 (check Vercel preview log after PR) nit1 (body fixe
 #96 | FINISH | head 7d0a7b9 (on #92) | unit 152 e2e 19
 REVIEW #88 FAIL must1 (body: card height for link-copy at 1440 changes due to #91 wrap) -> body fixed, re-review | #95 PASS want1(trailer: accepted) | #92 PASS want2 (body 320/390 added; trailer accepted) nit1
 DECIDED | member commit trailers say Sonnet 5.5 (true author) — keep; no force push | revert none
+REVIEW #96 PASS want1 (OS-dark test: follow-up) nit1
+#94 | FINISH | head 56dc02d (on #96) | unit 152 e2e 21
