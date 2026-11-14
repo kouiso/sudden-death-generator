@@ -94,3 +94,4 @@ REVIEW design G1 PASS want1 (body: #88 overlap, --shadow-toast) nit2
 design G4 bff642c (e2e 32) / G6 073b8cd (e2e 41) / G5 75dd3c4 (e2e 51) | FINISH | review
 DECIDED | G4 label line-height 1.2 (design unspecified; reproduces 73px) — flagged in PR | revert normal
 REVIEW design G2 PASS want3 nit2 | r40 FAIL must1 (click focus regression) -> FIX sent
+#r40 | FIX done | head 53e7cd7 | e2e 25 | re-review
