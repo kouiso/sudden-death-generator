@@ -116,3 +116,4 @@ SD-4	doing	agent	Q-SL4	sudden-death-generator do: 19 SBI PRs + 6 design PRs open
 V-5	blocked	wait	SD-4	答えの後に変わった所だけ回し直す
 F-02	blocked	wait	V-5	仕上げ
 RULE (manager 14:0xZ) GitHub writes: <=2 concurrent writers, >=2s between writes, batched reads, no <60s polling, on 403 honor Retry-After and do local work | queued writes now: 40 (PR124 x2, 12 PRs x3, #69 x2)
+REVIEW followup-106 PASS nit1 | followup-theme-media FAIL must1 (body counts) -> body fixed, re-review
