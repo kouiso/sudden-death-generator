@@ -31,9 +31,17 @@ const ZIGZAG_DOWN = "　　　　↘";
 const ZIGZAG_UP = "　　　　↙";
 const STRESS_INDENT = "　　　";
 
-/** 空行を除いた入力行を返す。全て空なら既定文言1行にフォールバックする。 */
+/**
+ * 空行を除いた入力行を返す。全て空なら空配列のまま返す。
+ * 既定文言への置換をここでやると、空入力と「突然の死」と打った入力が区別できなくなる。
+ * ストレス形だけは両者で出力を変える必要があるため、置換は形ごとに呼び出し側で行う。
+ */
 function parseLines(rawInput: string): string[] {
-  const lines = rawInput.split("\n").filter((line) => line.trim().length > 0);
+  return rawInput.split("\n").filter((line) => line.trim().length > 0);
+}
+
+/** 空入力のとき既定文言1行にフォールバックする（ストレス形以外の共通挙動）。 */
+function withDefaultText(lines: string[]): string[] {
   return lines.length > 0 ? lines : [DEFAULT_TEXT];
 }
 
@@ -120,7 +128,10 @@ const STRESS_DEFAULT_MESSAGE = "仕事のストレス";
 /**
  * ストレス形状。入力行を先頭から最大4個消費してジグザグ（字下げなし↘字下げあり↙の2往復）を
  * 組み、4個に満たない分は既定文言「仕事のストレス」で埋める。5個目以降が残っていればそれを
- * そのまま最後の枠に流し込み、何も残っていなければ枠も既定文言になる。ストレスの蓄積 →
+ * そのまま最後の枠に流し込み、何も残っていなければ枠も「仕事のストレス」になる。
+ * ただし入力が完全に空のときだけは、ストレス4段が「仕事のストレス」、枠が「突然の死」になる
+ * （形を選んだ直後に見せ場の形で出すため）。「突然の死」と打った入力は空入力ではないので、
+ * 従来どおり1段目に入る。ストレスの蓄積 →
  * 突然の死、という見せ方そのものが形状の定義なので、縦書きオプションはこの形状には影響しない
  * （内部の枠だけを縦書きにすると蓄積ラインとの整合が崩れるため、意図的に対象外とする）。
  */
@@ -135,19 +146,22 @@ function renderStress(lines: readonly string[], padding: boolean): string {
     zigzag.push(step % 2 === 0 ? ZIGZAG_DOWN : ZIGZAG_UP);
   }
 
-  const boxLines = remaining.length > 0 ? remaining : [STRESS_DEFAULT_MESSAGE];
+  // 1〜4行入力時の枠の既定値は未決定のため従来の「仕事のストレス」のまま据え置く。
+  const emptyBox = lines.length === 0 ? DEFAULT_TEXT : STRESS_DEFAULT_MESSAGE;
+  const boxLines = remaining.length > 0 ? remaining : [emptyBox];
   return [...zigzag, ...renderFramed(boxLines, NORMAL_GLYPHS, padding)].join("\n");
 }
 
 /** 入力テキストとオプションから AA 文字列を生成する。純粋関数で副作用を持たない。 */
 export function renderSuddenDeath(rawInput: string, options: RenderOptions): string {
-  const lines = parseLines(rawInput);
+  const parsed = parseLines(rawInput);
 
+  if (options.shape === "stress") {
+    return renderStress(parsed, options.padding);
+  }
+  const lines = withDefaultText(parsed);
   if (options.shape === "tanzaku") {
     return renderTanzaku(lines, options.padding);
-  }
-  if (options.shape === "stress") {
-    return renderStress(lines, options.padding);
   }
 
   const glyphs = options.shape === "square" ? SQUARE_GLYPHS : NORMAL_GLYPHS;
