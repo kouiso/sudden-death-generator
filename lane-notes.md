@@ -54,3 +54,5 @@ REVIEW #104 PASS must0 want0 nit3 (body: 4か所->3か所 corrected)
 #89 | FINISH | head 15f9460 (on #88) | unit 152 e2e 19 | fonts regenerated
 REVIEW #107 PASS must0 want1 (check Vercel preview log after PR) nit1 (body fixed)
 #96 | FINISH | head 7d0a7b9 (on #92) | unit 152 e2e 19
+REVIEW #88 FAIL must1 (body: card height for link-copy at 1440 changes due to #91 wrap) -> body fixed, re-review | #95 PASS want1(trailer: accepted) | #92 PASS want2 (body 320/390 added; trailer accepted) nit1
+DECIDED | member commit trailers say Sonnet 5.5 (true author) — keep; no force push | revert none
