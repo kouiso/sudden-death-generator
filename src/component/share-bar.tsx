@@ -1,5 +1,5 @@
 import type { ComponentChildren } from "preact";
-import { buildLineShareUrl, buildXShareUrl } from "../core/share";
+import { buildLineShareUrl, buildXShareUrl } from "../core";
 
 export interface ShareBarProps {
   output: string;
