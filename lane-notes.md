@@ -72,3 +72,5 @@ DECIDED (manager) | #97: draw sun (flag, not in design); NO warning icon (states
 REVIEW #90 PASS want3 (body fixed; design 注記 style -> owner flag; 390 full shots retake) nit2 | #93 PASS nit1
 REVIEW #100 PASS nit1 | #101 PASS 0件 13:27Z
 #98 | FIX done | head a4645e1 | unit 152 e2e 23 | re-review
+#97 | FINISH | head 1abeb3f (on #101) | unit 171 e2e 35
+OWNER INSTRUCTION (via manager) | 「あと全セッションにdesignartifactを配ったけど（Horsemanager以外）、デザイン通りになるように全部作ること」 | design link: https://claude.ai/artifact/AAu7a9ZhM9RPnGKAHuds4n (copy in design/, see design/README.md) | queued: full side-by-side audit of every screen/state on the combined stack after the open PRs
