@@ -104,3 +104,13 @@ for main session:
 REVIEW G4 FAIL must1 (body numbers 69/76 wrong; base 73, failure is icon box 28) -> body fixed, re-review | DECIDED lead: G4 line-height 1.2 approved (design shorthand = normal -> 76px), flagged owner | G6 PASS nit3 | G5 PASS nit1 (body fixed)
 PRs opened 13:58-14:03Z: #105->PR112 #106->113 #107->114 #108->115 #109->116 #102->117 #104->118 #88->119 #89->120 #90->121 #93->122 #100->123 #101->124 (124 comments pending) | GitHub secondary rate limit again 14:03Z, retry ~14:56Z | remaining to post: 95 92 96 94 98 97 g1 g2 r40 (+ g4 g6 g5 after review) | PR121 body needs update (old 概要)
 REVIEW G4 (2nd) PASS want1 (body fixed) | g4 g6 g5 added to plan
+FOLLOW-UPS (carried wants/nits from passed reviews; do after owner merges, as small PRs):
+- #106 AGENTS.md: say why `--trace off` (CPU) or drop it; name chromium versions 1254/1243
+- #89 token.css:19 comment: reason = design --ng (4.53 -> 6.48), not "below 4.5"
+- #96 / G1: add prefers-color-scheme (no data-theme) e2e case
+- #102 nits: test comment wording, doc comment reflow, empty+padding test
+- r40 app.tsx:91 comment still mentions tabIndex=-1
+- G1 comment: toast has no shadow in design; drop --shadow-toast after #88
+- G2: tests for disabled X/LINE no hover colour, :active unchanged
+- #101+#104: app.tsx import of ./core/shape -> ./core after both merge
+- G3 (audit row 11 「効きません」+font): needs #89 and #104 merged first
