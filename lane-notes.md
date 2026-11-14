@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-14T15:14Z | night lane (plan sudden-death-generator): 13 PRs open (OWNER, main=production), 46 queued GitHub writes being posted
+STATE DONE-WAITING 2026-11-14T15:25Z | waiting on: owner merge go for 28 GATE-passed PRs #112-#124 #126-#140 (main = production); owner answers #91 #99 #103 #86 #83 #82; #31 #61 (devin, not touched); design artifact v9 freshness; Vercel quota reset for #114 preview log; parent PBIs #76-#81 #84 #85 #87 close after merges | device 0
 mission: それぞれのプロジェクトに書いてあるプランに書いてある作業をやること／どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので | handoff: none for this repo (packet small-lot part 1/1)
 model lead Fable 5.2 (night order) / manager+reviewer fable / implementer opus / mechanical sonnet | advisor absent (no advisor tool) | github via connector | push via git | png ok
 goal: cycle DONE or DONE-WAITING (owner/device-only items listed) | DONE-WAITING satisfies it: yes
@@ -153,3 +153,23 @@ f3 | FINISH | branch fix/followup-89-token-comment pushed | head 09fc6bf (on fix
 POSTED 2026-11-14T15:24Z | queued writes all done, 0 refused: PR124 review+GATE; new PRs #95->126 #92->127 #96->128 #94->129 #98->130 #97->131 g1->132 g2->133 r40->134 g4->135 g6->136 g5->137 f1->138 f2->139 (each REVIEW + LOCAL-CHECK/GATE comment); #69 closed (completed) with reason; #125 made draft; note: PR134 body shows literal backslash-backticks from prr40.md (cosmetic)
 f3 | PR #140 (base fix/97-svg-icons) | head 09fc6bf | REVIEW PASS must0 want1 (wip commit title -> squash on merge, in PR body) nit1 (test title) https://github.com/kouiso/sudden-death-generator/pull/140#issuecomment-6879652861 | GATE posted | OWNER (merge = production)
 DRY-RUN 2026-11-14T15:24Z | all 28 heads merged in MERGE ORDER in scratch (not pushed) | lint 0, typecheck ok, unit 192/192, build ok, e2e 110 pass / 1 fail | conflicts: g5x#97 src/style/global.css (.shape-icon display inline-flex vs block; .toast->.notice leaves --shadow-toast unused); #104x#97/#101 src/app.tsx + shape-picker.tsx (+ re-export of #104 shape fns needed in src/core/index.ts, git will not flag) | r40xg5: no conflict | failing: tests/e2e/design-disabled-cursor.spec.ts:96 (r40) looks up "📋 コピー", #97 made it "コピー" | full report dry-run-20261114.md, patch dry-run-combined.patch
+
+DECIDED (manager) | merge day: .shape-icon takes g5's display:block + height/line-height 24px, drop font-size and #97's comment | reason value the combined e2e ran with; both give the design's 24px box | revert inline-flex
+DECIDED (manager) | merge day: delete --shadow-toast token + comment in the g-chain conflict-resolution commit | reason #97 removes .toast, design notice has no shadow | revert re-add the line
+DECIDED (manager) | r40 x #97 test-name break: merge-day note, no commit tonight (r40's base still has "📋 コピー"; passed heads take only base merges) | on merge day change tests/e2e/design-disabled-cursor.spec.ts:96 to "コピー" in r40's base-merge commit, re-review | scratch check 2026-11-14T15:25Z: with that one-line fix the spec passes 4/4 on the combined tree (so combined e2e = 111/111)
+MERGE-DAY NOTES: (1) g-chain x #97: src/style/global.css per the two DECIDED lines above (2) #118 last: src/app.tsx + shape-picker.tsx to single ./core entry AND add re-export of #104 shape functions in src/core/index.ts (git will not flag it) (3) r40 spec line 96 (4) #140: squash (wip commit title) (5) #114: read Vercel preview build log first (6) details: dry-run-20261114.md, dry-run-combined.patch
+AUDIT (manager, scene c, final) 2026-11-14T15:25Z: DONE-WAITING yes; needs owner complete; findings recorded above (fix/89 two items fixed by #140; row 43 in needs owner; #104 nits carried; g5 0件)
+CYCLE 2 result | PRs 13 -> 28 open work PRs (+#111 notes, #125 handoff draft; excluded) all GATE-posted, queue OWNER | issues 37 -> 36 (#69 closed) | SBIs with PR 19, WAIT-OWNER #91 #99 #103 #86 #83 #82 #31 #61, PARENT 9 | list cycle-2.tsv
+HOUR 2026-11-14T15:25Z | merged 0 | closed 1 (#69) | fixed 1 (f3 -> PR #140) | output 1 | open PR 13->28 | open issues 37->36 | ledger open 3->3 | owner 28 PRs + 8 issues | device 0 | blocked: gate — main = production, lane may not merge (G5); every PR is REVIEW PASS + GATE and waits owner | rules 2/3 front: iteration board unreadable (no Projects route); non-claude-cloud issues #91 #99 #103 all WAIT-OWNER | skipped: owner's rule (-ux): 0 | posted 15 PR-side (14 PRs + #140), 31 comments, 0 writes refused
+for main session (night):
+- 課題 review band: ready (NOTES + design-audit.md + dry-run-20261114.md handed over)
+- merges are the only remaining output and all are production: if the owner allows lane merges, resume with MERGE ORDER + MERGE-DAY NOTES (about 28 merges; Vercel 100 deploys/day limit was hit again 15:16Z, pace them)
+- gh token invalid / no Projects tool: iteration priority could not be read
+- new PRs auto-subscribe the session to bot noise (Vercel/Codex/CodeRabbit limit notices); this lane unsubscribed #126-#140 to save allowance
+- Codex and CodeRabbit review quotas are exhausted on this repo (no second-identity approvals seen on merged PRs; none required)
+LEDGER (night)
+id	state	who	depends_on	text
+SD-4	blocked	owner	Q-SL4	sudden-death-generator: 28 PRs reviewed+gated (#112-#124, #126-#140); merges are production -> owner
+V-5	blocked	wait	SD-4	答えの後に変わった所だけ回し直す
+F-02	blocked	wait	V-5	仕上げ
+HANDOFF 2026-11-14T15:25Z | next: on owner's merge go -> MERGE ORDER with MERGE-DAY NOTES; on owner answers -> #91 #99 #103 work | queues: OWNER 28 PRs, WAIT-OWNER 8 issues, PARENT 9, DEVICE 0 | members still running: none | worktrees in container only: /workspace/dry (scratch, never pushed), /workspace/wf3 (pushed)
