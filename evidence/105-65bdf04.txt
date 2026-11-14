@@ -1,0 +1,8 @@
+head 65bdf04  2026-11-14T12:56:50Z
+$ npm run test:e2e -- --trace off   (PW_CHROMIUM_PATH unset)
+     13     Error: browserType.launch: Executable doesn't exist at /opt/pw-browsers/chromium_headless_shell-1254/chrome-headless-shell-linux64/chrome-headless-shell
+      1   13 failed
+$ PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run test:e2e -- --trace off
+  13 passed (10.9s)
+$ npm test
+      Tests  152 passed (152)
