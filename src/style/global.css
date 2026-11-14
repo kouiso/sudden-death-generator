@@ -23,7 +23,9 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: clamp(16px, 4vw, 48px) 16px;
+  padding: clamp(16px, 4vw, 48px) 16px clamp(2rem, 1.28rem + 2.9vw, 3.5rem);
+  /* 下余白はデザインの 390px=32px / PC=56px を滑らかにつなぐ（上より少し厚くして
+   * 末尾のフッターが画面下端に張り付かないようにする）。 */
 }
 
 button {
@@ -42,6 +44,11 @@ button {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* デザインの .shell と同じく、画面の列全体を container にして 480px 以下の切替を
+   * 1 か所に集める（下の @container shell）。画面幅ではなく列の幅で判定するので、
+   * 親の余白が変わっても切替点がずれない。#91 の共有ボタンも同じ container を使える。 */
+  container-type: inline-size;
+  container-name: shell;
 }
 
 .app-header {
@@ -53,21 +60,26 @@ button {
 
 .app-title {
   margin: 0;
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-size: 2rem;
   font-weight: 900;
   letter-spacing: 0.02em;
+  line-height: 1.3;
 }
 
 .app-subtitle {
   margin: 4px 0 0;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  /* 狭い幅で「で/す。」のように 1〜2 文字だけ孤立して折り返すのを防ぐ。 */
+  text-wrap: balance;
 }
 
 .theme-toggle {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  /* タップ領域はデザインの 44x44（PBI #79 で見送った des-08 を持ち主の指示で実施）。 */
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -75,7 +87,8 @@ button {
   place-items: center;
   cursor: pointer;
   font-size: 1.1rem;
-  box-shadow: var(--shadow-sm);
+  /* デザインはライト・ダークとも影なし（枠線だけで面を区切る）。 */
+  box-shadow: none;
 }
 
 .card {
@@ -83,7 +96,7 @@ button {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: clamp(16px, 3vw, 28px);
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -91,13 +104,16 @@ button {
 
 .field-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.84375rem;
   font-weight: 700;
   color: var(--color-text-muted);
   margin-bottom: 8px;
 }
 
 .editor-textarea {
+  /* inline-block のままだと下に行内の隙間(約5px)が残り、直下のチェックボックス行との
+   * 間隔がデザインの 8px にならない。 */
+  display: block;
   width: 100%;
   min-height: 96px;
   resize: vertical;
@@ -112,6 +128,13 @@ button {
   transition: border-color 0.15s ease;
 }
 
+/* UA 既定の灰色(#757575)はダークで面(#23283a)に対し約 2.6:1 しか無いため、
+ * デザインどおりミュートトークンを使う。Firefox は既定で opacity を掛けるので 1 に固定する。 */
+.editor-textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
 .editor-textarea:focus-visible {
   border-color: var(--color-accent);
   outline: none;
@@ -121,38 +144,64 @@ button {
 .option-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  /* 行間 4px / 列間 20px（デザインの .opts）。行自体が 44px あるので行間は小さくてよい。 */
+  gap: 4px 20px;
 }
 
 .option-row--spaced {
-  margin-top: 12px;
+  /* デザインはテキストエリアとの間が fld の gap 8px。 */
+  margin-top: 8px;
 }
 
 .checkbox-label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  /* 指で押せる最小の高さ 44px。ラベル全体が押せるのでチェックボックス自体は 18px のまま。 */
+  min-height: 44px;
+  font-size: 0.90625rem;
   cursor: pointer;
   user-select: none;
+}
+
+/* 無効の縦書きチェック（短冊・ストレス）は、ミュート色と not-allowed で無効だと見た目でも分かるようにする。 */
+.checkbox-label:has(input:disabled) {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.checkbox-label input:disabled {
+  cursor: not-allowed;
 }
 
 .checkbox-label input {
   width: 18px;
   height: 18px;
+  /* UA 既定の margin を消して、ラベルとの間隔をデザインの gap 8px だけにする。 */
+  margin: 0;
   accent-color: var(--color-accent);
   cursor: pointer;
 }
 
 .shape-picker {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
-@media (min-width: 480px) {
+/* デザインの @container (max-width: 480px)。列の幅が 480px 以下で
+ * 見出し 24px・カード余白 16px・形選択 2 列に切り替わる。 */
+@container shell (max-width: 480px) {
+  .app-title {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
   .shape-picker {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -160,26 +209,35 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 10px 8px;
+  gap: 0.375rem;
+  padding: 0.75rem 0.5rem;
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--color-border);
   background: var(--color-surface-muted);
   cursor: pointer;
-  font-size: 0.82rem;
+  font-size: 0.84375rem;
   font-weight: 700;
+  /* デザインは line-height 未指定（normal）で、描画された高さは約 73px。normal は書体の
+   * ascent/descent 次第で 16〜19px と揺れる（実装の UI 書体だと 19px で 76px になる）ため、
+   * 1 行のラベルは 1.2 に固定してデザインの高さを書体に依存せず再現する。 */
+  line-height: 1.2;
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .shape-button[aria-checked="true"] {
   border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+  background: var(--color-accent-tint);
   color: var(--color-accent-strong);
 }
 
 .shape-icon {
   /* SVG を行内に置くと行ボックスの分だけ下に余白が出るため、flex にして絵の高さ（24px）だけにする。 */
-  display: inline-flex;
+  /* [dry-run] display は #97=inline-flex / g5=block で衝突。要判断。暫定で後順の g5 (block) を採用。 */
+  /* デザインのアイコン枠は 24x24（SVG）。文字アイコンは書体の ascent/descent で行が
+   * 約 28px まで伸びて、ボタンがデザインの約 73px より高くなっていたため高さを固定する。 */
+  display: block;
+  height: 24px;
+  line-height: 24px;
 }
 
 /* スクリーンリーダー専用テキスト（視覚的には非表示だが読み上げ対象には残す）。 */
@@ -347,7 +405,8 @@ button {
 
 .share-note {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.78125rem;
+  line-height: 1.7;
   color: var(--color-text-muted);
 }
 
