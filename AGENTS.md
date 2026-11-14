@@ -38,11 +38,14 @@ npm test           # vitest run
 npm run test:e2e   # Playwright (ローカル: 初回のみ `npx playwright install chromium`)
 ```
 
-クラウド環境には固定版と異なる Chromium が入っていて既定の起動先が存在しないため、`PW_CHROMIUM_PATH` で実行ファイルを指す:
+クラウド環境には固定版と異なる Chromium が入っていて既定の起動先が存在しないため、`PW_CHROMIUM_PATH` で実行ファイルを指す。
+設定は Playwright 1.65.0 の固定版 Chromium 1254 を前提にしているが、クラウドイメージには Chromium 1243 しか入っていない。イメージが変わったらこのパスも更新すること:
 
 ```bash
 PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run test:e2e -- --trace off
 ```
+
+`--trace off` は全テストでトレースを記録する CPU コストをクラウドの作業場で避けるため。失敗を調べるときは、その 1 テストだけを `--trace on` で再実行する。
 
 ### Font subset の再生成
 
