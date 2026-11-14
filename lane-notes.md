@@ -62,3 +62,4 @@ REVIEW #96 PASS want1 (OS-dark test: follow-up) nit1
 REVIEW #88 (2nd) PASS nit1 (body fixed) | #89 PASS want2 (token.css comment: follow-up; 390 shots retake) nit3
 #90 | FINISH | head 90c85a5 (on #89) | unit 152 e2e 21
 #93 | FINISH | head b73f648 (on #90) test only | e2e 30
+REVIEW #94 PASS nit2 | #89 evidence retaken (390 full, notice visible, card 987)
