@@ -12,6 +12,8 @@
   --color-accent: #2f5fe0;
   --color-accent-strong: #1f47b8;
   --color-accent-contrast: #ffffff;
+  /* 選択中のスタイルボタンの背景。デザインの --act（color-mix の近似ではなく実値）。 */
+  --color-accent-tint: #e9eefc;
   /* 白文字を乗せた時に WCAG AA (4.5:1) を満たす濃さまで暗くしている
    * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
   --color-success: #137a54;
@@ -54,6 +56,7 @@
   --color-accent: #6d8bff;
   --color-accent-strong: #8ca0ff;
   --color-accent-contrast: #0b0e17;
+  --color-accent-tint: #232b47;
   --color-success: #3fcf94;
   --color-success-strong: #63dba8;
   --color-danger: #ff7a90;
@@ -77,6 +80,7 @@
     --color-accent: #6d8bff;
     --color-accent-strong: #8ca0ff;
     --color-accent-contrast: #0b0e17;
+    --color-accent-tint: #232b47;
     --color-success: #3fcf94;
     --color-success-strong: #63dba8;
     --color-danger: #ff7a90;
