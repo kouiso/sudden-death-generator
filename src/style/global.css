@@ -289,10 +289,17 @@ button {
 
 /* <a> は disabled 属性を持たないため aria-disabled で判定する。X/LINE シェアURLが安全な
  * 長さの上限を超える場合（ShareBar の shareDisabled 参照）に同じ見た目・操作不可を適用する。 */
+/* pointer-events:none を敷くとマウスが下の要素扱いになり、デザインの「押せない時はマウスの形も
+ * not-allowed」が実際には出ない。操作できないことは href 無し・tabindex 無し・onClick の
+ * preventDefault（ShareBar 参照）で担保し、ポインタ自体は受けて cursor を見せる。 */
 .share-button[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
-  pointer-events: none;
+}
+
+/* ポインタを受けるようにしたので、押せないボタンが「押し込まれた」ように動かないよう明示する。 */
+.share-button[aria-disabled="true"]:active {
+  transform: none;
 }
 
 .share-note {
