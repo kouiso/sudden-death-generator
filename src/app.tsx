@@ -3,8 +3,11 @@ import {
   buildPermalinkQuery,
   isPermalinkQueryTooLong,
   isShareTooLong,
+  isVerticalDisabled,
   parsePermalink,
   renderSuddenDeath,
+  resolveVertical,
+  verticalHintOf,
   type ShapeKind,
 } from "./core";
 import { Editor } from "./component/editor";
@@ -66,10 +69,10 @@ export function App() {
   // （render.ts のコメント参照）ため、同様にチェックボックスを無効化する。無効化しないと
   // チェックを切り替えても見た目が変わらないのに permalink には vertical=1 が残る
   // という不整合が起きる（Codex bot 指摘）。
-  const effectiveVertical = shape === "tanzaku" ? true : vertical;
-  const verticalDisabled = shape === "tanzaku" || shape === "stress";
-  const verticalDisabledHint =
-    shape === "tanzaku" ? "（短冊は常に縦書き）" : shape === "stress" ? "（ストレスには影響しません）" : "";
+  // 規則は src/core/shape.ts の定義表が持つ。
+  const effectiveVertical = resolveVertical(shape, vertical);
+  const verticalDisabled = isVerticalDisabled(shape);
+  const verticalDisabledHint = verticalHintOf(shape);
 
   // 純粋関数なので useMemo だけで生成ボタン無しのリアルタイムプレビューが成立する。
   const output = useMemo(

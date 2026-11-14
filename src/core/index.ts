@@ -10,3 +10,5 @@ export {
   MAX_PERMALINK_QUERY_LENGTH,
 } from "./permalink";
 export { buildXShareUrl, buildLineShareUrl, isShareTooLong } from "./share";
+// [dry-run] #104 の定義表を #101 の「画面は ./core の入口だけから読む」に合わせて入口から出す。
+export { SHAPE_KINDS, isVerticalDisabled, resolveVertical, verticalHintOf } from "./shape";
