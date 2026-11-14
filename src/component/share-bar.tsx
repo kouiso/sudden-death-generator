@@ -50,13 +50,17 @@ export function ShareBar({
         </button>
         <a
           className="share-button share-button--x"
-          // 押せなくするのは href を外す・tabIndex=-1・onClick の preventDefault の3つ。
+          // 押せなくするのは href を外す・onClick の preventDefault。tabIndex は付けない
+          // （href の無い <a> は tabindex が無ければフォーカスできず、Tab 順にも入らない。
+          // tabIndex=-1 を付けるとマウスクリックでフォーカスが移り、キー操作で枠が出る）。
           // pointer-events:none にするとデザインの cursor:not-allowed が出ないため使わない。
           href={shareDisabled ? undefined : buildXShareUrl(output)}
           target="_blank"
           rel="noreferrer"
           aria-disabled={shareDisabled}
-          tabIndex={shareDisabled ? -1 : undefined}
+          onMouseDown={(event) => {
+            if (shareDisabled) event.preventDefault();
+          }}
           onClick={(event) => {
             if (shareDisabled) event.preventDefault();
           }}
@@ -69,7 +73,9 @@ export function ShareBar({
           target="_blank"
           rel="noreferrer"
           aria-disabled={shareDisabled}
-          tabIndex={shareDisabled ? -1 : undefined}
+          onMouseDown={(event) => {
+            if (shareDisabled) event.preventDefault();
+          }}
           onClick={(event) => {
             if (shareDisabled) event.preventDefault();
           }}
