@@ -9,7 +9,7 @@ async function visibleText(page: Page) {
   return page.evaluate(() => document.body.innerText);
 }
 
-test("通常・コピー成功・コピー失敗・長文入力のどの状態でも、画面の文字に絵文字が無い", async ({ page, context }) => {
+test("通常・コピー成功・コピー失敗・長文入力のどの状態でも、画面の文字に絵文字が無い", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("textbox").fill("復帰");
   expect(await visibleText(page)).not.toMatch(EMOJI);
@@ -26,10 +26,11 @@ test("通常・コピー成功・コピー失敗・長文入力のどの状態�
   await page.getByRole("button", { name: "コピー", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("コピーできませんでした");
   expect(await visibleText(page)).not.toMatch(EMOJI);
-  void context;
+  // 失敗の知らせはデザイン（states.dc.html）どおり色と文言だけで、絵（svg）を持たない。
+  await expect(page.getByRole("status").locator("svg")).toHaveCount(0);
 
   await page.getByRole("textbox").fill("長い入力".repeat(200));
-  await expect(page.getByRole("status")).toContainText(/長すぎる|コピー/);
+  await expect(page.getByRole("status")).toHaveText("入力が長すぎるため、X・LINEでの共有はできません");
   expect(await visibleText(page)).not.toMatch(EMOJI);
 });
 
@@ -58,19 +59,32 @@ test("アイコンの色は文字色に従い、明暗を切り替えると変�
         const svg = el.querySelector("svg")!;
         return { button: getComputedStyle(el).color, icon: getComputedStyle(svg).color };
       };
-      const toggle = document.querySelector(".theme-toggle")!;
-      const radio = document.querySelector('[role="radio"]')!;
-      const link = document.querySelector(".share-button--link")!;
-      return { toggle: pick(toggle), radio: pick(radio), link: pick(link) };
+      return {
+        theme: document.documentElement.dataset.theme ?? "",
+        toggle: pick(document.querySelector(".theme-toggle")!),
+        radio: pick(document.querySelector('[role="radio"]')!),
+        link: pick(document.querySelector(".share-button--link")!),
+      };
     });
+  // .shape-button などは color に 0.15s の transition があり、切替直後は途中の色を読んでしまう。
+  // 製品 CSS は変えず、色が落ち着く（250ms 空けた2回の読みが一致する）まで待ってから比べる。
+  const settled = async () => {
+    let result = await read();
+    await expect
+      .poll(async () => {
+        const before = JSON.stringify(result);
+        await page.waitForTimeout(250);
+        result = await read();
+        return JSON.stringify(result) === before;
+      })
+      .toBe(true);
+    return result;
+  };
   const toggle = page.locator(".theme-toggle");
-  await page.evaluate(() => {
-    document.documentElement.dataset.theme = "light";
-  });
-  await toggle.click(); // 現在のテーマを確定させるため一度切り替える
-  const first = await read();
+  const first = await settled();
   await toggle.click();
-  const second = await read();
+  await expect.poll(async () => (await read()).theme).not.toBe(first.theme);
+  const second = await settled();
   for (const key of ["toggle", "radio", "link"] as const) {
     expect(first[key].icon).toBe(first[key].button);
     expect(second[key].icon).toBe(second[key].button);
