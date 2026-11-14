@@ -101,3 +101,4 @@ needs owner (added):
 - Vercel の無料枠（1日 100 デプロイ）を使い切った。24時間は Preview も本番も作られない。#107（packageManager）は Preview のビルドの記録を確かめてからマージしてほしい。今日 main にマージしても本番に出ない恐れがある
 for main session:
 - Vercel 無料枠 api-deployments-free-per-day に到達（13:59Z）。他の lane の PR も同じチームなら影響
+REVIEW G4 FAIL must1 (body numbers 69/76 wrong; base 73, failure is icon box 28) -> body fixed, re-review | DECIDED lead: G4 line-height 1.2 approved (design shorthand = normal -> 76px), flagged owner | G6 PASS nit3 | G5 PASS nit1 (body fixed)
