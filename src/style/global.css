@@ -254,13 +254,15 @@ button {
 }
 
 .share-button--copy {
-  background: var(--color-success);
+  /* 主操作の「コピー」はアクセント色（青）。緑の LINE と並んだ時に見分けがつくよう、緑は
+   * LINE と「コピーしました」の知らせだけに残す。値はデザインの --ac / --onac / --ach。 */
+  background: var(--color-accent);
   color: var(--color-accent-contrast);
 }
 
 .share-button--copy:hover {
   filter: brightness(1.05);
-  background: var(--color-success-strong);
+  background: var(--color-accent-strong);
 }
 
 .share-button--x {
