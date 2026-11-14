@@ -1,6 +1,6 @@
-STATE PAUSED 2026-11-14T14:23Z | manager pause (weekly allowance) | resume first: post queued GitHub writes from scratchpad plan.json
+STATE RUNNING 2026-11-14T15:14Z | night lane (plan sudden-death-generator): 13 PRs open (OWNER, main=production), 46 queued GitHub writes being posted
 mission: それぞれのプロジェクトに書いてあるプランに書いてある作業をやること／どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので | handoff: none for this repo (packet small-lot part 1/1)
-model claude-opus-5-5 (lead) | advisor unknown (no advisor tool visible) | github via connector (gh token invalid) | push via git | png ok
+model lead Fable 5.2 (night order) / manager+reviewer fable / implementer opus / mechanical sonnet | advisor absent (no advisor tool) | github via connector | push via git | png ok
 goal: cycle DONE or DONE-WAITING (owner/device-only items listed) | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md (日本語コメント、src/core は純粋関数、npm run lint/typecheck/test/build), .github/scrum-board.yml (project 49, read only); stricter: none beyond exec-prompt-v2
 DEPLOY | merge to main -> production | evidence Vercel project ito-games (prj_lONtvDn51I9PKglDDTai6MEjnB9J) git integration: domain ito-games-git-main-kouisos-projects.vercel.app + latestDeployment target=production; vercel.json:2 buildCommand. PR branches -> Vercel preview (staging, SSO-protected). .github/workflows/ci.yml:3-5 and codeql.yml:3-5 deploy nothing.
@@ -125,3 +125,10 @@ PAUSE 2026-11-14T14:23Z (manager: weekly allowance reserved for client work)
 - Open PRs: #112-#124 (13), all OWNER (merge = production). Vercel free deploy limit hit 13:59Z (24h).
 - Scheduled reminder deleted; background timer stopped.
 HANDOFF 2026-11-14T14:23Z | next: queued GitHub writes | queues: OWNER 13 PRs open + 14 to open; WAIT-OWNER issues 8; PARENT 9 | members still running: f3/f4 member (one step)
+
+START 2026-11-14T15:14Z night lane sudden-death-generator [cloud] (NIGHT ORDER 2026-11-15 JST; continues handoff PR #125; NOTES reused: notes/small-lot, PR #111)
+worktree /workspace/sudden-death-generator claude/sudden-death-generator-messages-c356ua clean | /workspace/notes notes/small-lot clean (fresh container, nothing unpushed)
+CYCLE 2 T=2026-11-14T15:14Z | PRs 13 (+#111 notes, #125 handoff excluded) | issues 37 | ledger rows 3 | all 27 queued heads == origin heads (post-plan.json verified)
+DECIDED | DEPLOY unchanged: merge to main -> production (Vercel git integration) -> no lane merges tonight; PRs end at GATE and wait OWNER | revert owner says main may merge
+DECIDED | iteration board (project 49) still unreadable from this container (connector has no Projects tool) | revert read when a route appears
+NEXT 5: PR#124 review+GATE comments; open PRs for #95 #92 #96 #94 (+2 comments each); then #98 #97 g1 g4 g6 g5 g2 r40 f1 f2; close #69 with reason; manager judges f3 wip branch
