@@ -54,7 +54,7 @@ for (const [width, height] of [
     expect(withReason.pageWidth).toBeLessThanOrEqual(withReason.viewport);
 
     // コピーの知らせが同じ行に出て消えても、理由に戻り、カードの高さと行の位置は同じ。
-    await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
+    await page.getByRole("button", { name: "コピー", exact: true }).click();
     await expect(reason).toHaveText(/コピーしました$/);
     const during = await measure(page);
     await expect(reason).toHaveText(REASON);

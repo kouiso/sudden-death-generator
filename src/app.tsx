@@ -11,6 +11,7 @@ import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";
 import { ShareBar } from "./component/share-bar";
+import { MoonIcon, SunIcon } from "./component/icon";
 import { Notice } from "./component/notice";
 import { useClipboard } from "./hook/use-clipboard";
 import { useTheme } from "./hook/use-theme";
@@ -114,7 +115,7 @@ export function App() {
           onClick={toggleTheme}
           aria-label={theme === "dark" ? "ライトモードに切り替え" : "ダークモードに切り替え"}
         >
-          <span aria-hidden="true">{theme === "dark" ? "☀️" : "🌙"}</span>
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
       </header>
 
