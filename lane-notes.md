@@ -20,3 +20,5 @@ for main session:
 - gh CLI の GH_TOKEN が無効。Projects(iteration) を読む道が無い
 - 課題 review band: not yet
 NOTES PR #111 (draft). baseline main 04daef7: lint/typecheck/test/build pass 2026-11-14T12:54:48Z
+#105 | FINISH | branch fix/105-e2e-browser-path pushed | head 65bdf04 | local: e2e 13 pass w/ PW_CHROMIUM_PATH, 13 fail without; unit 152 pass; lint/type/build pass | PR not yet: GitHub secondary rate limit on writes until ~13:57Z | 2026-11-14T12:56:40Z
+DECIDED | GitHub write rate-limited (secondary limit, retry ~59m); 2nd connector 403 | reason tooling | work continues on branches, PRs opened after limit clears
