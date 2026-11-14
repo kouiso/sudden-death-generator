@@ -49,3 +49,4 @@ REVIEW #106 PASS must0 want1 nit1 (carry: --trace off reason -> follow-up)
 REVIEW #108 PASS 0件
 REVIEW #109 PASS 0件
 2026-11-14T13:11:36Z
+REVIEW #104 PASS must0 want0 nit3 (body: 4か所->3か所 corrected)
