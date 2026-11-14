@@ -1,7 +1,7 @@
 STATE RUNNING 2026-11-14T12:55Z | counts pending
 mission: それぞれのプロジェクトに書いてあるプランに書いてある作業をやること／どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので | handoff: none for this repo (packet small-lot part 1/1)
 model claude-opus-5-5 (lead) | advisor unknown (no advisor tool visible) | github via connector (gh token invalid) | push via git | png ok
-goal: unknown | DONE-WAITING satisfies it: unknown
+goal: cycle DONE or DONE-WAITING (owner/device-only items listed) | DONE-WAITING satisfies it: yes
 repo rules: AGENTS.md (日本語コメント、src/core は純粋関数、npm run lint/typecheck/test/build), .github/scrum-board.yml (project 49, read only); stricter: none beyond exec-prompt-v2
 DEPLOY | merge to main -> production | evidence Vercel project ito-games (prj_lONtvDn51I9PKglDDTai6MEjnB9J) git integration: domain ito-games-git-main-kouisos-projects.vercel.app + latestDeployment target=production; vercel.json:2 buildCommand. PR branches -> Vercel preview (staging, SSO-protected). .github/workflows/ci.yml:3-5 and codeql.yml:3-5 deploy nothing.
 ---
