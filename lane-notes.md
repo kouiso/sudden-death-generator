@@ -149,3 +149,4 @@ needs owner (added, night):
 - #115: リポの外で .github/mcp-config.json を読むツールはあるか。推奨: 無い → マージ
 - 断れる既定（レーンが決めた物）: #96 枠線 #565e7a／#97 太陽のアイコン・警告アイコン無し／G5 44px の押せる大きさ／G4 行の高さ 1.2／G6 .shell の container
 NOISE 15:17Z | new PRs auto-subscribe this session; bots only report their own limits (Vercel 100/day again from #129, Codex quota, CodeRabbit OSS limit) -> unsubscribed #126-#131 to save allowance; CodeRabbit on #126: no actionable comments. CodeRabbit findings on main-based PRs checked in one batch later.
+f3 | FINISH | branch fix/followup-89-token-comment pushed | head 09fc6bf (on fix/97) | lint/type 0, unit 171, build 0, e2e 35; fail-before 2 light tests on #d1425a | review started (fresh fable)

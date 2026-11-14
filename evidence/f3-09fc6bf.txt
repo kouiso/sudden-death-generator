@@ -1,0 +1,27 @@
+f3 local check — branch fix/followup-89-token-comment
+head: 09fc6bf4569f42df97403d2af8f7cb8b49722fde
+base: origin/fix/97-svg-icons (7367188)
+ src/style/token.css            | 4 ++--
+ tests/e2e/share-notice.spec.ts | 5 +++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+npm ci            exit 0 (package-lock.json diff: none)
+npm run lint      exit 0 (oxlint --deny-warnings)
+npm run typecheck exit 0
+npm test          exit 0  Test Files  5 passed (5) / Tests  171 passed (171)
+npm run build     exit 0
+e2e  npx playwright test --trace off (override config outside repo, executablePath=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome)
+                  exit 0  35 passed (37.6s), 0 failed, 0 skipped
+
+fail-before: light --color-danger temporarily set to #d1425a, ran -g コピー失敗, then restored (git checkout)
+  ✘  2 [chromium] › tests/e2e/share-notice.spec.ts:79:5 › 1440px light: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上 (538ms)
+  ✓  3 [chromium] › tests/e2e/share-notice.spec.ts:79:5 › 1440px dark: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上 (471ms)
+  ✘  4 [chromium] › tests/e2e/share-notice.spec.ts:79:5 › 390px light: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上 (449ms)
+  ✓  5 [chromium] › tests/e2e/share-notice.spec.ts:79:5 › 390px dark: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上 (407ms)
+
+    Expected: "rgb(179, 36, 63)"
+    Received: "rgb(209, 66, 90)"
+  2 failed
+    [chromium] › tests/e2e/share-notice.spec.ts:79:5 › 1440px light: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上 
+    [chromium] › tests/e2e/share-notice.spec.ts:79:5 › 390px light: コピー失敗の知らせが同じ行に出て、カードの高さが変わらず、文字が 4.5:1 以上 
+  3 passed (12.3s)
