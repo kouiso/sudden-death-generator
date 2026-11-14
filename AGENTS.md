@@ -35,6 +35,13 @@ npm run preview    # 本番ビルドをローカルで確認
 npm run lint       # oxlint
 npm run typecheck  # tsc --noEmit
 npm test           # vitest run
+npm run test:e2e   # Playwright (ローカル: 初回のみ `npx playwright install chromium`)
+```
+
+クラウド環境には固定版と異なる Chromium が入っていて既定の起動先が存在しないため、`PW_CHROMIUM_PATH` で実行ファイルを指す:
+
+```bash
+PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run test:e2e -- --trace off
 ```
 
 ### Font subset の再生成
