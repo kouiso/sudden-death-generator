@@ -23,3 +23,15 @@ NOTES PR #111 (draft). baseline main 04daef7: lint/typecheck/test/build pass 202
 #105 | FINISH | branch fix/105-e2e-browser-path pushed | head 65bdf04 | local: e2e 13 pass w/ PW_CHROMIUM_PATH, 13 fail without; unit 152 pass; lint/type/build pass | PR not yet: GitHub secondary rate limit on writes until ~13:57Z | 2026-11-14T12:56:40Z
 DECIDED | GitHub write rate-limited (secondary limit, retry ~59m); 2nd connector 403 | reason tooling | work continues on branches, PRs opened after limit clears
 REVIEW #105 PASS must0 want1(fixed: evidence lines added) — post on PR when opened
+MANAGER (scene a) agent a041d435763465df8 done 2026-11-14T13:0xZ. POLICY: staging only, lane never merges; one SBI per PR, stacked PRs within a track; decided work proceeds, undecided waits with exact question; close only via owner merge (Closes #) or written reason.
+PASS LINE: one SBI/PR; body 概要/変更内容/関連Issue + PBI checkboxes covered/not; AGENTS.md style; npm ci no lock diff; lint/type/test/build/e2e at head; fail-before/pass-after (vitest core / Playwright measurements, new spec file per topic); UI: light/dark×1440/390 shots + measured values vs design/project/*.dc.html, contrast>=4.5, no h-scroll/console errors; fonts: corpus + regenerate (gstatic v20 pinned) ; Vercel preview READY for head.
+JUDGE: KEEP-WORK #88 #89 #90 #92 #93 #94 #95 #96 #97 #98 #100 #101 #102 #104 #105 #106 #107 #108 #109 | WAIT-OWNER #31 #61 #82 #83 #86 #91 #99 #103 | PARENT #76-#81 #84 #85 #87 | CLOSE #69 (all 6 dep PRs decided; superseded by merged #71 #74 #75)
+TRACKS: T1 #105>#106>#107, #108, #109 | T2 #88>#89>#90>#93>#100>#101 | T3 #95>#92>#96>#94 | T4 #102>#104 | T5 #98 | last #97
+needs owner (added):
+- #91 共有ボタンの並び: 案A 4列 / 案B 2×2 / 2列×2段（A・B ならカード幅 約800px も）。推奨: 2列×2段（レビューの推奨、カード幅そのまま）
+- #99 X の上限: 数え方と上限（X の投稿画面で確かめる）、文言「X の文字数を超えます」でよいか、超えても押せるままにするか。推奨: 全角2/半角1で280、文言そのまま、押せるまま
+- #103 行の割り当て「1〜4行目=ストレス、5行目〜=枠」で確定か／デザインの「最後の行を枠」か、説明の行を出すか・文言。推奨: 今の決まりのまま、説明の行を出す
+- #86 CI を再開するか止めたままか。推奨: 再開（Dependabot が週10本）
+- #83 本番ドメインは ito-games.vercel.app で確定か。はい／いいえ
+- #82 画像保存を作るか、作るなら保存／コピー／両方。推奨: 今は作らない
+- #31 #61 (devin): この lane は触らない。進めるかは本人
