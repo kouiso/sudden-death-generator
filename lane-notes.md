@@ -78,3 +78,8 @@ REVIEW #98 (2nd, a4645e1) PASS want1 nit2 (body fixed)
 DESIGN LINK (owner via manager, 13:33Z): 「これが突然の死ジェネレーター https://claude.ai/artifact/AAu7a9ZhM9RPnGKAHuds4n」 — same artifact as design/README.md (repo copy v9). Audit member checking artifact access.
 DESIGN AUDIT | design page https://claude.ai/artifact/AAu7a9ZhM9RPnGKAHuds4n NOT openable from container: Artifact read -> "artifact not found — it may have been deleted, or it has not been shared with you" | used repo copy design/project (v9, 2026-11-11) | integration of all branches: clean except refactor/104 conflicts with fix/97 stack (app.tsx, shape-picker.tsx; expected, rebase whichever merges second) | 55 rows: covered 12, undecided 11, uncovered 23, font-subst 1, match 8 | table design-audit.md, images evidence/design-audit/
 REVIEW #97 FAIL must1 (flaky icon colour test, transition) want2 nit3 -> FIX sent
+DECIDED (manager) design audit | implement 22/23 UNC rows; row 37 (:active 1px) not changed -> owner question | no new issues; PR bodies quote owner instruction + inline audit rows; hover rows Refs #78 | groups: G1 dark (6,47,48,49) > G4 type/spacing/disabled look (1,2,3,4,8,12,13,14,46,10) > G6 container query (15) > G5 tap targets (5,9, declinable, reverses des-08 deferral) chained off main; G2 hover (32-35) on #94; row 40 separate PR on #90 (lead: #90 already PASS, so not amended); G3 wording 「効きません」 (11) last, needs #89 fonts + #104 | rem units | revert per PR
+needs owner (added):
+- デザインの正のアーティファクトがこの作業場から開けない（artifact not found）。写し v9（2026-11-11）は今も最新か。はい／いいえ（新しい版を共有してほしい）
+- デザイン差分の残りを1つの PBI として起票してよいか。はい／いいえ。推奨: はい
+- 押している間にボタンが 1px 下がる動き（デザインに描かれていない）を残すか。推奨: 残す
