@@ -67,3 +67,4 @@ REVIEW #94 PASS nit2 | #89 evidence retaken (390 full, notice visible, card 987)
 #101 | FINISH | head bb6de7b (on #100) | unit 171 e2e 30
 DECIDED | keep MAX_PERMALINK_QUERY_LENGTH exported in core/index.ts | reason PBI #81 arch-03 names it | revert drop the line
 RULING (owner via manager, 2026-11-14T13:24:53Z) | 「CIはローカルで通れば通ったものとみなしていいよ」: local run of the repo's CI checks (lint, typecheck, test, build, e2e) on the exact head = checks passed; LOCAL-CHECK on PR; failing local = failed gate; hosted CI failure later -> follow-up fix PR. G5 (main = production) unchanged: merges still wait for owner.
+REVIEW #98 FAIL must1 (line-height 1 must be square/tanzaku only; design 1.5) want2 nit2 -> FIX sent to member 13:25Z
