@@ -63,3 +63,6 @@ REVIEW #88 (2nd) PASS nit1 (body fixed) | #89 PASS want2 (token.css comment: fol
 #90 | FINISH | head 90c85a5 (on #89) | unit 152 e2e 21
 #93 | FINISH | head b73f648 (on #90) test only | e2e 30
 REVIEW #94 PASS nit2 | #89 evidence retaken (390 full, notice visible, card 987)
+#100 | FINISH | head 38d1a5e (on #93) | unit 171 e2e 30
+#101 | FINISH | head bb6de7b (on #100) | unit 171 e2e 30
+DECIDED | keep MAX_PERMALINK_QUERY_LENGTH exported in core/index.ts | reason PBI #81 arch-03 names it | revert drop the line
