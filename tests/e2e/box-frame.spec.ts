@@ -92,6 +92,18 @@ async function measure(page: Page, png: Buffer, column?: number): Promise<Measur
   );
 }
 
+test.describe("行の高さは枠の形だけ詰める", () => {
+  // デザインは 16px/1.5 (=24px)。四角形・短冊だけ罫線をつなぐため 1em (=16px) にする。
+  const expected: Record<string, string> = { 通常: "24px", 四角形: "16px", 短冊: "16px", ストレス: "24px" };
+  for (const shape of shapes) {
+    test(`${shape.name}: line-height は ${expected[shape.name]}`, async ({ page }) => {
+      await select(page, shape);
+      await expect(page.locator(".preview-pre")).toHaveCSS("line-height", expected[shape.name]!);
+      await expect(page.locator(".preview-pre")).toHaveCSS("font-size", "16px");
+    });
+  }
+});
+
 test.describe("四角形・短冊の枠は行をまたいでつながって見える", () => {
   for (const shape of shapes.filter((s) => s.name === "四角形" || s.name === "短冊")) {
     test(`${shape.name}: 先頭文字の縦線に行間の隙間が無い`, async ({ page }) => {

@@ -111,7 +111,7 @@ export function App() {
           <ShapePicker value={shape} onChange={setShape} />
         </div>
 
-        <Preview output={output} />
+        <Preview output={output} shape={shape} />
 
         <ShareBar
           output={output}
