@@ -52,3 +52,5 @@ REVIEW #109 PASS 0件
 REVIEW #104 PASS must0 want0 nit3 (body: 4か所->3か所 corrected)
 #107 | FINISH | head dc561f1 (on #106) | unit 152 e2e 13 | packageManager npm@11.21.2; Vercel preview check after PR
 #89 | FINISH | head 15f9460 (on #88) | unit 152 e2e 19 | fonts regenerated
+REVIEW #107 PASS must0 want1 (check Vercel preview log after PR) nit1 (body fixed)
+#96 | FINISH | head 7d0a7b9 (on #92) | unit 152 e2e 19
