@@ -1,3 +1,5 @@
+import type { ComponentChildren } from "preact";
+
 export interface ShareBarProps {
   output: string;
   copyStatus: "idle" | "success" | "error";
@@ -15,6 +17,8 @@ export interface ShareBarProps {
    * （自己レビューで指摘: パーマリンクだけ上限を設けてX/LINEシェアには無かった不整合）。
    */
   shareDisabled: boolean;
+  /** コピー結果の知らせ行。ボタン群のすぐ下（注記より上）に置く。 */
+  notice: ComponentChildren;
 }
 
 function buildXShareUrl(text: string): string {
@@ -38,6 +42,7 @@ export function ShareBar({
   onCopyLink,
   linkCopyDisabled,
   shareDisabled,
+  notice,
 }: ShareBarProps) {
   return (
     <div>
@@ -85,6 +90,7 @@ export function ShareBar({
           🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
       </div>
+      {notice}
       {/*
        * shareDisabled と linkCopyDisabled は独立した基準（前者は本体出力の長さ、後者は
        * 入力テキストの長さ）で判定しており、同時に true になり得る。片方だけ表示すると、
