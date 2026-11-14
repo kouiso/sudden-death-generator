@@ -211,15 +211,22 @@ button {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 1rem;
-  /* サブセットフォント(sd-symbols.woff2)の hhea ascent(1160)+|descent|(288) が
-   * unitsPerEm(1000) の 1.448 倍あり、line-height がそれを下回ると隣接行の
-   * グリフが重なって完全に見えなくなる（実機で四角形・短冊の枠が消えるのを確認した
-   * 不具合）。余裕を見て 1.5 にする。 */
+  /* デザイン(design/project/Screen.dc.html)の 16px/1.5 を既定にする。通常・ストレスは
+   * ＞／＜ と ＿／￣ が接して読みにくくなるため詰めない。 */
   line-height: 1.5;
   white-space: pre;
   /* タブのタブストップ可変幅描画を width.ts の固定幅計算（タブ=半角1）と一致させる。 */
   tab-size: 1;
   color: var(--color-text);
+}
+
+/* 四角形・短冊だけ行の送りを 1em にする。罫線グリフは 1em の高さちょうどなので、1.5 だと
+ * 角と縦線の間に 0.5em の隙間が開いて枠がばらばらに見える。font.css の ascent/descent-override
+ * は、この 1em のグリフを行ボックスの中央に置き、行ボックスの下へ約 0.9px はみ出さない
+ * ようにしている（1 未満にすると隣の行のグリフが重なるので詰めすぎない）。 */
+.preview-pre[data-shape="square"],
+.preview-pre[data-shape="tanzaku"] {
+  line-height: 1;
 }
 
 .share-bar {

@@ -9,6 +9,17 @@
   src: url("/font/sd-symbols.woff2") format("woff2");
   font-display: block;
   /*
+   * 罫線グリフは縦方向に y=-120〜880（ちょうど 1em）を満たすが、フォント本来の hhea は
+   * ascent 1160 / descent 288（計 1.448em）で、行ボックスの中心がグリフの中心より 56/1000em
+   * 上にずれる。行を line-height: 1 まで詰めると、このずれでグリフが行ボックスの下へ
+   * はみ出し（overflow:hidden の枠で切れる恐れ）、行ごとの位置もずれる。そこで
+   * ascent/descent をグリフの実寸(880/120)に合わせ、「グリフ = 行ボックス」にする。
+   * フォントファイル自体は変えない（line-gap は元から 0 だが念のため明示）。
+   */
+  ascent-override: 88%;
+  descent-override: 12%;
+  line-gap-override: 0%;
+  /*
    * ASCII印字可能域(U+0020-007E)を丸ごと含む。表示幅モデルは「半角=全角ちょうど半分」を
    * 前提にしており、ASCIIを和文フォントより先に評価されるLatin専用等幅フォント
    * （token.css の --font-mono 参照）に任せると、その等幅フォントの実測幅が0.5emから
