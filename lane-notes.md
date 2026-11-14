@@ -132,3 +132,20 @@ CYCLE 2 T=2026-11-14T15:14Z | PRs 13 (+#111 notes, #125 handoff excluded) | issu
 DECIDED | DEPLOY unchanged: merge to main -> production (Vercel git integration) -> no lane merges tonight; PRs end at GATE and wait OWNER | revert owner says main may merge
 DECIDED | iteration board (project 49) still unreadable from this container (connector has no Projects tool) | revert read when a route appears
 NEXT 5: PR#124 review+GATE comments; open PRs for #95 #92 #96 #94 (+2 comments each); then #98 #97 g1 g4 g6 g5 g2 r40 f1 f2; close #69 with reason; manager judges f3 wip branch
+MANAGER (night, fable high) agent a15c79ac25d253637 2026-11-14T15:22Z decisions:
+DECIDED (manager) | f3 (#89 token comment + colour pin): finish tonight as PR stacked on fix/97-svg-icons, both schemes pinned without `if`, fail-before shown, fresh review | reason closes a pass-line gap of #89 (token.css:19-20 comment false, share-notice.spec.ts:113 passes on old colour) | revert close the PR
+DECIDED (manager) | other FOLLOW-UPS (#102 nits, r40 tabIndex comment, G2 extra tests, --shadow-toast, #101+#104 import): wait for merges | reason nit-level, one more PR each, last two span two stacks | revert build them
+DECIDED (manager) | G3 (audit row 11 「効きません」): wait | reason 「効」 not in script/ui-font-corpus.txt, needs font regen on #89 + string moves in #104 (two stacks, no single base) | revert build after merges
+DECIDED (manager) | combined-stack dry run (scratch, not pushed): merge all heads in merge order, run all checks, record conflicts as rebase notes; PASSed heads untouched | suspected: #97×g5, r40×g5 (global.css), #97×#104 (app.tsx, shape-picker.tsx)
+DECIDED (manager) | PR #125 (handoff, base main, not draft): make draft so a bulk merge cannot put doc/handoff into main | revert mark ready
+PASS LINE amendments: CI = local run on exact head; Vercel preview READY replaced for heads pushed after 13:59Z by "quota-blocked recorded, re-check after reset" (#114 still needs build log before merge); a colour/value change needs an assertion failing on the old value.
+AUDIT (manager, scene c) fix/89: token.css:19-20 comment false + spec:113 no fail-before (both fixed by f3); global.css:341-345 40px row at <=430px also changes success row (audit row 43) -> needs owner | refactor/104: must 0, nit core/shape.ts:15-16 UI copy in core, nit permalink.ts:61 indent | design/g5: 0件 (2 files, rows 5 and 9 only, spec 63 lines)
+JUDGE issues: 0件 startable (every SBI has a branch except #91 #99 #103 = owner); audit rows: 21/23 built, row 11 = G3 wait, row 37 = owner.
+MERGE ORDER (for owner / merge day): 1) #112>#113>#114(after preview log)>f1; #115; #116  2) #117  3) #119>#120>#121>#122>#123>#124>#97>f3  4) r40  5) #95>#92>#96>#94>g2>f2  6) #98  7) g1>g4>g6>g5 (lane resolves global.css, re-review)  8) #118 last (lane resolves app.tsx, shape-picker.tsx). ~28 merges count against Vercel 100 deploys/day -> pace them.
+needs owner (added, night):
+- GATE 済みの PR を上の MERGE ORDER の順にレーンがマージしてよいか（main = 本番）。はい／自分で押す／いいえ。推奨: はい。答えが来るまでマージしない
+- 行43: 390px で知らせの行を 40px にしたまま（成功の知らせも変わる）でよいか。推奨: はい
+- 行45: デザインに描かれていない「リンクをコピーしました」の文言を残すか。推奨: はい
+- #115: リポの外で .github/mcp-config.json を読むツールはあるか。推奨: 無い → マージ
+- 断れる既定（レーンが決めた物）: #96 枠線 #565e7a／#97 太陽のアイコン・警告アイコン無し／G5 44px の押せる大きさ／G4 行の高さ 1.2／G6 .shell の container
+NOISE 15:17Z | new PRs auto-subscribe this session; bots only report their own limits (Vercel 100/day again from #129, Codex quota, CodeRabbit OSS limit) -> unsubscribed #126-#131 to save allowance; CodeRabbit on #126: no actionable comments. CodeRabbit findings on main-based PRs checked in one batch later.
