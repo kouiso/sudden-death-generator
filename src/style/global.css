@@ -75,7 +75,8 @@ button {
   place-items: center;
   cursor: pointer;
   font-size: 1.1rem;
-  box-shadow: var(--shadow-sm);
+  /* デザインはライト・ダークとも影なし（枠線だけで面を区切る）。 */
+  box-shadow: none;
 }
 
 .card {
@@ -327,7 +328,7 @@ button {
   border-radius: 999px;
   font-size: 0.88rem;
   font-weight: 700;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-toast);
   display: flex;
   align-items: center;
   gap: 8px;
