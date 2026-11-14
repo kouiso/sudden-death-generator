@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-14T13:50Z | PRs 0 open (19 reviewed branches waiting for GitHub write limit) | issues 37 | owner 9
+STATE PAUSED 2026-11-14T14:23Z | manager pause (weekly allowance) | resume first: post queued GitHub writes from scratchpad plan.json
 mission: それぞれのプロジェクトに書いてあるプランに書いてある作業をやること／どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので | handoff: none for this repo (packet small-lot part 1/1)
 model claude-opus-5-5 (lead) | advisor unknown (no advisor tool visible) | github via connector (gh token invalid) | push via git | png ok
 goal: cycle DONE or DONE-WAITING (owner/device-only items listed) | DONE-WAITING satisfies it: yes
@@ -118,3 +118,10 @@ F-02	blocked	wait	V-5	仕上げ
 RULE (manager 14:0xZ) GitHub writes: <=2 concurrent writers, >=2s between writes, batched reads, no <60s polling, on 403 honor Retry-After and do local work | queued writes now: 40 (PR124 x2, 12 PRs x3, #69 x2)
 REVIEW followup-106 PASS nit1 | followup-theme-media FAIL must1 (body counts) -> body fixed, re-review
 REVIEW followup-theme-media (2nd) PASS 0件 | f1 f2 added to plan (queued writes now 46)
+PAUSE 2026-11-14T14:23Z (manager: weekly allowance reserved for client work)
+- In flight: member building follow-ups f3 (fix/followup-89-token-comment on fix/97) and f4 (test/followup-102-nits on refactor/104); told to finish current step only. Not reviewed. Check `git -C /home/user/wf3|wf4 log` on resume.
+- Queued GitHub writes (46): PR124 review+status comments (2); create PR + 2 comments for 95 92 96 94 98 97 g1 g4 g6 g5 g2 r40 f1 f2 (14 x3 = 42); close #69 + comment (2). Plan file: /tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/plan.json (scratchpad may be wiped: bodies/reviews are reproducible from this NOTES file + branches). Post with <=2 writers, >=2s apart.
+- Resume first: post the queued writes (start with PR124 comments), then close #69, then review f3/f4 if pushed.
+- Open PRs: #112-#124 (13), all OWNER (merge = production). Vercel free deploy limit hit 13:59Z (24h).
+- Scheduled reminder deleted; background timer stopped.
+HANDOFF 2026-11-14T14:23Z | next: queued GitHub writes | queues: OWNER 13 PRs open + 14 to open; WAIT-OWNER issues 8; PARENT 9 | members still running: f3/f4 member (one step)

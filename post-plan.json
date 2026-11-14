@@ -1,0 +1,429 @@
+[
+ {
+  "n": 105,
+  "branch": "fix/105-e2e-browser-path",
+  "base": "main",
+  "title": "fix(e2e): PW_CHROMIUM_PATH でブラウザの実行ファイルを差し替えられるようにする",
+  "sha": "65bdf046b47bece5dd366e34e5a115fd95e35a1b",
+  "evidence": [
+   "105-65bdf04.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr105.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost105.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status105.md",
+  "pr": 112,
+  "done": true
+ },
+ {
+  "n": 106,
+  "branch": "docs/106-agents-e2e",
+  "base": "fix/105-e2e-browser-path",
+  "title": "docs: AGENTS.md に e2e の回し方（クラウドを含む）を足す",
+  "sha": "cd93e4af1ac45759ce29a97270adfe168cd6aaff",
+  "evidence": [
+   "106-cd93e4a-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr106.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost106.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status106.md",
+  "pr": 113,
+  "done": true
+ },
+ {
+  "n": 107,
+  "branch": "chore/107-npm-ci",
+  "base": "docs/106-agents-e2e",
+  "title": "chore: セットアップ手順を npm ci にそろえ、npm の版を packageManager に書く",
+  "sha": "dc561f1b86ac15878910d847fb6ba9fd9b2bbbd9",
+  "evidence": [
+   "107-dc561f1-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr107.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost107.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status107.md",
+  "pr": 114,
+  "done": true
+ },
+ {
+  "n": 108,
+  "branch": "chore/108-remove-mcp-config",
+  "base": "main",
+  "title": "chore: 読まれていない .github/mcp-config.json を消す",
+  "sha": "b46e0778c7ae3c52eff0d466e55487080beb222f",
+  "evidence": [
+   "108-b46e077-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr108.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost108.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status108.md",
+  "pr": 115,
+  "done": true
+ },
+ {
+  "n": 109,
+  "branch": "docs/109-vite-comment-date",
+  "base": "main",
+  "title": "docs: index.html のコメントを Vite に直し、test-spec の実施環境に日付を付ける",
+  "sha": "3cb58dd4d69b5f15b21de701065f2ea3062e13a2",
+  "evidence": [
+   "109-3cb58dd-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr109.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost109.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status109.md",
+  "pr": 116,
+  "done": true
+ },
+ {
+  "n": 102,
+  "branch": "fix/102-empty-stress-default",
+  "base": "main",
+  "title": "fix(core): 空入力のストレス形で、枠を「突然の死」・4段を「仕事のストレス」にする",
+  "sha": "0ac96a2b7971c3a1bbaa2bf7becc5de8e89c69a2",
+  "evidence": [
+   "102-0ac96a2-dark-1440.png",
+   "102-0ac96a2-dark-390.png",
+   "102-0ac96a2-light-1440.png",
+   "102-0ac96a2-light-390.png",
+   "102-0ac96a2-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr102.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost102.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status102.md",
+  "pr": 117,
+  "done": true
+ },
+ {
+  "n": 104,
+  "branch": "refactor/104-shape-table",
+  "base": "fix/102-empty-stress-default",
+  "title": "refactor(core): 形の一覧と縦書きの決まりを core の定義表1か所にまとめる",
+  "sha": "a8ace610203a7461c5487a0b09ff4bfaff08fcec",
+  "evidence": [
+   "104-a8ace61-light-1440.png",
+   "104-a8ace61-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr104.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost104.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status104.md",
+  "pr": 118,
+  "done": true
+ },
+ {
+  "n": 88,
+  "branch": "fix/88-notice-row",
+  "base": "main",
+  "title": "fix(ui): コピーの知らせを共有ボタンのすぐ下の確保した行に出す",
+  "sha": "7fd92b73643bf198eadbb6b65875e94f9c76066f",
+  "evidence": [
+   "88-7fd92b7-dark-1440.png",
+   "88-7fd92b7-dark-390.png",
+   "88-7fd92b7-light-1440.png",
+   "88-7fd92b7-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr88.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost88.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status88.md",
+  "pr": 119,
+  "done": true
+ },
+ {
+  "n": 89,
+  "branch": "fix/89-copy-failure-notice",
+  "base": "fix/88-notice-row",
+  "title": "fix(ui): コピーに失敗した時も同じ行に知らせを出し、文言と色をデザインに合わせる",
+  "sha": "15f9460424acf5dad33ade6650493aaaa4517b9d",
+  "evidence": [
+   "89-15f9460-dark-1440.png",
+   "89-15f9460-dark-390-full.png",
+   "89-15f9460-dark-390.png",
+   "89-15f9460-light-1440.png",
+   "89-15f9460-light-390-full.png",
+   "89-15f9460-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr89.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost89.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status89.md",
+  "pr": 120,
+  "done": true
+ },
+ {
+  "n": 90,
+  "branch": "fix/90-disabled-reason",
+  "base": "fix/89-copy-failure-notice",
+  "title": "fix(ui): 押せない X・LINE の理由を title でなくボタンのすぐ下の行に出す",
+  "sha": "90c85a504a649149046a12e19f436efc821eeb3f",
+  "evidence": [
+   "90-90c85a5-dark-1440.png",
+   "90-90c85a5-dark-390-full.png",
+   "90-90c85a5-dark-390.png",
+   "90-90c85a5-light-1440.png",
+   "90-90c85a5-light-390-full.png",
+   "90-90c85a5-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr90.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost90.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status90.md",
+  "pr": 121,
+  "done": true
+ },
+ {
+  "n": 93,
+  "branch": "fix/93-share-note-gap",
+  "base": "fix/90-disabled-reason",
+  "title": "test(e2e): 共有ボタンと注記の間が 8px 以上ある事を9つの幅で測る",
+  "sha": "b73f648795df4310d8f312700b38d38129f872a8",
+  "evidence": [
+   "93-b73f648-localcheck.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr93.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost93.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status93.md",
+  "pr": 122,
+  "done": true
+ },
+ {
+  "n": 100,
+  "branch": "refactor/100-share-core",
+  "base": "fix/93-share-note-gap",
+  "title": "refactor(core): 共有 URL の組み立てと長さの判定を core/share.ts にまとめる",
+  "sha": "38d1a5ee9bbd97fe367bb5006c26c232c14ac690",
+  "evidence": [],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr100.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost100.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status100.md",
+  "pr": 123,
+  "done": true
+ },
+ {
+  "n": 101,
+  "branch": "refactor/101-core-entry",
+  "base": "refactor/100-share-core",
+  "title": "refactor(core): 画面の import を ./core の入口だけにし、使われない公開を外す",
+  "sha": "bb6de7b74d7100bae46e4360563739829f0cc27c",
+  "evidence": [],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr101.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost101.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status101.md",
+  "pr": 124,
+  "done": false
+ },
+ {
+  "n": 95,
+  "branch": "fix/95-share-underline",
+  "base": "main",
+  "title": "fix(style): X・LINE の共有ボタンのラベルから下線を消す",
+  "sha": "07ea3926791fbeaddcefd0ac81ce76e8f6135da1",
+  "evidence": [
+   "95-07ea392-dark-1440.png",
+   "95-07ea392-dark-390.png",
+   "95-07ea392-light-1440.png",
+   "95-07ea392-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr95.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost95.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status95.md"
+ },
+ {
+  "n": 92,
+  "branch": "fix/92-share-button-height",
+  "base": "fix/95-share-underline",
+  "title": "fix(style): 共有ボタンの枠線の太さと高さ（48px）をそろえる",
+  "sha": "381d053706f2aa1545f1289fefac936f94c629f4",
+  "evidence": [
+   "92-381d053-dark-1440.png",
+   "92-381d053-dark-390.png",
+   "92-381d053-light-1440.png",
+   "92-381d053-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr92.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost92.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status92.md"
+ },
+ {
+  "n": 96,
+  "branch": "fix/96-x-dark-border",
+  "base": "fix/92-share-button-height",
+  "title": "fix(style): 暗い表示で X のボタンに枠線を付け、カードと見分けられるようにする",
+  "sha": "7d0a7b9ea3afc36a1ac2ab212c67a74871122801",
+  "evidence": [
+   "96-7d0a7b9-dark-1440.png",
+   "96-7d0a7b9-dark-390.png",
+   "96-7d0a7b9-light-1440.png",
+   "96-7d0a7b9-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr96.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost96.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status96.md"
+ },
+ {
+  "n": 94,
+  "branch": "fix/94-copy-accent",
+  "base": "fix/96-x-dark-border",
+  "title": "fix(style): 「コピー」をアクセント色の塗りにし、緑は LINE と知らせだけにする",
+  "sha": "56dc02d1cb69de100ada3bc9ba16b44b4710cf30",
+  "evidence": [
+   "94-56dc02d-dark-1440.png",
+   "94-56dc02d-dark-390.png",
+   "94-56dc02d-light-1440.png",
+   "94-56dc02d-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr94.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost94.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status94.md"
+ },
+ {
+  "n": 98,
+  "branch": "fix/98-box-line-height",
+  "base": "main",
+  "title": "fix(style): 四角形・短冊の時だけ行の高さを詰め、枠の罫線をつなげる",
+  "sha": "a4645e1d5c036fc3ee72f6d545a56858d2591115",
+  "evidence": [
+   "98-a4645e1-normal-light-1440.png",
+   "98-a4645e1-square-dark-1440.png",
+   "98-a4645e1-square-dark-390.png",
+   "98-a4645e1-square-light-1440.png",
+   "98-a4645e1-square-light-390.png",
+   "98-a4645e1-stress-light-1440.png",
+   "98-a4645e1-tanzaku-dark-1440.png",
+   "98-a4645e1-tanzaku-dark-390.png",
+   "98-a4645e1-tanzaku-light-1440.png",
+   "98-a4645e1-tanzaku-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr98.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost98.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status98.md"
+ },
+ {
+  "n": 97,
+  "branch": "fix/97-svg-icons",
+  "base": "refactor/101-core-entry",
+  "title": "fix(ui): 絵文字のアイコンを、文字色に従う線の SVG に置き換える",
+  "sha": "7367188acc2bb76e85d09d5eaee3f4f4cadf22b2",
+  "evidence": [
+   "97-7367188-dark-1440.png",
+   "97-7367188-dark-390.png",
+   "97-7367188-light-1440.png",
+   "97-7367188-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr97.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost97.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status97.md"
+ },
+ {
+  "n": "g1",
+  "branch": "design/g1-dark-surfaces",
+  "base": "main",
+  "title": "style(design): 暗い表示の影と背景、テーマ切替の影をデザインにそろえる",
+  "sha": "5632d66b7eea959c23347b4baf88e86a4202bb61",
+  "evidence": [
+   "design-g1-5632d66-dark-1440.png",
+   "design-g1-5632d66-dark-390.png",
+   "design-g1-5632d66-light-1440.png",
+   "design-g1-5632d66-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg1.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg1.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg1.md"
+ },
+ {
+  "n": "g2",
+  "branch": "design/g2-hover",
+  "base": "fix/94-copy-accent",
+  "title": "style(design): 共有ボタン4つの hover の色をデザインにそろえる",
+  "sha": "911e85ab45f0ab8d4cdb80a83ad98af24d2ef007",
+  "evidence": [
+   "g2-hover-911e85a-dark-1440.png",
+   "g2-hover-911e85a-dark-390.png",
+   "g2-hover-911e85a-light-1440.png",
+   "g2-hover-911e85a-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg2.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg2.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg2.md"
+ },
+ {
+  "n": "r40",
+  "branch": "design/r40-disabled-cursor",
+  "base": "fix/90-disabled-reason",
+  "title": "style(design): 押せない X・LINE でマウスの形を「押せない」にする",
+  "sha": "53e7cd7481e2ba4f49624210503ee2ed636d90d2",
+  "evidence": [
+   "r40-53e7cd7-dark-1440.png",
+   "r40-53e7cd7-dark-390.png",
+   "r40-53e7cd7-light-1440.png",
+   "r40-53e7cd7-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prr40.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostr40.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusr40.md"
+ },
+ {
+  "n": "g4",
+  "branch": "design/g4-type-spacing",
+  "base": "design/g1-dark-surfaces",
+  "title": "style(design): 文字の組み方と余白、押せない縦書きのチェックをデザインにそろえる",
+  "sha": "bff642c23ce33e633fc5654ee0bc1dc8ed2f2cef",
+  "evidence": [
+   "design-g4-bff642c-dark-1440.png",
+   "design-g4-bff642c-dark-390.png",
+   "design-g4-bff642c-light-1440.png",
+   "design-g4-bff642c-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg4.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg4.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg4.md"
+ },
+ {
+  "n": "g6",
+  "branch": "design/g6-shape-container",
+  "base": "design/g4-type-spacing",
+  "title": "style(design): 480px 以下の切り替えを画面の列全体の container query にする",
+  "sha": "073b8cd0ef6d0b00da4a362c66073cb25a8bacb8",
+  "evidence": [
+   "design-g6-073b8cd-dark-1440.png",
+   "design-g6-073b8cd-dark-390.png",
+   "design-g6-073b8cd-light-1440.png",
+   "design-g6-073b8cd-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg6.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg6.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg6.md"
+ },
+ {
+  "n": "g5",
+  "branch": "design/g5-tap-targets",
+  "base": "design/g6-shape-container",
+  "title": "style(design): テーマ切替とチェックボックスの行をデザインの押せる大きさにする",
+  "sha": "75dd3c4550a68296b29e6be74f6143b243d0eaa7",
+  "evidence": [
+   "design-g5-75dd3c4-dark-1440.png",
+   "design-g5-75dd3c4-dark-390.png",
+   "design-g5-75dd3c4-light-1440.png",
+   "design-g5-75dd3c4-light-390.png"
+  ],
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg5.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg5.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg5.md"
+ },
+ {
+  "n": "f1",
+  "branch": "docs/followup-106-trace",
+  "base": "chore/107-npm-ci",
+  "title": "docs: AGENTS.md の e2e の手順に --trace off の理由と Chromium の版を書く",
+  "sha": "955d6d233a4dbc7c6d77245ecd891d386168a1a6",
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prf1.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostf1.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusf1.md"
+ },
+ {
+  "n": "f2",
+  "branch": "test/followup-theme-media",
+  "base": "design/g2-hover",
+  "title": "test(e2e): OS の明暗・押している間・暗い表示の hover を固定するテストを足す",
+  "sha": "f316a2605ace98bdc6ff6d6891234c9d74b506c9",
+  "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prf2.md",
+  "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostf2.md",
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusf2.md"
+ }
+]
