@@ -12,14 +12,16 @@ async function open(page: Page, theme: Theme, width: number) {
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
 }
 
-const css = (page: Page, selector: string, props: string[]) =>
+const num = (v: string | undefined) => Number.parseFloat(v ?? "");
+
+const css = (page: Page, selector: string, props: string[]): Promise<Record<string, string>> =>
   page.evaluate(
     ([sel, ps]) => {
       const s = getComputedStyle(document.querySelector(sel as string)!);
       return Object.fromEntries((ps as string[]).map((p) => [p, s.getPropertyValue(p)]));
     },
     [selector, props],
-  );
+  ) as Promise<Record<string, string>>;
 
 test("ページ下余白: 1440 は 56px、390 は 32px（行1・2）", async ({ page }) => {
   await open(page, "light", 1440);
@@ -31,7 +33,7 @@ test("ページ下余白: 1440 は 56px、390 は 32px（行1・2）", async ({ 
 test("h1 の line-height は 1.3（行3）", async ({ page }) => {
   await open(page, "light", 1440);
   const v = await css(page, ".app-title", ["line-height", "font-size"]);
-  expect(parseFloat(v["line-height"])).toBeCloseTo(parseFloat(v["font-size"]) * 1.3, 1);
+  expect(num(v["line-height"])).toBeCloseTo(num(v["font-size"]) * 1.3, 1);
   expect(v["font-size"]).toBe("32px");
 });
 
@@ -39,7 +41,7 @@ test("サブタイトルは 14px / 1.6 / balance（行4）", async ({ page }) =>
   await open(page, "light", 390);
   const v = await css(page, ".app-subtitle", ["font-size", "line-height", "text-wrap-style"]);
   expect(v["font-size"]).toBe("14px");
-  expect(parseFloat(v["line-height"])).toBeCloseTo(22.4, 1);
+  expect(num(v["line-height"])).toBeCloseTo(22.4, 1);
   expect(v["text-wrap-style"]).toBe("balance");
 });
 
@@ -82,7 +84,7 @@ test("注記は 12.5px / 1.7（行46）", async ({ page }) => {
   await open(page, "light", 1440);
   const v = await css(page, ".share-note", ["font-size", "line-height"]);
   expect(v["font-size"]).toBe("12.5px");
-  expect(parseFloat(v["line-height"])).toBeCloseTo(21.25, 1);
+  expect(num(v["line-height"])).toBeCloseTo(21.25, 1);
 });
 
 for (const [theme, muted] of [
