@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useState } from "preact/hooks";
-import { renderSuddenDeath, type ShapeKind } from "./core";
-import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
+import {
+  buildPermalinkQuery,
+  isPermalinkQueryTooLong,
+  isShareTooLong,
+  parsePermalink,
+  renderSuddenDeath,
+  type ShapeKind,
+} from "./core";
 import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";
 import { ShareBar } from "./component/share-bar";
-import { Toast } from "./component/toast";
+import { MoonIcon, SunIcon } from "./component/icon";
+import { Notice } from "./component/notice";
 import { useClipboard } from "./hook/use-clipboard";
 import { useTheme } from "./hook/use-theme";
 
@@ -72,10 +79,28 @@ export function App() {
   // X/LINE のシェアURLも同じ危険（一部環境のURL長制限に引っかかって開けない）を抱える。
   // むしろ本体出力（枠のパディング込みで入力テキストより常に長い）を丸ごと載せるため、
   // パーマリンク（入力テキストのみ）より長くなりやすく、パーマリンクは安全と判定された
-  // 入力でもこちらは超過しうる（自己レビューで指摘）。パーマリンクと同じ基準
-  // （MAX_PERMALINK_QUERY_LENGTH）を「text=<encode後の出力>」というクエリ片に対して適用し、
-  // 新たな閾値を当て推量で作らず同じ安全マージンを流用する。
-  const shareTooLong = isPermalinkQueryTooLong(`text=${encodeURIComponent(output)}`);
+  // 入力でもこちらは超過しうる（自己レビューで指摘）。判定は URL 組み立てと同じ
+  // core/share.ts のクエリ関数の結果で行い、URL の形が変わっても判定がずれないようにする。
+  const shareTooLong = isShareTooLong(output);
+
+  // コピーの知らせ。「コピー」と「リンクをコピー」は同じ1行を共有し、直近に押した側を出す
+  // （従来どおり本体コピーの結果を優先する）。
+  const notice =
+    copyStatus !== "idle" ? (
+      <Notice status={copyStatus} message={copyStatus === "success" ? "コピーしました" : "コピーできませんでした。もう一度押してください"} />
+    ) : linkCopyStatus !== "idle" ? (
+      <Notice
+        status={linkCopyStatus}
+        message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
+      />
+    ) : shareTooLong ? (
+      // 押せない理由は title に入れても pointer-events:none と tabIndex=-1 で誰にも出ない。
+      // コピー結果と同じ行に出せば、行の高さを先に確保済みなのでカードの高さが変わらない。
+      // コピーの知らせが出ている間はそちらを優先し、消えれば理由に戻る。
+      <Notice status="info" message="入力が長すぎるため、X・LINEでの共有はできません" />
+    ) : (
+      <Notice status={null} message="" />
+    );
 
   return (
     <div className="app-shell">
@@ -90,7 +115,7 @@ export function App() {
           onClick={toggleTheme}
           aria-label={theme === "dark" ? "ライトモードに切り替え" : "ダークモードに切り替え"}
         >
-          <span aria-hidden="true">{theme === "dark" ? "☀️" : "🌙"}</span>
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
       </header>
 
@@ -121,20 +146,8 @@ export function App() {
           onCopyLink={() => copyLink(permalinkHref)}
           linkCopyDisabled={permalinkTooLong}
           shareDisabled={shareTooLong}
+          notice={notice}
         />
-
-        {copyStatus !== "idle" && (
-          <Toast
-            status={copyStatus}
-            message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"}
-          />
-        )}
-        {copyStatus === "idle" && linkCopyStatus !== "idle" && (
-          <Toast
-            status={linkCopyStatus}
-            message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
-          />
-        )}
       </div>
 
       <footer className="app-footer">

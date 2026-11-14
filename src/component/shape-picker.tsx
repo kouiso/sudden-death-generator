@@ -1,6 +1,7 @@
 import { useRef } from "preact/hooks";
-import type { TargetedKeyboardEvent } from "preact";
+import type { ComponentType, TargetedKeyboardEvent } from "preact";
 import type { ShapeKind } from "../core";
+import { NormalIcon, SquareIcon, StressIcon, TanzakuIcon } from "./icon";
 
 export interface ShapePickerProps {
   value: ShapeKind;
@@ -8,11 +9,11 @@ export interface ShapePickerProps {
 }
 
 // accessKey は echo-sd のショートカット割り当て(N/4/T/S)に合わせる（機能面の参考、コードは転記していない）。
-const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; icon: string; accessKey: string }> = [
-  { value: "normal", label: "通常", icon: "📝", accessKey: "n" },
-  { value: "square", label: "四角形", icon: "⬜", accessKey: "4" },
-  { value: "tanzaku", label: "短冊", icon: "🎋", accessKey: "t" },
-  { value: "stress", label: "ストレス", icon: "💢", accessKey: "s" },
+const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; Icon: ComponentType; accessKey: string }> = [
+  { value: "normal", label: "通常", Icon: NormalIcon, accessKey: "n" },
+  { value: "square", label: "四角形", Icon: SquareIcon, accessKey: "4" },
+  { value: "tanzaku", label: "短冊", Icon: TanzakuIcon, accessKey: "t" },
+  { value: "stress", label: "ストレス", Icon: StressIcon, accessKey: "s" },
 ];
 
 export function ShapePicker({ value, onChange }: ShapePickerProps) {
@@ -56,7 +57,7 @@ export function ShapePicker({ value, onChange }: ShapePickerProps) {
             onKeyDown={(e) => handleKeyDown(e, index)}
           >
             <span className="shape-icon" aria-hidden="true">
-              {shape.icon}
+              <shape.Icon />
             </span>
             <span>{shape.label}</span>
           </button>
