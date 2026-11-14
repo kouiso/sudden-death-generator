@@ -35,3 +35,4 @@ needs owner (added):
 - #83 本番ドメインは ito-games.vercel.app で確定か。はい／いいえ
 - #82 画像保存を作るか、作るなら保存／コピー／両方。推奨: 今は作らない
 - #31 #61 (devin): この lane は触らない。進めるかは本人
+#102 | FINISH | branch pushed | head 0ac96a2 | unit 158 e2e 13 | review pending | 2026-11-14T13:07:59Z
