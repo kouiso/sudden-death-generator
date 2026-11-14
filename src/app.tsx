@@ -81,7 +81,7 @@ export function App() {
   // （従来どおり本体コピーの結果を優先する）。
   const notice =
     copyStatus !== "idle" ? (
-      <Notice status={copyStatus} message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"} />
+      <Notice status={copyStatus} message={copyStatus === "success" ? "コピーしました" : "コピーできませんでした。もう一度押してください"} />
     ) : linkCopyStatus !== "idle" ? (
       <Notice
         status={linkCopyStatus}
