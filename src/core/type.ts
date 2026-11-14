@@ -1,5 +1,7 @@
-/** 生成する枠の形状。短冊は常に縦書きになる（紙の短冊自体が縦長のため）。 */
-export type ShapeKind = "normal" | "square" | "tanzaku" | "stress";
+import type { ShapeKind } from "./shape";
+
+/** 生成する枠の形状。一覧と縦書きの規則は shape.ts の定義表が持つ。 */
+export type { ShapeKind };
 
 export interface RenderOptions {
   shape: ShapeKind;
