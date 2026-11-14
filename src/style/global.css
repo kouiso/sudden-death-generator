@@ -94,6 +94,11 @@ button {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* 列数の切り替えを画面幅ではなく「カードの中身の幅」で判定するためのコンテナ。
+   * 同じ画面幅でもカードの余白や親の幅で中身の幅は変わるので、viewport 基準だと
+   * 2列にすべき幅で4列になる帯ができる。#91 の共有ボタンも同じコンテナを使える。 */
+  container-type: inline-size;
+  container-name: card;
 }
 
 .field-label {
@@ -170,13 +175,14 @@ button {
 
 .shape-picker {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
-@media (min-width: 480px) {
+/* カードの中身が 480px 以下なら 2 列（デザインの「480px 以下で2列」）。 */
+@container card (max-width: 480px) {
   .shape-picker {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
