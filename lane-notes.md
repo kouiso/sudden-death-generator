@@ -84,3 +84,5 @@ needs owner (added):
 - デザイン差分の残りを1つの PBI として起票してよいか。はい／いいえ。推奨: はい
 - 押している間にボタンが 1px 下がる動き（デザインに描かれていない）を残すか。推奨: 残す
 #97 | FIX done | head 7367188 | e2e 35x5 | re-review
+design/g2-hover | FINISH | head 911e85a (on #94) | e2e 29
+design/r40-disabled-cursor | FINISH | head fe3ed6f (on #90) | e2e 24
