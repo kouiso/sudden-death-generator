@@ -1,6 +1,6 @@
 export interface NoticeProps {
-  /** 知らせの種類。null は何も出さない（行の高さだけ確保したまま空にする）。 */
-  status: "success" | "error" | null;
+  /** 知らせの種類。info は押せない理由（アイコン無し）。null は何も出さない（行の高さだけ確保したまま空にする）。 */
+  status: "success" | "error" | "info" | null;
   message: string;
 }
 
@@ -13,10 +13,10 @@ export interface NoticeProps {
  */
 export function Notice({ status, message }: NoticeProps) {
   return (
-    <p className={`notice ${status === "error" ? "notice--error" : ""}`} role="status" aria-live="polite">
+    <p className={`notice ${status === "error" ? "notice--error" : ""} ${status === "info" ? "notice--info" : ""}`} role="status" aria-live="polite">
       {status !== null && (
         <>
-          <span aria-hidden="true">{status === "error" ? "⚠️" : "✅"}</span>
+          {status !== "info" && <span aria-hidden="true">{status === "error" ? "⚠️" : "✅"}</span>}
           <span>{message}</span>
         </>
       )}
