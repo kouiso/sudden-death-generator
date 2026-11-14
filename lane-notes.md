@@ -39,3 +39,6 @@ needs owner (added):
 #106 | FINISH | head cd93e4a | e2e 13 unit 152
 #108 | FINISH | head b46e077 | e2e 13 unit 152
 #109 | FINISH | head 3cb58dd | e2e 13 unit 152
+#88 | FINISH | head 7fd92b7 | e2e 15 unit 152
+#95 | FINISH | head 07ea392 | e2e 14
+#92 | FINISH | head 381d053 (on #95) | e2e 17
