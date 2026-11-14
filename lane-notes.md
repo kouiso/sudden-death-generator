@@ -45,3 +45,7 @@ needs owner (added):
 REVIEW #102 PASS must0 want0 nit3 (nits carried; not fixed after pass) 2026-11-14T13:09:59Z
 #104 | FINISH | head a8ace61 (on #102) | unit 173 e2e 13
 DECIDED (manager) | #96 option (a): dark X border #565e7a 1.5px, fill #14171a; light border #14171a; e2e: dark border == #565e7a and >=2.5:1 vs card; PR flags 2.59<3:1 (alt #6b7494 3.6:1) and design fill inconsistency | revert owner picks #6b7494
+REVIEW #106 PASS must0 want1 nit1 (carry: --trace off reason -> follow-up)
+REVIEW #108 PASS 0件
+REVIEW #109 PASS 0件
+2026-11-14T13:11:36Z
