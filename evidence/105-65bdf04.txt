@@ -6,3 +6,9 @@ $ PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run 
   13 passed (10.9s)
 $ npm test
       Tests  152 passed (152)
+$ npm run lint
+  exit 0
+$ npm run typecheck
+  exit 0
+$ npm run build
+  exit 0
