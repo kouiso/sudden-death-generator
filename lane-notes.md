@@ -59,3 +59,4 @@ DECIDED | member commit trailers say Sonnet 5.5 (true author) — keep; no force
 REVIEW #96 PASS want1 (OS-dark test: follow-up) nit1
 #94 | FINISH | head 56dc02d (on #96) | unit 152 e2e 21
 #98 | FINISH | head 52da883 | unit 152 e2e 19
+REVIEW #88 (2nd) PASS nit1 (body fixed) | #89 PASS want2 (token.css comment: follow-up; 390 shots retake) nit3
