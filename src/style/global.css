@@ -192,6 +192,10 @@ button {
   cursor: pointer;
   font-size: 0.84375rem;
   font-weight: 700;
+  /* デザインは line-height 未指定（normal）で、描画された高さは約 73px。normal は書体の
+   * ascent/descent 次第で 16〜19px と揺れる（実装の UI 書体だと 19px で 76px になる）ため、
+   * 1 行のラベルは 1.2 に固定してデザインの高さを書体に依存せず再現する。 */
+  line-height: 1.2;
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
@@ -203,6 +207,11 @@ button {
 
 .shape-icon {
   font-size: 1.2rem;
+  /* デザインのアイコン枠は 24x24（SVG）。文字アイコンは書体の ascent/descent で行が
+   * 約 28px まで伸びて、ボタンがデザインの約 73px より高くなっていたため高さを固定する。 */
+  display: block;
+  height: 24px;
+  line-height: 24px;
 }
 
 /* スクリーンリーダー専用テキスト（視覚的には非表示だが読み上げ対象には残す）。 */

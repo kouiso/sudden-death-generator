@@ -69,6 +69,18 @@ test("スタイル選択ボタン: padding 12px 8px / gap 6px / 13.5px（行13�
   expect(v["font-size"]).toBe("13.5px");
 });
 
+test("スタイル選択ボタンの高さはデザインの約 73px（±1px）、アイコン枠は 24px（行13）", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await open(page, "light", width);
+    const h = await page.evaluate(() => {
+      const b = document.querySelector(".shape-button")!;
+      return { button: b.getBoundingClientRect().height, icon: b.querySelector(".shape-icon")!.getBoundingClientRect().height };
+    });
+    expect(Math.abs(h.button - 73), `${width}px: ${h.button}`).toBeLessThanOrEqual(1);
+    expect(h.icon).toBe(24);
+  }
+});
+
 for (const [theme, act] of [
   ["light", "rgb(233, 238, 252)"],
   ["dark", "rgb(35, 43, 71)"],
