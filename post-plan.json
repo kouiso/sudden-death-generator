@@ -206,7 +206,7 @@
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost101.md",
   "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status101.md",
   "pr": 124,
-  "done": false
+  "done": true
  },
  {
   "n": 95,
@@ -222,7 +222,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr95.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost95.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status95.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status95.md",
+  "pr": 126,
+  "done": true
  },
  {
   "n": 92,
@@ -238,7 +240,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr92.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost92.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status92.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status92.md",
+  "pr": 127,
+  "done": true
  },
  {
   "n": 96,
@@ -254,7 +258,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr96.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost96.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status96.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status96.md",
+  "pr": 128,
+  "done": true
  },
  {
   "n": 94,
@@ -270,7 +276,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr94.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost94.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status94.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status94.md",
+  "pr": 129,
+  "done": true
  },
  {
   "n": 98,
@@ -292,7 +300,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr98.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost98.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status98.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status98.md",
+  "pr": 130,
+  "done": true
  },
  {
   "n": 97,
@@ -308,7 +318,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/pr97.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpost97.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status97.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/status97.md",
+  "pr": 131,
+  "done": true
  },
  {
   "n": "g1",
@@ -324,7 +336,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg1.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg1.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg1.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg1.md",
+  "pr": 132,
+  "done": true
  },
  {
   "n": "g2",
@@ -340,7 +354,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg2.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg2.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg2.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg2.md",
+  "pr": 133,
+  "done": true
  },
  {
   "n": "r40",
@@ -356,7 +372,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prr40.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostr40.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusr40.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusr40.md",
+  "pr": 134,
+  "done": true
  },
  {
   "n": "g4",
@@ -372,7 +390,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg4.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg4.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg4.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg4.md",
+  "pr": 135,
+  "done": true
  },
  {
   "n": "g6",
@@ -388,7 +408,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg6.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg6.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg6.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg6.md",
+  "pr": 136,
+  "done": true
  },
  {
   "n": "g5",
@@ -404,7 +426,9 @@
   ],
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prg5.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostg5.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg5.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusg5.md",
+  "pr": 137,
+  "done": true
  },
  {
   "n": "f1",
@@ -414,7 +438,9 @@
   "sha": "955d6d233a4dbc7c6d77245ecd891d386168a1a6",
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prf1.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostf1.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusf1.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusf1.md",
+  "pr": 138,
+  "done": true
  },
  {
   "n": "f2",
@@ -424,6 +450,8 @@
   "sha": "f316a2605ace98bdc6ff6d6891234c9d74b506c9",
   "body": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/prf2.md",
   "review": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/reviewpostf2.md",
-  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusf2.md"
+  "status": "/tmp/claude-0/-home-user-sudden-death-generator/e3b796bd-86a5-56fd-b579-ac266ce21e3a/scratchpad/statusf2.md",
+  "pr": 139,
+  "done": true
  }
 ]
