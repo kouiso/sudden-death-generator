@@ -96,3 +96,8 @@ DECIDED | G4 label line-height 1.2 (design unspecified; reproduces 73px) — fla
 REVIEW design G2 PASS want3 nit2 | r40 FAIL must1 (click focus regression) -> FIX sent
 #r40 | FIX done | head 53e7cd7 | e2e 25 | re-review
 PR #112 opened for #105 at 13:58Z | REVIEW r40 (2nd 53e7cd7) PASS nit2
+BLOCKER 13:59Z | Vercel: "Resource is limited - try again in 24 hours (more than 100, code: api-deployments-free-per-day)" on PR #114 (#107). Preview builds fail for ~24h, so #107's required Vercel preview build-log check cannot be done yet; also a main merge today may fail to deploy to production. Staging previews already READY: #112 (#105), #113 (#106).
+needs owner (added):
+- Vercel の無料枠（1日 100 デプロイ）を使い切った。24時間は Preview も本番も作られない。#107（packageManager）は Preview のビルドの記録を確かめてからマージしてほしい。今日 main にマージしても本番に出ない恐れがある
+for main session:
+- Vercel 無料枠 api-deployments-free-per-day に到達（13:59Z）。他の lane の PR も同じチームなら影響
