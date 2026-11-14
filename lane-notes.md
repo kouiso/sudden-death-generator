@@ -69,3 +69,4 @@ DECIDED | keep MAX_PERMALINK_QUERY_LENGTH exported in core/index.ts | reason PBI
 RULING (owner via manager, 2026-11-14T13:24:53Z) | 「CIはローカルで通れば通ったものとみなしていいよ」: local run of the repo's CI checks (lint, typecheck, test, build, e2e) on the exact head = checks passed; LOCAL-CHECK on PR; failing local = failed gate; hosted CI failure later -> follow-up fix PR. G5 (main = production) unchanged: merges still wait for owner.
 REVIEW #98 FAIL must1 (line-height 1 must be square/tanzaku only; design 1.5) want2 nit2 -> FIX sent to member 13:25Z
 DECIDED (manager) | #97: draw sun (flag, not in design); NO warning icon (states.dc.html failure notice is text only) -> remove ⚠️; copy success swaps to check + 「コピー済み」 on copy and link buttons; 𝕏 stays text; tap targets unchanged; don't commit regenerated fonts | revert owner asks for warning triangle
+REVIEW #90 PASS want3 (body fixed; design 注記 style -> owner flag; 390 full shots retake) nit2 | #93 PASS nit1
