@@ -58,3 +58,4 @@ REVIEW #88 FAIL must1 (body: card height for link-copy at 1440 changes due to #9
 DECIDED | member commit trailers say Sonnet 5.5 (true author) — keep; no force push | revert none
 REVIEW #96 PASS want1 (OS-dark test: follow-up) nit1
 #94 | FINISH | head 56dc02d (on #96) | unit 152 e2e 21
+#98 | FINISH | head 52da883 | unit 152 e2e 19
