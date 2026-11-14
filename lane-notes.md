@@ -71,3 +71,4 @@ REVIEW #98 FAIL must1 (line-height 1 must be square/tanzaku only; design 1.5) wa
 DECIDED (manager) | #97: draw sun (flag, not in design); NO warning icon (states.dc.html failure notice is text only) -> remove ⚠️; copy success swaps to check + 「コピー済み」 on copy and link buttons; 𝕏 stays text; tap targets unchanged; don't commit regenerated fonts | revert owner asks for warning triangle
 REVIEW #90 PASS want3 (body fixed; design 注記 style -> owner flag; 390 full shots retake) nit2 | #93 PASS nit1
 REVIEW #100 PASS nit1 | #101 PASS 0件 13:27Z
+#98 | FIX done | head a4645e1 | unit 152 e2e 23 | re-review
