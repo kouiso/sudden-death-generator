@@ -87,3 +87,5 @@ needs owner (added):
 design/g2-hover | FINISH | head 911e85a (on #94) | e2e 29
 design/r40-disabled-cursor | FINISH | head fe3ed6f (on #90) | e2e 24
 REVIEW #97 (2nd, 7367188) PASS 0件
+design/g1-dark-surfaces | FINISH | head 5632d66 | e2e 19 | review
+DECIDED | G6 container follows design literally (.shell, incl. h1 24px / card padding 16px under container) | reason owner 「デザイン通り」 | revert card container
