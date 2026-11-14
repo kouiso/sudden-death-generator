@@ -1,6 +1,7 @@
 import { useRef } from "preact/hooks";
 import type { TargetedKeyboardEvent } from "preact";
 import type { ShapeKind } from "../core";
+import { SHAPE_KINDS } from "../core/shape";
 
 export interface ShapePickerProps {
   value: ShapeKind;
@@ -8,12 +9,15 @@ export interface ShapePickerProps {
 }
 
 // accessKey は echo-sd のショートカット割り当て(N/4/T/S)に合わせる（機能面の参考、コードは転記していない）。
-const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; icon: string; accessKey: string }> = [
-  { value: "normal", label: "通常", icon: "📝", accessKey: "n" },
-  { value: "square", label: "四角形", icon: "⬜", accessKey: "4" },
-  { value: "tanzaku", label: "短冊", icon: "🎋", accessKey: "t" },
-  { value: "stress", label: "ストレス", icon: "💢", accessKey: "s" },
-];
+// 形状の一覧と順序は core の定義表から導出し、ここは表示用の属性だけを持つ
+// （Record にすることで、形状が増えたときに型エラーで追記漏れに気づける）。
+const SHAPE_VIEW: Record<ShapeKind, { label: string; icon: string; accessKey: string }> = {
+  normal: { label: "通常", icon: "📝", accessKey: "n" },
+  square: { label: "四角形", icon: "⬜", accessKey: "4" },
+  tanzaku: { label: "短冊", icon: "🎋", accessKey: "t" },
+  stress: { label: "ストレス", icon: "💢", accessKey: "s" },
+};
+const SHAPES = SHAPE_KINDS.map((value) => ({ value, ...SHAPE_VIEW[value] }));
 
 export function ShapePicker({ value, onChange }: ShapePickerProps) {
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
