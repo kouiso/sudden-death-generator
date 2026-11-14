@@ -1,4 +1,4 @@
-STATE RUNNING 2026-11-14T12:55Z | counts pending
+STATE RUNNING 2026-11-14T13:50Z | PRs 0 open (19 reviewed branches waiting for GitHub write limit) | issues 37 | owner 9
 mission: それぞれのプロジェクトに書いてあるプランに書いてある作業をやること／どのプロジェクトもまず既存のPRを本質的に対処することを作業を優先してください。そうしないと溜まってばっかりなので | handoff: none for this repo (packet small-lot part 1/1)
 model claude-opus-5-5 (lead) | advisor unknown (no advisor tool visible) | github via connector (gh token invalid) | push via git | png ok
 goal: cycle DONE or DONE-WAITING (owner/device-only items listed) | DONE-WAITING satisfies it: yes
@@ -89,3 +89,4 @@ design/r40-disabled-cursor | FINISH | head fe3ed6f (on #90) | e2e 24
 REVIEW #97 (2nd, 7367188) PASS 0件
 design/g1-dark-surfaces | FINISH | head 5632d66 | e2e 19 | review
 DECIDED | G6 container follows design literally (.shell, incl. h1 24px / card padding 16px under container) | reason owner 「デザイン通り」 | revert card container
+HOUR 2026-11-14T13:50Z | merged 0 | closed 0 | output 0 | open PR 0->0 (+1 NOTES draft) | open issues 37->37 | ledger open 3->3 | owner 9 (#31 #61 #82 #83 #86 #91 #99 #103 + main=production merge question) | device 0 | stuck at gate: main = production (G5) so no lane merges; GitHub write secondary rate limit since 12:56Z (PR creation blocked until ~13:57Z) | branches pushed 25 (19 issue SBIs + 6 design), reviews PASS 19, in review/fix 6 | rules 2/3 front: iteration board unreadable (no route); non-claude-cloud first: 3 SBIs (#91 #99 #103) all WAIT-OWNER | skipped: owner's rule (-ux): 0 | design page: Artifact read "artifact not found — it may have been deleted, or it has not been shared with you" -> repo copy v9 used
