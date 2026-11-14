@@ -43,3 +43,4 @@ needs owner (added):
 #95 | FINISH | head 07ea392 | e2e 14
 #92 | FINISH | head 381d053 (on #95) | e2e 17
 REVIEW #102 PASS must0 want0 nit3 (nits carried; not fixed after pass) 2026-11-14T13:09:59Z
+#104 | FINISH | head a8ace61 (on #102) | unit 173 e2e 13
