@@ -312,29 +312,24 @@ button {
 }
 
 /*
- * position:fixed の画面下部オーバーレイだと、スマホの短い画面高さやスクロール位置次第で
- * share-bar と重なってボタンのラベルを覆ってしまい、固定オフセット値では画面サイズごとの
- * 組み合わせを網羅できないことを実機幅マトリクス（iPhone SE/12/Pro Max, Pixel）で確認した。
- * ドキュメントフロー内（ShareBar の直下）に置くことで、画面サイズ・スクロール位置に関わらず
- * 他要素と重ならないことを構造的に保証する。
+ * コピー結果の知らせ行（design/project/states.dc.html）。共有ボタンのすぐ下に置き、
+ * 高さ 24px を先に確保する。出ても消えてもカードの高さが変わらず、スマホでも押した
+ * ボタンのそばで見える。ドキュメントフロー内なので他要素と重ならない。
+ * 背景の塗りは持たず、文字色だけで成功/失敗を示す（カード面に対する文字のコントラスト）。
  */
-.toast {
-  margin: 0 auto;
-  width: fit-content;
-  background: var(--color-success);
-  color: var(--color-accent-contrast);
-  padding: 10px 20px;
-  border-radius: 999px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  box-shadow: var(--shadow-card);
+.notice {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  min-height: 24px;
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-success);
 }
 
-.toast--error {
-  background: var(--color-danger);
+.notice--error {
+  color: var(--color-danger);
 }
 
 /* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では4列だと

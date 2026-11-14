@@ -5,7 +5,7 @@ import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";
 import { ShareBar } from "./component/share-bar";
-import { Toast } from "./component/toast";
+import { Notice } from "./component/notice";
 import { useClipboard } from "./hook/use-clipboard";
 import { useTheme } from "./hook/use-theme";
 
@@ -77,6 +77,20 @@ export function App() {
   // 新たな閾値を当て推量で作らず同じ安全マージンを流用する。
   const shareTooLong = isPermalinkQueryTooLong(`text=${encodeURIComponent(output)}`);
 
+  // コピーの知らせ。「コピー」と「リンクをコピー」は同じ1行を共有し、直近に押した側を出す
+  // （従来どおり本体コピーの結果を優先する）。
+  const notice =
+    copyStatus !== "idle" ? (
+      <Notice status={copyStatus} message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"} />
+    ) : linkCopyStatus !== "idle" ? (
+      <Notice
+        status={linkCopyStatus}
+        message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
+      />
+    ) : (
+      <Notice status={null} message="" />
+    );
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -121,20 +135,8 @@ export function App() {
           onCopyLink={() => copyLink(permalinkHref)}
           linkCopyDisabled={permalinkTooLong}
           shareDisabled={shareTooLong}
+          notice={notice}
         />
-
-        {copyStatus !== "idle" && (
-          <Toast
-            status={copyStatus}
-            message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"}
-          />
-        )}
-        {copyStatus === "idle" && linkCopyStatus !== "idle" && (
-          <Toast
-            status={linkCopyStatus}
-            message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
-          />
-        )}
       </div>
 
       <footer className="app-footer">
