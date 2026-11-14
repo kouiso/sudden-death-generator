@@ -92,3 +92,41 @@ for (const theme of ["light", "dark"] as const) {
     }
   });
 }
+
+// --- 「コピー」を主操作のアクセント色にする（緑は LINE と成功の知らせだけ）。デザインの --ac / --onac。 ---
+const expected = {
+  light: { copy: "rgb(47, 95, 224)", copyText: "rgb(255, 255, 255)" },
+  dark: { copy: "rgb(109, 139, 255)", copyText: "rgb(11, 14, 23)" },
+} as const;
+
+for (const theme of ["light", "dark"] as const) {
+  test(`${theme}: コピーはアクセント色の塗り・LINE は緑のまま・4つとも文字コントラスト4.5以上`, async ({
+    page,
+  }) => {
+    await page.evaluate((t) => document.documentElement.setAttribute("data-theme", t), theme);
+    const styles = await page.locator(".share-bar .share-button").evaluateAll((els) =>
+      els.map((el) => {
+        const s = getComputedStyle(el);
+        return { cls: el.className, bg: s.backgroundColor, color: s.color };
+      }),
+    );
+    const by = (c: string) => styles.find((s) => s.cls.includes(c))!;
+    const copy = by("share-button--copy");
+    const accent = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue("--color-accent").trim(),
+    );
+    expect(copy.bg, JSON.stringify(copy)).toBe(expected[theme].copy);
+    expect(copy.color).toBe(expected[theme].copyText);
+    // トークン（アプリのアクセント色）と同じ値であること。hex を rgb に直して比べる。
+    const hex = accent.replace("#", "");
+    const rgb = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(", ");
+    expect(copy.bg).toBe(`rgb(${rgb})`);
+    // LINE は緑のまま（コピーと見分けがつく）
+    expect(by("share-button--line").bg).toBe("rgb(3, 122, 51)");
+    expect(copy.bg).not.toBe(by("share-button--line").bg);
+    expect(styles).toHaveLength(4);
+    for (const s of styles) {
+      expect(contrast(s.color, s.bg), JSON.stringify(s)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+}
