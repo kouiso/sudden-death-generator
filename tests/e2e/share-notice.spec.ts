@@ -111,6 +111,8 @@ for (const [width, height] of [
         description: `fg=${colors.fg} bg=${colors.bg} ratio=${ratio.toFixed(2)} noticeH=${during.notice!.height} cardH=${during.cardHeight}`,
       });
       expect(ratio).toBeGreaterThanOrEqual(4.5);
+      // 色をデザインの --ng に合わせた変更（旧 #d1425a）が戻らないよう、ライトの値を固定する。
+      if (scheme === "light") expect(colors.fg).toBe("rgb(179, 36, 63)");
     });
   }
 }
