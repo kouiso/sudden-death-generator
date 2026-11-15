@@ -93,7 +93,7 @@ for (const [name, selector] of [
 }
 
 test("押せない X・LINE は Tab 順に入らない", async ({ page }) => {
-  await page.getByRole("button", { name: "📋 コピー", exact: true }).focus();
+  await page.getByRole("button", { name: "コピー", exact: true }).focus();
   const visited: string[] = [];
   for (let i = 0; i < 3; i++) {
     await page.keyboard.press("Tab");
