@@ -66,8 +66,9 @@ button {
 
 .theme-toggle {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  /* デザイン（design/project/Screen.dc.html の .tg）に合わせてタッチターゲット 44px。 */
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -178,6 +179,9 @@ button {
 }
 
 .shape-icon {
+  /* 線アイコン（svg）はインライン要素だとベースライン分の隙間が下に付くため、
+   * flex item 化して余白を潰す。 */
+  display: inline-flex;
   font-size: 1.2rem;
 }
 
@@ -235,32 +239,47 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 16px;
+  /* デザイン指定は高さ 48px 固定。「リンクをコピー」がカード内幅で折れないよう
+   * white-space:nowrap と組み合わせる（design/project/states.dc.html の .sb）。 */
+  height: 48px;
+  padding: 0 16px;
   border-radius: var(--radius-sm);
-  border: none;
+  /* X（暗い表示）とリンクは枠線を出す。全ボタンに透明枠線を敷いて寸法をそろえる。 */
+  border: 1.5px solid transparent;
   font-weight: 700;
   font-size: 0.92rem;
+  white-space: nowrap;
+  /* <a> にも同じクラスを当てるため、ブラウザ既定の下線を消す（デザイン指定: 下線なし）。 */
+  text-decoration: none;
   cursor: pointer;
-  transition: transform 0.1s ease, filter 0.15s ease;
+  transition: transform 0.1s ease, background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .share-button:active {
   transform: translateY(1px);
 }
 
+/* 主操作の「コピー」はアクセント色（緑は LINE と「コピーしました」の知らせだけに
+ * 使う、というデザインの色配分。design/project/canvas.json の付箋参照）。 */
 .share-button--copy {
-  background: var(--color-success);
+  background: var(--color-accent);
   color: var(--color-accent-contrast);
 }
 
 .share-button--copy:hover {
-  filter: brightness(1.05);
-  background: var(--color-success-strong);
+  background: var(--color-accent-strong);
 }
 
 .share-button--x {
-  background: #14171a;
+  background: var(--color-x-bg);
+  border-color: var(--color-x-border);
   color: #ffffff;
+}
+
+.share-button--x:hover {
+  /* デザイン指定の hover 色（states.dc.html の .xh）。明暗共通の固定値。 */
+  background: #2a2f36;
 }
 
 .share-button--line {
@@ -270,13 +289,20 @@ button {
   color: #ffffff;
 }
 
+.share-button--line:hover {
+  /* デザイン指定の hover 色（states.dc.html の .lnh）。 */
+  background: #026a2c;
+}
+
 .share-button--link {
   background: var(--color-surface-muted);
   color: var(--color-text);
-  border: 1.5px solid var(--color-border);
+  border-color: var(--color-border);
 }
 
 .share-button--link:hover:not(:disabled) {
+  /* デザイン指定: 枠線と文字色をともにアクセント色へ（states.dc.html の .lkh）。 */
+  color: var(--color-accent);
   border-color: var(--color-accent);
 }
 
@@ -293,6 +319,12 @@ button {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.share-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .share-note {
@@ -312,29 +344,24 @@ button {
 }
 
 /*
- * position:fixed の画面下部オーバーレイだと、スマホの短い画面高さやスクロール位置次第で
- * share-bar と重なってボタンのラベルを覆ってしまい、固定オフセット値では画面サイズごとの
- * 組み合わせを網羅できないことを実機幅マトリクス（iPhone SE/12/Pro Max, Pixel）で確認した。
- * ドキュメントフロー内（ShareBar の直下）に置くことで、画面サイズ・スクロール位置に関わらず
- * 他要素と重ならないことを構造的に保証する。
+ * 知らせ行。デザイン（design/project/states.dc.html, Screen.dc.html の .st）に合わせ、
+ * ピル状のオーバーレイではなく共有ボタンのすぐ下に置く1行のプレーンな色付きテキスト。
+ * min-height で常に1行分の高さを予約し、メッセージが出ても消えてもカードが伸び縮み
+ * しないようにする。失敗も同じ行に出す（色だけ --color-danger に変える）。
  */
 .toast {
-  margin: 0 auto;
-  width: fit-content;
-  background: var(--color-success);
-  color: var(--color-accent-contrast);
-  padding: 10px 20px;
-  border-radius: 999px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  box-shadow: var(--shadow-card);
+  margin: 0;
+  min-height: 24px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-success);
 }
 
 .toast--error {
-  background: var(--color-danger);
+  color: var(--color-danger);
 }
 
 /* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では4列だと

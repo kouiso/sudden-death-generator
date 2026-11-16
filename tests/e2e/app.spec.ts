@@ -72,10 +72,12 @@ test("縦書きと余白の切り替えで出力が変わる", async ({ page }) 
 test("実クリップボードへのコピーと通知の自動消去", async ({ page }) => {
   await page.getByRole("textbox").fill("コピー😀 & 改行\n確認");
   const output = await page.locator(".preview-pre").innerText();
-  await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
+  await page.getByRole("button", { name: "コピー", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(output);
-  await expect(page.getByRole("status")).toHaveCount(0);
+  // 知らせ行は自動消去する。行自体は高さ確保のため常時存在するので、要素の消滅ではなく
+  // 中身が空になることを見る。
+  await expect(page.getByRole("status")).toHaveText("");
 });
 
 test("リンクコピー直後と再読み込み後に全文と全オプションを復元する", async ({ page }) => {
@@ -134,7 +136,7 @@ test("矢印キーで4形状を巡回し、Tabでグループを抜ける", asyn
     await expect(page.locator('[role="radio"][tabindex="0"]')).toHaveCount(1);
   }
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: "📋 コピー", exact: true })).toBeFocused();
+  await expect(page.getByRole("button", { name: "コピー", exact: true })).toBeFocused();
 });
 
 test("長文では共有と古いURLを無効にし、短文へ戻すと復帰する", async ({ page }) => {
@@ -206,7 +208,7 @@ for (const width of [375, 428]) {
       }
     };
     await assertLayout();
-    await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
+    await page.getByRole("button", { name: "コピー", exact: true }).click();
     await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
     await assertLayout();
     await page.screenshot({ path: test.info().outputPath(`mobile-${width}.png`), fullPage: true });

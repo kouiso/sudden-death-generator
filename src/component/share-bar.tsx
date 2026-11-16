@@ -1,3 +1,6 @@
+import { CheckIcon, CopyIcon, LinkIcon } from "./icons";
+import { Toast } from "./toast";
+
 export interface ShareBarProps {
   output: string;
   copyStatus: "idle" | "success" | "error";
@@ -39,11 +42,27 @@ export function ShareBar({
   linkCopyDisabled,
   shareDisabled,
 }: ShareBarProps) {
+  // 知らせ行はカードを伸縮させないよう常に1行分を確保し、直近のコピー結果だけを出す。
+  // コピーとリンクコピーは別々の useClipboard を持つため同時に結果を持ち得るが、
+  // その場合は主操作のコピー側を優先する（従来 app.tsx で振り分けていたのと同じ規則）。
+  const noticeStatus = copyStatus !== "idle" ? copyStatus : linkCopyStatus;
+  const noticeMessage =
+    copyStatus !== "idle"
+      ? copyStatus === "success"
+        ? "コピーしました"
+        : "コピーに失敗しました"
+      : linkCopyStatus !== "idle"
+        ? linkCopyStatus === "success"
+          ? "リンクをコピーしました"
+          : "リンクのコピーに失敗しました"
+        : "";
+
   return (
-    <div>
+    <div className="share-area">
       <div className="share-bar">
         <button type="button" className="share-button share-button--copy" onClick={onCopy}>
-          📋 {copyStatus === "success" ? "コピー済み" : "コピー"}
+          {copyStatus === "success" ? <CheckIcon /> : <CopyIcon />}
+          {copyStatus === "success" ? "コピー済み" : "コピー"}
         </button>
         <a
           className="share-button share-button--x"
@@ -82,9 +101,12 @@ export function ShareBar({
           disabled={linkCopyDisabled}
           title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
         >
-          🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
+          {linkCopyStatus === "success" ? <CheckIcon /> : <LinkIcon />}
+          {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
       </div>
+      {/* 知らせ行（ボタンのすぐ下・高さ24px予約）。成功/失敗はプレーンな色付きテキストで出す。 */}
+      <Toast status={noticeStatus} message={noticeMessage} />
       {/*
        * shareDisabled と linkCopyDisabled は独立した基準（前者は本体出力の長さ、後者は
        * 入力テキストの長さ）で判定しており、同時に true になり得る。片方だけ表示すると、
