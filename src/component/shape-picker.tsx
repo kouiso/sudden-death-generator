@@ -1,6 +1,7 @@
 import { useRef } from "preact/hooks";
-import type { TargetedKeyboardEvent } from "preact";
+import type { ComponentChildren, TargetedKeyboardEvent } from "preact";
 import type { ShapeKind } from "../core";
+import { NormalShapeIcon, SquareShapeIcon, StressShapeIcon, TanzakuShapeIcon } from "./icons";
 
 export interface ShapePickerProps {
   value: ShapeKind;
@@ -8,11 +9,17 @@ export interface ShapePickerProps {
 }
 
 // accessKey は echo-sd のショートカット割り当て(N/4/T/S)に合わせる（機能面の参考、コードは転記していない）。
-const SHAPES: ReadonlyArray<{ value: ShapeKind; label: string; icon: string; accessKey: string }> = [
-  { value: "normal", label: "通常", icon: "📝", accessKey: "n" },
-  { value: "square", label: "四角形", icon: "⬜", accessKey: "4" },
-  { value: "tanzaku", label: "短冊", icon: "🎋", accessKey: "t" },
-  { value: "stress", label: "ストレス", icon: "💢", accessKey: "s" },
+// アイコンはデザイン（design/project/Screen.dc.html の .sp 内 svg）の線アイコン。
+const SHAPES: ReadonlyArray<{
+  value: ShapeKind;
+  label: string;
+  icon: ComponentChildren;
+  accessKey: string;
+}> = [
+  { value: "normal", label: "通常", icon: <NormalShapeIcon />, accessKey: "n" },
+  { value: "square", label: "四角形", icon: <SquareShapeIcon />, accessKey: "4" },
+  { value: "tanzaku", label: "短冊", icon: <TanzakuShapeIcon />, accessKey: "t" },
+  { value: "stress", label: "ストレス", icon: <StressShapeIcon />, accessKey: "s" },
 ];
 
 export function ShapePicker({ value, onChange }: ShapePickerProps) {

@@ -4,8 +4,8 @@ import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./
 import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";
+import { MoonIcon, SunIcon } from "./component/icons";
 import { ShareBar } from "./component/share-bar";
-import { Toast } from "./component/toast";
 import { useClipboard } from "./hook/use-clipboard";
 import { useTheme } from "./hook/use-theme";
 
@@ -90,7 +90,8 @@ export function App() {
           onClick={toggleTheme}
           aria-label={theme === "dark" ? "ライトモードに切り替え" : "ダークモードに切り替え"}
         >
-          <span aria-hidden="true">{theme === "dark" ? "☀️" : "🌙"}</span>
+          {/* 絵文字は OS ごとに見た目が変わるため線アイコン化（デザインの .tg 内 svg）。 */}
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
       </header>
 
@@ -113,6 +114,10 @@ export function App() {
 
         <Preview output={output} />
 
+        {/*
+         * コピー結果の知らせ行は ShareBar 内（共有ボタンのすぐ下）で常時描画する。
+         * 高さを予約してカードの伸縮を防ぐデザインのため、ここでは別途描画しない。
+         */}
         <ShareBar
           output={output}
           copyStatus={copyStatus}
@@ -122,19 +127,6 @@ export function App() {
           linkCopyDisabled={permalinkTooLong}
           shareDisabled={shareTooLong}
         />
-
-        {copyStatus !== "idle" && (
-          <Toast
-            status={copyStatus}
-            message={copyStatus === "success" ? "コピーしました" : "コピーに失敗しました"}
-          />
-        )}
-        {copyStatus === "idle" && linkCopyStatus !== "idle" && (
-          <Toast
-            status={linkCopyStatus}
-            message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
-          />
-        )}
       </div>
 
       <footer className="app-footer">
