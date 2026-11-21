@@ -266,6 +266,21 @@ button {
 .share-button--x {
   background: #14171a;
   color: #ffffff;
+  /* デザインの --xbd。ライトは塗りと同色（見た目は従来どおり）。 */
+  border-color: #14171a;
+}
+
+/* ダークではカード(#1a1e2b)と塗り(#14171a)がほぼ同色で輪郭が消えるため、デザインどおり
+ * 枠線 #565e7a を付ける（カード比 2.59:1。WCAG 1.4.11 の 3:1 には届かない既知の差）。
+ * token.css と同じく手動指定と OS 追従の両方を書く。 */
+:root[data-theme="dark"] .share-button--x {
+  border-color: #565e7a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .share-button--x {
+    border-color: #565e7a;
+  }
 }
 
 .share-button--line {
