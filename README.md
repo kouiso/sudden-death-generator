@@ -30,7 +30,7 @@
 ## コマンド
 
 ```bash
-npm install        # 依存関係インストール
+npm ci             # 依存関係インストール（package-lock.json を書き換えない）
 npm run dev        # 開発サーバー起動 (http://localhost:5173)
 npm run build      # 本番ビルド (dist/)
 npm run preview    # 本番ビルドをローカルで確認
