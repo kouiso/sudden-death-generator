@@ -10,3 +10,5 @@ export {
   MAX_PERMALINK_QUERY_LENGTH,
 } from "./permalink";
 export { buildXShareUrl, buildLineShareUrl, isShareTooLong } from "./share";
+// 形状の定義表は #104 で core/shape.ts に集約済み。画面が使う分だけここから出す。
+export { SHAPE_KINDS, isVerticalDisabled, resolveVertical, verticalHintOf } from "./shape";

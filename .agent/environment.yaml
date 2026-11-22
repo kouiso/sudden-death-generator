@@ -1,4 +1,4 @@
 setup:
-  install: "npm install"
+  install: "npm ci"
   test: "npm test"
   lint: "npm run lint"
