@@ -77,8 +77,9 @@ button {
 
 .theme-toggle {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  /* タップ領域はデザインの 44x44（PBI #79 で見送った des-08 を持ち主の指示で実施）。 */
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -110,6 +111,9 @@ button {
 }
 
 .editor-textarea {
+  /* inline-block のままだと下に行内の隙間(約5px)が残り、直下のチェックボックス行との
+   * 間隔がデザインの 8px にならない。 */
+  display: block;
   width: 100%;
   min-height: 96px;
   resize: vertical;
@@ -140,18 +144,22 @@ button {
 .option-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  /* 行間 4px / 列間 20px（デザインの .opts）。行自体が 44px あるので行間は小さくてよい。 */
+  gap: 4px 20px;
 }
 
 .option-row--spaced {
-  margin-top: 12px;
+  /* デザインはテキストエリアとの間が fld の gap 8px。 */
+  margin-top: 8px;
 }
 
 .checkbox-label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  /* 指で押せる最小の高さ 44px。ラベル全体が押せるのでチェックボックス自体は 18px のまま。 */
+  min-height: 44px;
+  font-size: 0.90625rem;
   cursor: pointer;
   user-select: none;
 }
@@ -169,6 +177,8 @@ button {
 .checkbox-label input {
   width: 18px;
   height: 18px;
+  /* UA 既定の margin を消して、ラベルとの間隔をデザインの gap 8px だけにする。 */
+  margin: 0;
   accent-color: var(--color-accent);
   cursor: pointer;
 }
