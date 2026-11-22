@@ -5,6 +5,8 @@ export interface EditorProps {
   verticalDisabled: boolean;
   /** チェックボックス無効時に添える理由（短冊=常に縦書き、ストレス=縦書きの影響を受けない、等）。 */
   verticalDisabledHint: string;
+  /** 入力欄の下に出す補足（ストレス形の行の使われ方など）。空文字なら行ごと出さない。 */
+  inputNote: string;
   onTextChange: (text: string) => void;
   onVerticalChange: (value: boolean) => void;
   onPaddingChange: (value: boolean) => void;
@@ -16,6 +18,7 @@ export function Editor({
   padding,
   verticalDisabled,
   verticalDisabledHint,
+  inputNote,
   onTextChange,
   onVerticalChange,
   onPaddingChange,
@@ -33,6 +36,7 @@ export function Editor({
         value={text}
         onInput={(e) => onTextChange(e.currentTarget.value)}
       />
+      {inputNote !== "" && <p className="editor-hint">{inputNote}</p>}
       <div className="option-row option-row--spaced">
         <label className="checkbox-label" title="ショートカットキー: V">
           <input
