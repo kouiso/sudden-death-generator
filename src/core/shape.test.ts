@@ -4,6 +4,7 @@ import { renderSuddenDeath } from "./render";
 import {
   SHAPE_KINDS,
   SHAPE_TABLE,
+  inputNoteOf,
   isShapeKind,
   isVerticalDisabled,
   isVerticalMeaningful,
@@ -41,6 +42,13 @@ describe("形状の定義表", () => {
     expect(verticalHintOf("square")).toBe("");
     expect(verticalHintOf("tanzaku")).toBe("（短冊は常に縦書き）");
     expect(verticalHintOf("stress")).toBe("（ストレスには影響しません）");
+  });
+
+  it("入力欄の下の補足は行の割り当てが他と違うストレス形だけ持つ", () => {
+    expect(inputNoteOf("normal")).toBe("");
+    expect(inputNoteOf("square")).toBe("");
+    expect(inputNoteOf("tanzaku")).toBe("");
+    expect(inputNoteOf("stress")).toContain("最後の行が枠に入ります");
   });
 
   it("isShapeKind は表にある値だけを通す", () => {

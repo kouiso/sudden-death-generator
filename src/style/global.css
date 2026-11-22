@@ -141,6 +141,15 @@ button {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
 
+/* 入力欄の下に出す補足（今はストレス形の行の使われ方）。値はデザインの .hint（13px/1.6/ミュート）。
+ * 上の間隔は fld の gap 8px、下は .option-row--spaced の margin-top 8px に任せる。 */
+.editor-hint {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
 .option-row {
   display: flex;
   flex-wrap: wrap;

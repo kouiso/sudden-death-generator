@@ -13,7 +13,15 @@ export const SHAPE_TABLE = [
   { value: "normal", vertical: "free" },
   { value: "square", vertical: "free" },
   { value: "tanzaku", vertical: "always", verticalHint: "（短冊は常に縦書き）" },
-  { value: "stress", vertical: "none", verticalHint: "（ストレスには影響しません）" },
+  {
+    value: "stress",
+    vertical: "none",
+    verticalHint: "（ストレスには影響しません）",
+    // ストレス形だけ行の割り当てが他と違う（最後の行=枠、残り=ストレス行）ため、
+    // 入力欄の下で使われ方を説明する。文言は design/project/Screen390.dc.html の .hint。
+    inputNote:
+      "最後の行が枠に入ります。その前の行（4行まで）がストレスになり、足りない段は「仕事のストレス」で埋まります。",
+  },
 ] as const;
 
 export type ShapeKind = (typeof SHAPE_TABLE)[number]["value"];
@@ -45,6 +53,12 @@ export function isVerticalDisabled(shape: ShapeKind): boolean {
 export function verticalHintOf(shape: ShapeKind): string {
   const entry = SHAPE_TABLE.find((e) => e.value === shape)!;
   return "verticalHint" in entry ? entry.verticalHint : "";
+}
+
+/** 入力欄の下に出す行の使われ方の説明。説明の要らない形状では空文字。 */
+export function inputNoteOf(shape: ShapeKind): string {
+  const entry = SHAPE_TABLE.find((e) => e.value === shape)!;
+  return "inputNote" in entry ? entry.inputNote : "";
 }
 
 /**

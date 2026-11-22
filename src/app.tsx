@@ -3,6 +3,7 @@ import {
   buildPermalinkQuery,
   isPermalinkQueryTooLong,
   isShareTooLong,
+  inputNoteOf,
   isVerticalDisabled,
   parsePermalink,
   renderSuddenDeath,
@@ -129,6 +130,7 @@ export function App() {
           padding={padding}
           verticalDisabled={verticalDisabled}
           verticalDisabledHint={verticalDisabledHint}
+          inputNote={inputNoteOf(shape)}
           onTextChange={setText}
           onVerticalChange={setVertical}
           onPaddingChange={setPadding}
