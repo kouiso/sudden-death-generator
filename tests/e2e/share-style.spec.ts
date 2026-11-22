@@ -27,26 +27,45 @@ test("共有ボタン4つのラベルに下線が出ない（a 要素の X/LINE 
       line: getComputedStyle(element).textDecorationLine,
     })),
   );
-  expect(decorations.map((d) => d.tag)).toEqual(["BUTTON", "A", "A", "BUTTON"]);
+  // 決定した並び（コピー系を上段・送る系を下段）では button → button → a → a の順になる。
+  expect(decorations.map((d) => d.tag)).toEqual(["BUTTON", "BUTTON", "A", "A"]);
   for (const d of decorations) expect(d.line, d.tag).toBe("none");
 });
 
-// 2列になる幅（ラベルが折り返さない幅）。4列幅の折り返しは別 PBI（#91 並びの決定待ち）で扱う。
-for (const width of [481, 560, 640]) {
-  test(`${width}px: 共有ボタン4つの枠線の太さと高さ(48px)がそろう`, async ({ page }) => {
+// 決定した並び（2列×2段、481px 未満は 1 列）では、主要幅のすべてでラベルが 1 行で
+// 高さがそろい、横スクロールも出ない（#77 の完了条件を計測して確かめる）。
+for (const width of [320, 390, 481, 560, 641, 720, 768, 1024, 1440]) {
+  test(`${width}px: 共有ボタン4つのラベルが1行で高さ(48px)がそろい横スクロールしない`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     const buttons = page.locator(".share-bar .share-button");
     await expect(buttons).toHaveCount(4);
     const metrics = await buttons.evaluateAll((elements) =>
-      elements.map((element) => ({
-        border: getComputedStyle(element).borderTopWidth,
-        height: element.getBoundingClientRect().height,
-      })),
+      elements.map((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        // アイコンと文字は別の矩形になるので、縦に重なる矩形を同じ行としてまとめて数える。
+        const rows: { top: number; bottom: number }[] = [];
+        for (const rect of [...range.getClientRects()].sort((a, b) => a.top - b.top)) {
+          const last = rows.at(-1);
+          if (last && rect.top < last.bottom) last.bottom = Math.max(last.bottom, rect.bottom);
+          else rows.push({ top: rect.top, bottom: rect.bottom });
+        }
+        return {
+          border: getComputedStyle(element).borderTopWidth,
+          height: element.getBoundingClientRect().height,
+          labelLines: rows.length,
+          overflowX: document.documentElement.scrollWidth - window.innerWidth,
+        };
+      }),
     );
     // 「リンクをコピー」だけ枠線を持つと 2px 高くなり、2段目と1段目で高さがずれていた。
     expect(new Set(metrics.map((m) => m.border)).size, JSON.stringify(metrics)).toBe(1);
     expect(parseFloat(metrics[0]?.border ?? "0")).toBeGreaterThan(0);
-    for (const m of metrics) expect(m.height, JSON.stringify(metrics)).toBe(48);
+    for (const m of metrics) {
+      expect(m.labelLines, JSON.stringify(metrics)).toBe(1);
+      expect(m.height, JSON.stringify(metrics)).toBe(48);
+      expect(m.overflowX, JSON.stringify(metrics)).toBeLessThanOrEqual(0);
+    }
   });
 }
 
