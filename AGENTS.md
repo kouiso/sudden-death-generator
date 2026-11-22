@@ -16,7 +16,7 @@ sudden-death-generator - kouiso プロジェクト。「突然の死」AA をリ
 ### Setup
 
 ```bash
-npm install
+npm ci
 ```
 
 ### Code Style
@@ -35,7 +35,17 @@ npm run preview    # 本番ビルドをローカルで確認
 npm run lint       # oxlint
 npm run typecheck  # tsc --noEmit
 npm test           # vitest run
+npm run test:e2e   # Playwright (ローカル: 初回のみ `npx playwright install chromium`)
 ```
+
+クラウド環境には固定版と異なる Chromium が入っていて既定の起動先が存在しないため、`PW_CHROMIUM_PATH` で実行ファイルを指す。
+設定は Playwright 1.65.0 が管理するブラウザのリビジョン 1254（Google Chrome for Testing 158 系）を前提にしているが、クラウドイメージにはリビジョン 1243 の Chromium しか入っていない。イメージが変わったらこのパスも更新すること:
+
+```bash
+PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome npm run test:e2e -- --trace off
+```
+
+`--trace off` は全テストでトレースを記録する CPU コストをクラウドの作業場で避けるため。失敗を調べるときは、その 1 テストだけを `--trace on` で再実行する。
 
 ### Font subset の再生成
 
