@@ -1,4 +1,5 @@
 import type { ComponentChildren } from "preact";
+import { buildLineShareUrl, buildXShareUrl } from "../core/share";
 
 export interface ShareBarProps {
   output: string;
@@ -19,17 +20,6 @@ export interface ShareBarProps {
   shareDisabled: boolean;
   /** コピー結果の知らせ行。ボタン群のすぐ下（注記より上）に置く。 */
   notice: ComponentChildren;
-}
-
-function buildXShareUrl(text: string): string {
-  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-}
-
-function buildLineShareUrl(text: string): string {
-  // LINE 公式ドキュメントが現在案内する共有スキームは R/share?text=。
-  // 旧 R/msg/text/ は非掲載でクライアントによっては共有ピッカーが開かない
-  // (実機で開かないため Codex bot 指摘を受け確認・修正)。
-  return `https://line.me/R/share?text=${encodeURIComponent(text)}`;
 }
 
 export function ShareBar({
