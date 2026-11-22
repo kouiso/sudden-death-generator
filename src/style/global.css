@@ -249,6 +249,10 @@ button {
    * あると、その分 2px 高くなって2列の段で高さがずれていた。高さも 48px を下限にそろえる。 */
   border: 1.5px solid transparent;
   min-height: 48px;
+  /* line-height を normal にすると「𝕏」(数学英数字)が別フォントにフォールバックして行箱が
+   * 1px 高くなり、grid の stretch でその段のボタン全部が 49px になっていた。
+   * min-height より小さい値に固定して、どの段も 48px に揃える。 */
+  line-height: 1.4;
   /* X/LINE は <a> のため UA 既定の下線が出る。<button> のコピー系と見た目をそろえる。 */
   text-decoration: none;
   font-weight: 700;
