@@ -68,6 +68,8 @@ function luminance(c: number[]) {
   return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
 }
 const rgb = (css: string) => (css.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+// design/project/states.dc.html の --ng（ライト #b3243f / ダーク #ff7a90）。
+const DANGER_COLOR = { light: "rgb(179, 36, 63)", dark: "rgb(255, 122, 144)" } as const;
 
 for (const [width, height] of [
   [1440, 900],
@@ -111,6 +113,9 @@ for (const [width, height] of [
         description: `fg=${colors.fg} bg=${colors.bg} ratio=${ratio.toFixed(2)} noticeH=${during.notice!.height} cardH=${during.cardHeight}`,
       });
       expect(ratio).toBeGreaterThanOrEqual(4.5);
+      // 4.5:1 の判定は旧 #d1425a（4.53:1）でも通ってしまうため、デザインの --ng に合わせた
+      // 値そのものを明暗の両方で固定し、色が戻ったら落ちるようにする。
+      expect(colors.fg).toBe(DANGER_COLOR[scheme]);
     });
   }
 }
