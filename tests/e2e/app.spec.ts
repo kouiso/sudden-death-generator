@@ -75,7 +75,8 @@ test("実クリップボードへのコピーと通知の自動消去", async ({
   await page.getByRole("button", { name: "📋 コピー", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText(/コピーしました$/);
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(output);
-  await expect(page.getByRole("status")).toHaveCount(0);
+  // 知らせの行は高さごと先に確保して常に DOM にあるので、消えた事は「中身が空」で確かめる。
+  await expect(page.locator('[role="status"]:not(:empty)')).toHaveCount(0);
 });
 
 test("リンクコピー直後と再読み込み後に全文と全オプションを復元する", async ({ page }) => {
@@ -181,7 +182,7 @@ for (const width of [375, 428]) {
               textLines: rows.length,
             };
           }),
-          toast: document.querySelector(".toast") ? box(document.querySelector(".toast")!) : null,
+          toast: document.querySelector(".notice") ? box(document.querySelector(".notice")!) : null,
           preview: box(document.querySelector(".preview-panel")!),
           scroll: {
             client: document.querySelector(".preview-scroll")!.clientWidth,
