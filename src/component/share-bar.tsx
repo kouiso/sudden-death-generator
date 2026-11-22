@@ -36,9 +36,21 @@ export function ShareBar({
   return (
     <div>
       <div className="share-bar">
+        {/* 並びはデザインの決定（Main.dc.html の 2列×2段）どおり、コピー系を上段・送る系を下段に
+         * 置く順。DOM の順を変えるので、キーボードの Tab 順もコピー→リンク→X→LINE になる。 */}
         <button type="button" className="share-button share-button--copy" onClick={onCopy}>
           {copyStatus === "success" ? <CheckIcon /> : <CopyIcon />}
           {copyStatus === "success" ? "コピー済み" : "コピー"}
+        </button>
+        <button
+          type="button"
+          className="share-button share-button--link"
+          onClick={onCopyLink}
+          disabled={linkCopyDisabled}
+          title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
+        >
+          {linkCopyStatus === "success" ? <CheckIcon /> : <LinkIcon />}
+          {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
         <a
           className="share-button share-button--x"
@@ -74,16 +86,6 @@ export function ShareBar({
         >
           LINE で送信
         </a>
-        <button
-          type="button"
-          className="share-button share-button--link"
-          onClick={onCopyLink}
-          disabled={linkCopyDisabled}
-          title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
-        >
-          {linkCopyStatus === "success" ? <CheckIcon /> : <LinkIcon />}
-          {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
-        </button>
       </div>
       {notice}
       {/*
