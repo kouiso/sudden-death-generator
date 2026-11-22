@@ -16,7 +16,9 @@
    * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
   --color-success: #137a54;
   --color-success-strong: #0f6a48;
-  --color-danger: #d1425a;
+  /* 値はデザイン（design/project/states.dc.html）の --ng に合わせている。
+   * カード面(#fff)に対するコントラスト比は旧 #d1425a の 4.53:1 から 6.48:1 になった。 */
+  --color-danger: #b3243f;
   --color-focus-ring: #2f5fe0;
 
   --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
@@ -35,9 +37,6 @@
   --radius-lg: 20px;
 
   --shadow-card: 0 20px 45px -25px rgb(31 43 92 / 0.35), 0 2px 8px -2px rgb(31 43 92 / 0.12);
-  /* トーストはカードとは別の面なので、ダークでカードの影を消しても影を保つよう分けている
-   * （デザインの --sh はカード専用で、トーストの影は指定が無い）。 */
-  --shadow-toast: 0 20px 45px -25px rgb(31 43 92 / 0.35), 0 2px 8px -2px rgb(31 43 92 / 0.12);
 
   color-scheme: light;
 }

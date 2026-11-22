@@ -24,7 +24,7 @@
     />
     <meta name="twitter:card" content="summary" />
     <script>
-      // テーマの初回チラつき防止。Farm が注入する <link rel=stylesheet> より前に
+      // テーマの初回チラつき防止。Vite がビルド時に注入する <link rel=stylesheet> より前に
       // 同期実行させる必要があるため、head内の他要素より先に置く（インラインscriptは
       // パーサーを止めて即実行されるので、後続のスタイルシート適用より先に間に合う）。
       // useTheme.ts と同じキー・同じ「手動選択が無ければ何もしない」ロジックをここで
