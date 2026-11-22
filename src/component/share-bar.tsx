@@ -1,3 +1,7 @@
+import type { ComponentChildren } from "preact";
+import { buildLineShareUrl, buildXShareUrl } from "../core";
+import { CheckIcon, CopyIcon, LinkIcon } from "./icon";
+
 export interface ShareBarProps {
   output: string;
   copyStatus: "idle" | "success" | "error";
@@ -15,20 +19,9 @@ export interface ShareBarProps {
    * （自己レビューで指摘: パーマリンクだけ上限を設けてX/LINEシェアには無かった不整合）。
    */
   shareDisabled: boolean;
+  /** コピー結果の知らせ行。ボタン群のすぐ下（注記より上）に置く。 */
+  notice: ComponentChildren;
 }
-
-function buildXShareUrl(text: string): string {
-  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-}
-
-function buildLineShareUrl(text: string): string {
-  // LINE 公式ドキュメントが現在案内する共有スキームは R/share?text=。
-  // 旧 R/msg/text/ は非掲載でクライアントによっては共有ピッカーが開かない
-  // (実機で開かないため Codex bot 指摘を受け確認・修正)。
-  return `https://line.me/R/share?text=${encodeURIComponent(text)}`;
-}
-
-const SHARE_DISABLED_TITLE = "入力が長すぎるため、この方法では共有できません";
 
 export function ShareBar({
   output,
@@ -38,23 +31,28 @@ export function ShareBar({
   onCopyLink,
   linkCopyDisabled,
   shareDisabled,
+  notice,
 }: ShareBarProps) {
   return (
     <div>
       <div className="share-bar">
         <button type="button" className="share-button share-button--copy" onClick={onCopy}>
-          📋 {copyStatus === "success" ? "コピー済み" : "コピー"}
+          {copyStatus === "success" ? <CheckIcon /> : <CopyIcon />}
+          {copyStatus === "success" ? "コピー済み" : "コピー"}
         </button>
         <a
           className="share-button share-button--x"
-          // href を外すだけでは pointer-events:none を敷いていないマウス操作で単にページ内
-          // アンカーへ飛ぶだけの不具合になる。onClick で確実に無効化する。
+          // 押せなくするのは href を外す・onClick の preventDefault。tabIndex は付けない
+          // （href の無い <a> は tabindex が無ければフォーカスできず、Tab 順にも入らない。
+          // tabIndex=-1 を付けるとマウスクリックでフォーカスが移り、キー操作で枠が出る）。
+          // pointer-events:none にするとデザインの cursor:not-allowed が出ないため使わない。
           href={shareDisabled ? undefined : buildXShareUrl(output)}
           target="_blank"
           rel="noreferrer"
           aria-disabled={shareDisabled}
-          tabIndex={shareDisabled ? -1 : undefined}
-          title={shareDisabled ? SHARE_DISABLED_TITLE : undefined}
+          onMouseDown={(event) => {
+            if (shareDisabled) event.preventDefault();
+          }}
           onClick={(event) => {
             if (shareDisabled) event.preventDefault();
           }}
@@ -67,8 +65,9 @@ export function ShareBar({
           target="_blank"
           rel="noreferrer"
           aria-disabled={shareDisabled}
-          tabIndex={shareDisabled ? -1 : undefined}
-          title={shareDisabled ? SHARE_DISABLED_TITLE : undefined}
+          onMouseDown={(event) => {
+            if (shareDisabled) event.preventDefault();
+          }}
           onClick={(event) => {
             if (shareDisabled) event.preventDefault();
           }}
@@ -82,22 +81,23 @@ export function ShareBar({
           disabled={linkCopyDisabled}
           title={linkCopyDisabled ? "入力が長すぎるためリンクを生成できません" : undefined}
         >
-          🔗 {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
+          {linkCopyStatus === "success" ? <CheckIcon /> : <LinkIcon />}
+          {linkCopyStatus === "success" ? "コピー済み" : "リンクをコピー"}
         </button>
       </div>
+      {notice}
       {/*
        * shareDisabled と linkCopyDisabled は独立した基準（前者は本体出力の長さ、後者は
        * 入力テキストの長さ）で判定しており、同時に true になり得る。片方だけ表示すると、
        * もう一方も無効なのに理由が説明文から消えてユーザーが混乱する
        * （CodeRabbit 指摘: 長文入力で両方無効になる帯域を実測して確認した不具合）。
-       * 該当する理由を全部つなげて表示する。
+       * X・LINE が押せない理由は押せないボタンの直下（notice 行）に出すので、ここには
+       * リンクの理由だけを置く。同じ文を二度出さない。
        */}
       <p className="share-note">
         ※ X・LINE は等幅フォントで表示されないため、貼り付け先で AA がズレる場合があります。
-        {shareDisabled && " ※ 入力が長すぎるため、X・LINEでの共有はできません。"}
         {linkCopyDisabled && " ※ 入力が長すぎるため、リンクでの共有はできません。"}
-        {!shareDisabled &&
-          !linkCopyDisabled &&
+        {!linkCopyDisabled &&
           " ※ リンクをコピーすると、入力内容とオプションを復元できる URL を共有できます。"}
       </p>
     </div>
