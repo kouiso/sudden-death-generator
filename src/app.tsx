@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { renderSuddenDeath, type ShapeKind } from "./core";
 import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
+import { isVerticalDisabled, resolveVertical, verticalHintOf } from "./core/shape";
 import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";
@@ -59,10 +60,10 @@ export function App() {
   // （render.ts のコメント参照）ため、同様にチェックボックスを無効化する。無効化しないと
   // チェックを切り替えても見た目が変わらないのに permalink には vertical=1 が残る
   // という不整合が起きる（Codex bot 指摘）。
-  const effectiveVertical = shape === "tanzaku" ? true : vertical;
-  const verticalDisabled = shape === "tanzaku" || shape === "stress";
-  const verticalDisabledHint =
-    shape === "tanzaku" ? "（短冊は常に縦書き）" : shape === "stress" ? "（ストレスには影響しません）" : "";
+  // 規則は src/core/shape.ts の定義表が持つ。
+  const effectiveVertical = resolveVertical(shape, vertical);
+  const verticalDisabled = isVerticalDisabled(shape);
+  const verticalDisabledHint = verticalHintOf(shape);
 
   // 純粋関数なので useMemo だけで生成ボタン無しのリアルタイムプレビューが成立する。
   const output = useMemo(
@@ -88,7 +89,7 @@ export function App() {
         message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
       />
     ) : shareTooLong ? (
-      // 押せない理由は title に入れても pointer-events:none と tabIndex=-1 で誰にも出ない。
+      // 押せない理由は title に入れても、タッチでは出ず tabIndex=-1 でキーボードにも出ない。
       // コピー結果と同じ行に出せば、行の高さを先に確保済みなのでカードの高さが変わらない。
       // コピーの知らせが出ている間はそちらを優先し、消えれば理由に戻る。
       <Notice status="info" message="入力が長すぎるため、X・LINEでの共有はできません" />
@@ -130,7 +131,7 @@ export function App() {
           <ShapePicker value={shape} onChange={setShape} />
         </div>
 
-        <Preview output={output} />
+        <Preview output={output} shape={shape} />
 
         <ShareBar
           output={output}
