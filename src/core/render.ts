@@ -1,6 +1,7 @@
 import type { FrameGlyphs, RenderOptions } from "./type";
 import { evenCeil, maxLineWidth, padCenterToWidth, padEndToWidth, splitGraphemes, stringWidth } from "./width";
 import { toVerticalGlyph } from "./vertical";
+import { resolveVertical } from "./shape";
 
 /** 入力が空のときに使う既定文言。リアルタイムプレビューでも常に何かが見えるようにする。 */
 const DEFAULT_TEXT = "突然の死";
@@ -165,7 +166,7 @@ export function renderSuddenDeath(rawInput: string, options: RenderOptions): str
   }
 
   const glyphs = options.shape === "square" ? SQUARE_GLYPHS : NORMAL_GLYPHS;
-  const contentLines = options.vertical ? buildVerticalRows(lines) : lines;
+  const contentLines = resolveVertical(options.shape, options.vertical) ? buildVerticalRows(lines) : lines;
   return renderFramed(contentLines, glyphs, options.padding).join("\n");
 }
 
