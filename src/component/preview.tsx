@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 
+import type { ShapeKind } from "../core";
+
 export interface PreviewProps {
   output: string;
+  /** 行の高さを形ごとに切り替えるために CSS へ渡す（global.css の .preview-pre[data-shape]）。 */
+  shape: ShapeKind;
 }
 
 // 生成ボタンが無くキー入力ごとに即再描画されるため、aria-live を output に直結すると
@@ -21,7 +25,7 @@ function buildAnnouncement(lineCount: number, tick: boolean): string {
   return `プレビューを更新しました（${lineCount}行）${tick ? "​" : ""}`;
 }
 
-export function Preview({ output }: PreviewProps) {
+export function Preview({ output, shape }: PreviewProps) {
   const [announcement, setAnnouncement] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tickRef = useRef(false);
@@ -52,7 +56,9 @@ export function Preview({ output }: PreviewProps) {
       <span className="field-label">プレビュー</span>
       <div className="preview-panel" role="region" aria-label="生成結果">
         <div className="preview-scroll">
-          <pre className="preview-pre">{output}</pre>
+          <pre className="preview-pre" data-shape={shape}>
+            {output}
+          </pre>
         </div>
       </div>
       <span className="visually-hidden" aria-live="polite" aria-atomic="true">
