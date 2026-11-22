@@ -51,9 +51,13 @@ for (const width of [320, 390, 481, 560, 641, 720, 768, 1024, 1440]) {
           else rows.push({ top: rect.top, bottom: rect.bottom });
         }
         return {
+          cls: element.className,
+          x: element.getBoundingClientRect().x,
+          y: element.getBoundingClientRect().y,
           border: getComputedStyle(element).borderTopWidth,
           height: element.getBoundingClientRect().height,
           labelLines: rows.length,
+          shellWidth: document.querySelector(".app-shell")!.getBoundingClientRect().width,
           overflowX: document.documentElement.scrollWidth - window.innerWidth,
         };
       }),
@@ -65,6 +69,22 @@ for (const width of [320, 390, 481, 560, 641, 720, 768, 1024, 1440]) {
       expect(m.labelLines, JSON.stringify(metrics)).toBe(1);
       expect(m.height, JSON.stringify(metrics)).toBe(48);
       expect(m.overflowX, JSON.stringify(metrics)).toBeLessThanOrEqual(0);
+    }
+    // 列数と段の配置も確かめる。列幅の判定はカードの中身（shell container）の幅で行う。
+    const rows = [...new Set(metrics.map((m) => Math.round(m.y)))].sort((a, b) => a - b);
+    const cols = [...new Set(metrics.map((m) => Math.round(m.x)))].sort((a, b) => a - b);
+    const at = (cls: string) => metrics.find((m) => m.cls.includes(cls))!;
+    if (metrics[0]!.shellWidth <= 480) {
+      expect(rows, JSON.stringify(metrics)).toHaveLength(4);
+      expect(cols, JSON.stringify(metrics)).toHaveLength(1);
+    } else {
+      expect(rows, JSON.stringify(metrics)).toHaveLength(2);
+      expect(cols, JSON.stringify(metrics)).toHaveLength(2);
+      // コピー系を上段・送る系を下段に置く決定の並びを保護する。
+      expect(Math.round(at("share-button--copy").y)).toBe(rows[0]);
+      expect(Math.round(at("share-button--link").y)).toBe(rows[0]);
+      expect(Math.round(at("share-button--x").y)).toBe(rows[1]);
+      expect(Math.round(at("share-button--line").y)).toBe(rows[1]);
     }
   });
 }
