@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useState } from "preact/hooks";
-import { renderSuddenDeath, type ShapeKind } from "./core";
-import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
-import { isShareTooLong } from "./core/share";
-import { isVerticalDisabled, resolveVertical, verticalHintOf } from "./core/shape";
+import {
+  buildPermalinkQuery,
+  isPermalinkQueryTooLong,
+  isShareTooLong,
+  isVerticalDisabled,
+  parsePermalink,
+  renderSuddenDeath,
+  resolveVertical,
+  verticalHintOf,
+  type ShapeKind,
+} from "./core";
 import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";

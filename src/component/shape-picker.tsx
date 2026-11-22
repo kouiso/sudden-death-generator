@@ -1,7 +1,6 @@
 import { useRef } from "preact/hooks";
 import type { TargetedKeyboardEvent } from "preact";
-import type { ShapeKind } from "../core";
-import { SHAPE_KINDS } from "../core/shape";
+import { SHAPE_KINDS, type ShapeKind } from "../core";
 
 export interface ShapePickerProps {
   value: ShapeKind;
