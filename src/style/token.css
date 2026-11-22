@@ -16,7 +16,9 @@
    * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
   --color-success: #137a54;
   --color-success-strong: #0f6a48;
-  --color-danger: #d1425a;
+  /* カード面(#fff)に対し 4.5:1 を満たす濃さ。旧 #d1425a は約 4.1:1 で通常テキストの基準未満。
+   * 値は design/project/states.dc.html の --ng。 */
+  --color-danger: #b3243f;
   --color-focus-ring: #2f5fe0;
 
   --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
