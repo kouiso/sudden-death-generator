@@ -178,7 +178,8 @@ button {
 }
 
 .shape-icon {
-  font-size: 1.2rem;
+  /* SVG を行内に置くと行ボックスの分だけ下に余白が出るため、flex にして絵の高さ（24px）だけにする。 */
+  display: inline-flex;
 }
 
 /* スクリーンリーダー専用テキスト（視覚的には非表示だが読み上げ対象には残す）。 */
@@ -211,15 +212,22 @@ button {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 1rem;
-  /* サブセットフォント(sd-symbols.woff2)の hhea ascent(1160)+|descent|(288) が
-   * unitsPerEm(1000) の 1.448 倍あり、line-height がそれを下回ると隣接行の
-   * グリフが重なって完全に見えなくなる（実機で四角形・短冊の枠が消えるのを確認した
-   * 不具合）。余裕を見て 1.5 にする。 */
+  /* デザイン(design/project/Screen.dc.html)の 16px/1.5 を既定にする。通常・ストレスは
+   * ＞／＜ と ＿／￣ が接して読みにくくなるため詰めない。 */
   line-height: 1.5;
   white-space: pre;
   /* タブのタブストップ可変幅描画を width.ts の固定幅計算（タブ=半角1）と一致させる。 */
   tab-size: 1;
   color: var(--color-text);
+}
+
+/* 四角形・短冊だけ行の送りを 1em にする。罫線グリフは 1em の高さちょうどなので、1.5 だと
+ * 角と縦線の間に 0.5em の隙間が開いて枠がばらばらに見える。font.css の ascent/descent-override
+ * は、この 1em のグリフを行ボックスの中央に置き、行ボックスの下へ約 0.9px はみ出さない
+ * ようにしている（1 未満にすると隣の行のグリフが重なるので詰めすぎない）。 */
+.preview-pre[data-shape="square"],
+.preview-pre[data-shape="tanzaku"] {
+  line-height: 1;
 }
 
 .share-bar {
@@ -241,6 +249,10 @@ button {
    * あると、その分 2px 高くなって2列の段で高さがずれていた。高さも 48px を下限にそろえる。 */
   border: 1.5px solid transparent;
   min-height: 48px;
+  /* line-height を normal にすると「𝕏」(数学英数字)が別フォントにフォールバックして行箱が
+   * 1px 高くなり、grid の stretch でその段のボタン全部が 49px になっていた。
+   * min-height より小さい値に固定して、どの段も 48px に揃える。 */
+  line-height: 1.4;
   /* X/LINE は <a> のため UA 既定の下線が出る。<button> のコピー系と見た目をそろえる。 */
   text-decoration: none;
   font-weight: 700;
@@ -311,10 +323,17 @@ button {
 
 /* <a> は disabled 属性を持たないため aria-disabled で判定する。X/LINE シェアURLが安全な
  * 長さの上限を超える場合（ShareBar の shareDisabled 参照）に同じ見た目・操作不可を適用する。 */
+/* pointer-events:none を敷くとマウスが下の要素扱いになり、デザインの「押せない時はマウスの形も
+ * not-allowed」が実際には出ない。操作できないことは href 無し・tabindex 無し・onClick の
+ * preventDefault（ShareBar 参照）で担保し、ポインタ自体は受けて cursor を見せる。 */
 .share-button[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
-  pointer-events: none;
+}
+
+/* ポインタを受けるようにしたので、押せないボタンが「押し込まれた」ように動かないよう明示する。 */
+.share-button[aria-disabled="true"]:active {
+  transform: none;
 }
 
 .share-note {
@@ -334,29 +353,41 @@ button {
 }
 
 /*
- * position:fixed の画面下部オーバーレイだと、スマホの短い画面高さやスクロール位置次第で
- * share-bar と重なってボタンのラベルを覆ってしまい、固定オフセット値では画面サイズごとの
- * 組み合わせを網羅できないことを実機幅マトリクス（iPhone SE/12/Pro Max, Pixel）で確認した。
- * ドキュメントフロー内（ShareBar の直下）に置くことで、画面サイズ・スクロール位置に関わらず
- * 他要素と重ならないことを構造的に保証する。
+ * コピー結果の知らせ行（design/project/states.dc.html）。共有ボタンのすぐ下に置き、
+ * 高さ 24px を先に確保する。出ても消えてもカードの高さが変わらず、スマホでも押した
+ * ボタンのそばで見える。ドキュメントフロー内なので他要素と重ならない。
+ * 背景の塗りは持たず、文字色だけで成功/失敗を示す（カード面に対する文字のコントラスト）。
  */
-.toast {
-  margin: 0 auto;
-  width: fit-content;
-  background: var(--color-success);
-  color: var(--color-accent-contrast);
-  padding: 10px 20px;
-  border-radius: 999px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  box-shadow: var(--shadow-card);
+.notice {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  min-height: 24px;
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-success);
 }
 
-.toast--error {
-  background: var(--color-danger);
+.notice--error {
+  color: var(--color-danger);
+}
+
+/* 押せない理由。成功・失敗ではないので色で意味付けせず、注記と同じ控えめな文字色にする。 */
+.notice--info {
+  color: var(--color-text-muted);
+}
+
+/*
+ * 失敗の文言「コピーできませんでした。もう一度押してください」は約 340px あり、カード内の幅が
+ * それを下回る狭いスマホ（390px で 324px）では 2 行に折り返す。1 行分（24px）しか確保して
+ * いないと失敗が出た時にカードが伸びて下の要素が動くので、狭い幅では 2 行分を先に確保する。
+ * デザインの 24px は 1 行で収まる幅の前提で描かれている（要確認事項として PR に記載）。
+ */
+@media (max-width: 430px) {
+  .notice {
+    min-height: 40px;
+  }
 }
 
 /* 主要なスマートフォン幅（iPhone Pro Max 428px 等も含む）では4列だと
