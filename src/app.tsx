@@ -1,11 +1,21 @@
 import { useEffect, useMemo, useState } from "preact/hooks";
-import { renderSuddenDeath, type ShapeKind } from "./core";
-import { buildPermalinkQuery, isPermalinkQueryTooLong, parsePermalink } from "./core/permalink";
+import {
+  buildPermalinkQuery,
+  isPermalinkQueryTooLong,
+  isShareTooLong,
+  isVerticalDisabled,
+  parsePermalink,
+  renderSuddenDeath,
+  resolveVertical,
+  verticalHintOf,
+  type ShapeKind,
+} from "./core";
 import { Editor } from "./component/editor";
 import { Preview } from "./component/preview";
 import { ShapePicker } from "./component/shape-picker";
-import { MoonIcon, SunIcon } from "./component/icons";
 import { ShareBar } from "./component/share-bar";
+import { MoonIcon, SunIcon } from "./component/icon";
+import { Notice } from "./component/notice";
 import { useClipboard } from "./hook/use-clipboard";
 import { useTheme } from "./hook/use-theme";
 
@@ -59,10 +69,10 @@ export function App() {
   // （render.ts のコメント参照）ため、同様にチェックボックスを無効化する。無効化しないと
   // チェックを切り替えても見た目が変わらないのに permalink には vertical=1 が残る
   // という不整合が起きる（Codex bot 指摘）。
-  const effectiveVertical = shape === "tanzaku" ? true : vertical;
-  const verticalDisabled = shape === "tanzaku" || shape === "stress";
-  const verticalDisabledHint =
-    shape === "tanzaku" ? "（短冊は常に縦書き）" : shape === "stress" ? "（ストレスには影響しません）" : "";
+  // 規則は src/core/shape.ts の定義表が持つ。
+  const effectiveVertical = resolveVertical(shape, vertical);
+  const verticalDisabled = isVerticalDisabled(shape);
+  const verticalDisabledHint = verticalHintOf(shape);
 
   // 純粋関数なので useMemo だけで生成ボタン無しのリアルタイムプレビューが成立する。
   const output = useMemo(
@@ -72,10 +82,28 @@ export function App() {
   // X/LINE のシェアURLも同じ危険（一部環境のURL長制限に引っかかって開けない）を抱える。
   // むしろ本体出力（枠のパディング込みで入力テキストより常に長い）を丸ごと載せるため、
   // パーマリンク（入力テキストのみ）より長くなりやすく、パーマリンクは安全と判定された
-  // 入力でもこちらは超過しうる（自己レビューで指摘）。パーマリンクと同じ基準
-  // （MAX_PERMALINK_QUERY_LENGTH）を「text=<encode後の出力>」というクエリ片に対して適用し、
-  // 新たな閾値を当て推量で作らず同じ安全マージンを流用する。
-  const shareTooLong = isPermalinkQueryTooLong(`text=${encodeURIComponent(output)}`);
+  // 入力でもこちらは超過しうる（自己レビューで指摘）。判定は URL 組み立てと同じ
+  // core/share.ts のクエリ関数の結果で行い、URL の形が変わっても判定がずれないようにする。
+  const shareTooLong = isShareTooLong(output);
+
+  // コピーの知らせ。「コピー」と「リンクをコピー」は同じ1行を共有し、直近に押した側を出す
+  // （従来どおり本体コピーの結果を優先する）。
+  const notice =
+    copyStatus !== "idle" ? (
+      <Notice status={copyStatus} message={copyStatus === "success" ? "コピーしました" : "コピーできませんでした。もう一度押してください"} />
+    ) : linkCopyStatus !== "idle" ? (
+      <Notice
+        status={linkCopyStatus}
+        message={linkCopyStatus === "success" ? "リンクをコピーしました" : "リンクのコピーに失敗しました"}
+      />
+    ) : shareTooLong ? (
+      // 押せない理由は title に入れても、タッチでは出ず tabIndex=-1 でキーボードにも出ない。
+      // コピー結果と同じ行に出せば、行の高さを先に確保済みなのでカードの高さが変わらない。
+      // コピーの知らせが出ている間はそちらを優先し、消えれば理由に戻る。
+      <Notice status="info" message="入力が長すぎるため、X・LINEでの共有はできません" />
+    ) : (
+      <Notice status={null} message="" />
+    );
 
   return (
     <div className="app-shell">
@@ -90,7 +118,6 @@ export function App() {
           onClick={toggleTheme}
           aria-label={theme === "dark" ? "ライトモードに切り替え" : "ダークモードに切り替え"}
         >
-          {/* 絵文字は OS ごとに見た目が変わるため線アイコン化（デザインの .tg 内 svg）。 */}
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
       </header>
@@ -112,12 +139,8 @@ export function App() {
           <ShapePicker value={shape} onChange={setShape} />
         </div>
 
-        <Preview output={output} />
+        <Preview output={output} shape={shape} />
 
-        {/*
-         * コピー結果の知らせ行は ShareBar 内（共有ボタンのすぐ下）で常時描画する。
-         * 高さを予約してカードの伸縮を防ぐデザインのため、ここでは別途描画しない。
-         */}
         <ShareBar
           output={output}
           copyStatus={copyStatus}
@@ -126,6 +149,7 @@ export function App() {
           onCopyLink={() => copyLink(permalinkHref)}
           linkCopyDisabled={permalinkTooLong}
           shareDisabled={shareTooLong}
+          notice={notice}
         />
       </div>
 

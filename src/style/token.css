@@ -12,19 +12,15 @@
   --color-accent: #2f5fe0;
   --color-accent-strong: #1f47b8;
   --color-accent-contrast: #ffffff;
+  /* 選択中のスタイルボタンの背景。デザインの --act（color-mix の近似ではなく実値）。 */
+  --color-accent-tint: #e9eefc;
   /* 白文字を乗せた時に WCAG AA (4.5:1) を満たす濃さまで暗くしている
    * （#1d9a6c だと 3.56:1 で通常テキストの基準を割っていたため）。 */
   --color-success: #137a54;
   --color-success-strong: #0f6a48;
-  /* 失敗の知らせはピルの背景色ではなくカード上の色付きテキストで出す（デザイン
-   * design/project/states.dc.html の --ng）。白地で読める濃さを取るため
-   * 旧ピル背景色 (#d1425a) より暗い値にする。 */
+  /* 値はデザイン（design/project/states.dc.html）の --ng に合わせている。
+   * カード面(#fff)に対するコントラスト比は旧 #d1425a の 4.53:1 から 6.48:1 になった。 */
   --color-danger: #b3243f;
-  /* X の共有ボタンはブランド色（黒）を維持し、暗い表示では枠線を付けて背景との
-   * 境界を分かるようにする。明るい表示では枠線を見せないため背景と同色にする
-   * （design/project/states.dc.html の --xbg / --xbd）。 */
-  --color-x-bg: #14171a;
-  --color-x-border: #14171a;
   --color-focus-ring: #2f5fe0;
 
   --font-ui: "Zen Maru Gothic UI", "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", system-ui,
@@ -43,14 +39,13 @@
   --radius-lg: 20px;
 
   --shadow-card: 0 20px 45px -25px rgb(31 43 92 / 0.35), 0 2px 8px -2px rgb(31 43 92 / 0.12);
-  --shadow-sm: 0 1px 2px rgb(31 43 92 / 0.08);
 
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
   --color-bg: #10131c;
-  --color-bg-gradient-start: #14182430;
+  --color-bg-gradient-start: #141824;
   --color-bg-gradient-end: #0a0c12;
   --color-surface: #1a1e2b;
   --color-surface-muted: #23283a;
@@ -60,15 +55,12 @@
   --color-accent: #6d8bff;
   --color-accent-strong: #8ca0ff;
   --color-accent-contrast: #0b0e17;
+  --color-accent-tint: #232b47;
   --color-success: #3fcf94;
   --color-success-strong: #63dba8;
   --color-danger: #ff7a90;
-  --color-x-bg: #0b0d12;
-  --color-x-border: #565e7a;
   --color-focus-ring: #6d8bff;
-
-  /* 暗い表示ではカードの影を落とす（デザイン --sh:none。暗背景では影が視認できず
-   * 枠線だけでカードの輪郭が成立するため）。 */
+  /* 暗い面では影が効かず濁るだけなので、デザイン(--sh:none)どおり消す。 */
   --shadow-card: none;
 
   color-scheme: dark;
@@ -77,7 +69,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-bg: #10131c;
-    --color-bg-gradient-start: #14182430;
+    --color-bg-gradient-start: #141824;
     --color-bg-gradient-end: #0a0c12;
     --color-surface: #1a1e2b;
     --color-surface-muted: #23283a;
@@ -87,11 +79,10 @@
     --color-accent: #6d8bff;
     --color-accent-strong: #8ca0ff;
     --color-accent-contrast: #0b0e17;
+    --color-accent-tint: #232b47;
     --color-success: #3fcf94;
     --color-success-strong: #63dba8;
     --color-danger: #ff7a90;
-    --color-x-bg: #0b0d12;
-    --color-x-border: #565e7a;
     --color-focus-ring: #6d8bff;
     --shadow-card: none;
 
