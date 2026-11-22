@@ -75,7 +75,8 @@ button {
   place-items: center;
   cursor: pointer;
   font-size: 1.1rem;
-  box-shadow: var(--shadow-sm);
+  /* デザインはライト・ダークとも影なし（枠線だけで面を区切る）。 */
+  box-shadow: none;
 }
 
 .card {
