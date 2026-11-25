@@ -35,6 +35,17 @@ jobs:
 
       - run: npm run build
 
+      # 検証済みの dist をそのまま配信単位に変換する。
+      # deploy ジョブはこの .vercel/output をダウンロードして再ビルドせず配信する
+      - run: node script/build-vercel-output.mjs
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: vercel-output-${{ github.sha }}
+          path: .vercel/output
+          retention-days: 1
+          if-no-files-found: error
+
       - run: npx playwright install --with-deps chromium
 
       - run: npm run test:e2e
@@ -47,3 +58,65 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # 同一デプロイ先への同時起動を防ぐ。実行中の deploy 自体はキャンセルしない
+    concurrency:
+      group: vercel-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'production' }}
+      cancel-in-progress: false
+    # 資格情報ゲート（issue #31）: 変数を立てるまでは起動しない。
+    # fork PR には deploy credential を渡さない。
+    # main への push は production、pull_request は preview として deploy する
+    if: >
+      vars.VERCEL_DEPLOY_ENABLED == 'true'
+      && (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork)
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: vercel-output-${{ github.sha }}
+          path: .vercel/output
+
+      - name: Link Vercel project
+        run: printf '{"projectId":"%s","orgId":"%s"}' "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
+
+      - name: Deploy prebuilt output
+        id: deploy
+        env:
+          IS_PROD: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          set -euo pipefail
+          args=(--prebuilt --yes "--token=$VERCEL_TOKEN")
+          if [ "$IS_PROD" = "true" ]; then args+=(--prod); fi
+          npx --yes vercel@54.10.1 deploy "${args[@]}" 2>&1 | tee deploy.log
+          url=$(grep -oE 'https://[A-Za-z0-9.-]+\.vercel\.app' deploy.log | tail -n1 || true)
+          [ -n "$url" ] || { echo "deploy URL を取得できなかった"; exit 1; }
+          echo "deployment_url=$url" >> "$GITHUB_OUTPUT"
+          echo "deployed: $url"
+
+      - name: Smoke check
+        run: bash script/smoke-vercel-deploy.sh "${{ steps.deploy.outputs.deployment_url }}" .vercel/output/static
+
+      - name: Comment preview URL
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --body "Vercel preview (prebuilt): ${{ steps.deploy.outputs.deployment_url }}"
