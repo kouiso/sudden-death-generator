@@ -44,6 +44,16 @@ const UNSUPPORTED_KEYS = [
   "services",
 ];
 
+// 正規表現メタを全てエスケープする。char class に '\' も含めるのが要点:
+// '\' を逃すと入力中の '\' が後続のエスケープ結果と合成されて別の
+// 正規表現になり得るため、エスケープ対象から外せない
+// （CodeQL js/incomplete-sanitization の指摘）。
+// 呼び出し側の allow-list で '\' は既に弾かれるが、
+// エスケープ関数単体でも完結した処理にしておく
+function escapeRegExp(value) {
+  return value.replace(/[\\^$.*+?()[\]{}|-]/g, "\\$&");
+}
+
 // vercel.json の source は path-to-regexp 記法。Build Output API の src は
 // PCRE 正規表現で、両者が一致する書き方だけをここで変換する。
 // 変換不能なパターン（:param 等）が来たら例外で止める。
@@ -57,13 +67,11 @@ function sourceToSrc(source) {
     if (!/^\/[\w\-./]+$/.test(literal)) {
       throw new Error(`未対応の source パターン: ${source}（プレフィックスは静的パスのみ対応）`);
     }
-    const escaped = literal.replace(/[-[\]{}()*+?.^$|]/g, "\\$&");
-    return `^${escaped}(?:/(.*))$`;
+    return `^${escapeRegExp(literal)}(?:/(.*))$`;
   }
   // 静的パス単体は完全一致に翻訳する
   if (/^\/[\w\-./]+$/.test(source)) {
-    const escaped = source.replace(/[-[\]{}()*+?.^$|]/g, "\\$&");
-    return `^${escaped}$`;
+    return `^${escapeRegExp(source)}$`;
   }
   throw new Error(`未対応の source パターン: ${source}（必要なら sourceToSrc を拡張すること）`);
 }
