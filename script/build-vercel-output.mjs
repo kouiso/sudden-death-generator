@@ -107,8 +107,13 @@ export function toOutputConfig(vercelJson) {
 
   // redirect は filesystem より前に評価される（vercel.json 側の仕様）
   for (const entry of vercelJson.redirects ?? []) {
-    const status = entry.statusCode ?? (entry.permanent === false ? 307 : 301);
-    routes.push({ src: sourceToSrc(entry.source), dest: entry.destination, status, ...passThroughConditions(entry) });
+    const status = entry.statusCode ?? (entry.permanent === false ? 307 : 308);
+    routes.push({
+      src: sourceToSrc(entry.source),
+      headers: { Location: entry.destination },
+      status,
+      ...passThroughConditions(entry),
+    });
   }
 
   // vercel.json の rewrite は「filesystem に無いパス」へだけ効く SPA fallback。

@@ -35,7 +35,7 @@ trap 'rm -rf "$work"' EXIT
 
 fetch() { # fetch <path> -> $work/body, $work/headers
   curl -fsS --max-time 20 -D "$work/headers" -o "$work/body" "$BASE$1" \
-    || { echo "curl failed: $1"; return 1; }
+    || { fail "HTTP 要求に失敗: $1"; return 1; }
 }
 
 header_value() { # 大文字小文字を吸収して値を取り出す

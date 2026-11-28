@@ -56,12 +56,28 @@ describe("toOutputConfig", () => {
     ).toThrow(/未対応の source/);
   });
 
+  it("permanent:false の redirect は 307 になり、明示 statusCode を保つ", () => {
+    const { routes: temporary } = toOutputConfig({
+      redirects: [{ source: "/old/(.*)", destination: "/", permanent: false }],
+    });
+    expect(temporary[0]).toMatchObject({ headers: { Location: "/" }, status: 307 });
+
+    const { routes: explicit } = toOutputConfig({
+      redirects: [{ source: "/old/(.*)", destination: "/", statusCode: 302 }],
+    });
+    expect(explicit[0]).toMatchObject({ headers: { Location: "/" }, status: 302 });
+  });
+
   it("redirect は filesystem より前で status 付きになる", () => {
     const { routes } = toOutputConfig({
       redirects: [{ source: "/old/(.*)", destination: "/", permanent: true }],
       rewrites: [{ source: "/(.*)", destination: "/index.html" }],
     });
-    expect(routes[0]).toMatchObject({ src: "^/old(?:/(.*))$", dest: "/", status: 301 });
+    expect(routes[0]).toMatchObject({
+      src: "^/old(?:/(.*))$",
+      headers: { Location: "/" },
+      status: 308,
+    });
     expect(routes.findIndex((r) => r.handle === "filesystem")).toBeGreaterThan(0);
   });
 });
