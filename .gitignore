@@ -8,6 +8,9 @@ desktop.ini
 /dist/
 /.vite/
 
+# Vercel CLI が作業ディレクトリに作るリンク情報・prebuilt 出力・env の退避先
+/.vercel/
+
 # Playwright
 /playwright-report/
 /test-results/

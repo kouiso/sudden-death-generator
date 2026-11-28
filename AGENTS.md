@@ -3,7 +3,8 @@
 ## Overview
 
 sudden-death-generator - kouiso プロジェクト。「突然の死」AA をリアルタイム生成する静的サイト。
-サーバーは無く、Vite でビルドした静的アセットをそのまま配信する（Vercel）。
+サーバーは無く、Vite でビルドした静的アセットをそのまま配信する（Vercel。
+CI からの prebuilt 配信の設計・手順は `doc/vercel-prebuilt-deploy.md`）。
 
 ## Development
 
